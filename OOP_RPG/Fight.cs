@@ -1,88 +1,201 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace OOP_RPG
 {
+    public enum Difficulty
+    {
+        Easy = 0,
+        Medium = 1,
+        Hard = 2,
+    }
+
+    public enum DaysOfTheWeek
+    {
+        Sunday = 0,
+        Monday = 1,
+        Tuesday = 2,
+        Wednsday = 3,
+        Thursday = 4,
+        Friday = 5,
+        Saturday = 6,
+    }
+
     public class Fight
     {
         private List<Monster> Monsters { get; }
         private Hero Hero { get; }
+        private Monster CurrentMonster { get; }
 
+
+        /*
+        ======================================================================================== 
+        Fight
+        ======================================================================================== 
+        */
         public Fight(Hero game)
         {
             Hero = game;
-            Monsters = new List<Monster>();
+            Monsters = new List<Monster>(GetTodaysMonsters());
 
-            AddMonster("Squid", 15, 5, 20);
+            CurrentMonster = Monsters[new Random().Next(0, (Monsters.Count - 1))];
         }
 
-        private void AddMonster(string name, int strength, int defense, int hp)
-        {
-            var monster = new Monster();
 
-            monster.Name = name;
-            monster.Strength = strength;
-            monster.Defense = defense;
-            monster.OriginalHP = hp;
-            monster.CurrentHP = hp;
+        /*
+        ======================================================================================== 
+        GetTodaysMonsters
+        ======================================================================================== 
+        */
+        private List<Monster> GetTodaysMonsters()
+        {
+            List<Monster> todaysMonsters;
+
+            int currentDayOfTheWeek = (int)DateTime.Now.DayOfWeek;
+
+            DayOfTheWeekMonsters myMonsters = new DayOfTheWeekMonsters();
+            List<List<Monster>> allMonstersLists = myMonsters.GetAllMonsters();
+
+            switch (currentDayOfTheWeek)
+            {
+                case (int)DayOfWeek.Monday:
+                    todaysMonsters = allMonstersLists[(int)DayOfWeek.Monday];
+                    break;
+
+                case (int)DayOfWeek.Tuesday:
+                    todaysMonsters = allMonstersLists[(int)DayOfWeek.Tuesday];
+                    break;
+
+                case (int)DayOfWeek.Wednesday:
+                    todaysMonsters = allMonstersLists[(int)DayOfWeek.Wednesday];
+                    break;
+
+                case (int)DayOfWeek.Thursday:
+                    todaysMonsters = allMonstersLists[(int)DayOfWeek.Thursday];
+                    break;
+
+                case (int)DayOfWeek.Friday:
+                    todaysMonsters = allMonstersLists[(int)DayOfWeek.Friday];
+                    break;
+
+                case (int)DayOfWeek.Saturday:
+                    todaysMonsters = allMonstersLists[(int)DayOfWeek.Saturday];
+                    break;
+
+                default:
+                    todaysMonsters = allMonstersLists[(int)DayOfWeek.Sunday];
+                    break;
+            }
+            return todaysMonsters;
+        }
+
+        
+        /*
+        ======================================================================================== 
+        AddMonster (+1 overloads)  NOT IN USE
+        ======================================================================================== 
+        */
+        // NOT IN USE
+        /*
+        private void AddMonster(int difficulty, string name, int strength, int defense, int hp)
+        {
+            var monster = new Monster(difficulty, name, strength, defense, hp, hp);
 
             Monsters.Add(monster);
         }
 
+        private void AddMonster(Monster monster)
+        {
+            Monsters.Add(monster);
+        }
+        */
+
+
+        /*
+        ======================================================================================== 
+        Start
+        ======================================================================================== 
+        */
         public void Start()
         {
-            var enemy = Monsters[0];
 
-            while (enemy.CurrentHP > 0 && Hero.CurrentHP > 0)
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"\nYou've encountered a {CurrentMonster.Name}! (Strength = {CurrentMonster.Strength} | Defense = {CurrentMonster.Defense} | HP = {CurrentMonster.CurrentHP})");
+            Console.ResetColor();
+
+            DayOfTheWeekMonsters a = new DayOfTheWeekMonsters();
+
+            while (CurrentMonster.CurrentHP > 0 && Hero.CurrentHP > 0)
             {
-                Console.WriteLine("You've encountered a " + enemy.Name + "! " + enemy.Strength + " Strength/" + enemy.Defense + " Defense/" +
-                enemy.CurrentHP + " HP. What will you do?");
-
+                Console.Title = $"FIGHT!!! ({Hero.Name} vs {CurrentMonster.Name}) --> Your Current HP: {Hero.CurrentHP} | Enemy Current HP: {CurrentMonster.CurrentHP}";
+                Console.WriteLine($"\nWhat will you do?");
                 Console.WriteLine("1. Fight");
+                Console.WriteLine("2. See The Enemy's Status and Your Status");
 
                 var input = Console.ReadLine();
 
                 if (input == "1")
                 {
-                    HeroTurn(enemy);
+                    HeroTurn();
+                }
+                else if (input == "2")
+                {
+                    Hero.ShowStats();
+                    CurrentMonster.ShowStats();
                 }
             }
         }
 
-        private void HeroTurn(Monster monster)
+
+        /*
+        ======================================================================================== 
+        HeroTurn
+        ======================================================================================== 
+        */
+        private void HeroTurn()
         {
-            var enemy = monster;
-            var compare = Hero.Strength - enemy.Defense;
+            var compare = Hero.Strength - CurrentMonster.Defense;
             int damage;
 
             if (compare <= 0)
             {
                 damage = 1;
-                enemy.CurrentHP -= damage;
+                CurrentMonster.CurrentHP -= damage;
             }
             else
             {
                 damage = compare;
-                enemy.CurrentHP -= damage;
+                CurrentMonster.CurrentHP -= damage;
             }
 
-            Console.WriteLine("You did " + damage + " damage!");
 
-            if (enemy.CurrentHP <= 0)
+
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine($"\nYou did {damage} damage!");
+            Console.ResetColor();
+
+
+            if (CurrentMonster.CurrentHP <= 0)
             {
-                Win(enemy);
+                Win();
             }
             else
             {
-                MonsterTurn(enemy);
+                MonsterTurn();
             }
         }
 
-        private void MonsterTurn(Monster monster)
+
+        /*
+        ======================================================================================== 
+        MonsterTurn
+        ======================================================================================== 
+        */
+        private void MonsterTurn()
         {
-            var enemy = monster;
             int damage;
-            var compare = enemy.Strength - Hero.Defense;
+            var compare = CurrentMonster.Strength - Hero.Defense;
 
             if (compare <= 0)
             {
@@ -95,7 +208,9 @@ namespace OOP_RPG
                 Hero.CurrentHP -= damage;
             }
 
-            Console.WriteLine(enemy.Name + " does " + damage + " damage!");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"\n{CurrentMonster.Name} does {damage} damage!");
+            Console.ResetColor();
 
             if (Hero.CurrentHP <= 0)
             {
@@ -103,15 +218,40 @@ namespace OOP_RPG
             }
         }
 
-        private void Win(Monster monster)
+        /*
+        ======================================================================================== 
+        Win
+        ======================================================================================== 
+        */
+        private void Win()
         {
-            var enemy = monster;
-            Console.WriteLine(enemy.Name + " has been defeated! You win the battle!");
+            Console.Title = $"VICTORY!!!";
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"{CurrentMonster.Name} has been defeated! You win the battle!");
+            Console.ResetColor();
+
+
+            Hero.ShowStats();
+
+            Thread.Sleep(1000);
+            Console.Title = $"Main Menu";
         }
 
+
+        /*
+        ======================================================================================== 
+        Lose
+        ======================================================================================== 
+        */
         private void Lose()
         {
+            Console.Title = $"Better Luck Next Time.";
+
+            Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine("You've been defeated! :( GAME OVER.");
+            Console.ResetColor();
+
             Console.WriteLine("Press any key to exit the game");
             Console.ReadKey();
         }

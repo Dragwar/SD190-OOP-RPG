@@ -17,12 +17,13 @@ namespace OOP_RPG
         public List<Armor> ArmorsBag { get; set; }
         public List<Weapon> WeaponsBag { get; set; }
 
-        /*This is a Constructor.
-        When we create a new object from our Hero class, the instance of this class, our hero, has:
-        an empty List that has to contain instances of the Armor class,
-        an empty List that has to contain instance of the Weapon class,
-        stats of the "int" data type, including an intial strength and defense,
-        original hitpoints that are going to be the same as the current hitpoints.
+        /*
+            This is a Constructor.
+            When we create a new object from our Hero class, the instance of this class, our hero, has:
+            an empty List that has to contain instances of the Armor class,
+            an empty List that has to contain instance of the Weapon class,
+            stats of the "int" data type, including an initial strength and defense,
+            original hit-points that are going to be the same as the current hit-points.
         */
         public Hero()
         {
@@ -34,38 +35,69 @@ namespace OOP_RPG
             CurrentHP = 30;
         }
 
-        //These are the Methods of our Class.
+        // These are the Methods of our Class.
         public void ShowStats()
         {
-            Console.WriteLine("*****" + this.Name + "*****");
-            Console.WriteLine("Strength: " + this.Strength);
-            Console.WriteLine("Defense: " + this.Defense);
-            Console.WriteLine("Hitpoints: " + this.CurrentHP + "/" + this.OriginalHP);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"\n***** {Name} *****");
+            Console.ResetColor();
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Strength: {Strength}");
+            Console.WriteLine($"Defense: {Defense}");
+            Console.WriteLine($"Hit-points: {CurrentHP}/{OriginalHP}");
+            Console.ResetColor();
         }
 
         public void ShowInventory()
         {
-            Console.WriteLine("*****  INVENTORY ******");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\n***** INVENTORY ******");
+
             Console.WriteLine("Weapons: ");
+            Console.ResetColor();
 
-            foreach (var weapon in this.WeaponsBag)
+            if (WeaponsBag.Any())
             {
-                Console.WriteLine(weapon.Name + " of " + weapon.Strength + " Strength");
+                Console.ForegroundColor = ConsoleColor.Green;
+                foreach (Weapon weapon in WeaponsBag)
+                {
+                    Console.WriteLine($"{weapon.Name} of {weapon.Strength} Strength");
+                }
             }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("You Have No Weapons . . .");
+            }
+            Console.ResetColor();
 
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Armor: ");
+            Console.ResetColor();
 
-            foreach (var armor in this.ArmorsBag)
+            if (ArmorsBag.Any())
             {
-                Console.WriteLine(armor.Name + " of " + armor.Defense + " Defense");
+                Console.ForegroundColor = ConsoleColor.Green;
+                foreach (Armor armor in ArmorsBag)
+                {
+                    Console.WriteLine($"{armor.Name} of {armor.Defense} Defense");
+                }
             }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("You Have No Armor . . .");
+            }
+            Console.ResetColor();
         }
 
         public void EquipWeapon()
         {
             if (WeaponsBag.Any())
             {
-                this.EquippedWeapon = this.WeaponsBag[0];
+                EquippedWeapon = WeaponsBag[0];
             }
         }
 
@@ -73,7 +105,7 @@ namespace OOP_RPG
         {
             if (ArmorsBag.Any())
             {
-                this.EquippedArmor = this.ArmorsBag[0];
+                EquippedArmor = ArmorsBag[0];
             }
         }
     }
