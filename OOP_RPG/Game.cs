@@ -7,11 +7,25 @@ namespace OOP_RPG
     {
         public Hero Hero { get; }
 
+
+
+        /*
+        ======================================================================================== 
+        Game ---> Instantiates the Hero property when a new game gets created (see Program.cs)
+        ======================================================================================== 
+        */
         public Game()
         {
             Hero = new Hero();
         }
 
+
+
+        /*
+        ======================================================================================== 
+        Start ---> Gets the Hero's name from user then calls Main()
+        ======================================================================================== 
+        */
         public void Start()
         {
             Console.Title = $"Welcome!!!";
@@ -37,6 +51,13 @@ namespace OOP_RPG
             Main();
         }
 
+
+
+        /*
+        ======================================================================================== 
+        Main ---> Main Menu for this game
+        ======================================================================================== 
+        */
         private void Main()
         {
             Console.Title = $"Main Menu";
@@ -85,6 +106,13 @@ namespace OOP_RPG
             }
         }
 
+
+
+        /*
+        ======================================================================================== 
+        ShowTodaysMonsters ---> Displays today's monsters (color coded, darker == harder)
+        ======================================================================================== 
+        */
         private void ShowTodaysMonsters()
         {
             Console.Clear();
@@ -121,6 +149,13 @@ namespace OOP_RPG
             Console.Title = $"Main Menu";
         }
 
+
+
+        /*
+        ======================================================================================== 
+        Stats ---> Displays the Hero's stats
+        ======================================================================================== 
+        */
         private void Stats()
         {
             Console.Clear();
@@ -133,6 +168,13 @@ namespace OOP_RPG
             Console.Title = $"Main Menu";
         }
 
+
+
+        /*
+        ======================================================================================== 
+        Stats ---> Displays the Hero's Inventory
+        ======================================================================================== 
+        */
         private void Inventory()
         {
             Console.Clear();
@@ -146,6 +188,13 @@ namespace OOP_RPG
             Console.Title = $"Main Menu";
         }
 
+
+
+        /*
+        ======================================================================================== 
+        FightMonster ---> Initializes the fight with the passed in Hero
+        ======================================================================================== 
+        */
         private void FightMonster()
         {
             Console.Clear();

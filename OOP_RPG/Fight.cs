@@ -29,6 +29,7 @@ namespace OOP_RPG
         private Monster CurrentMonster { get; }
 
 
+
         /*
         ======================================================================================== 
         Fight ---> Initializes the fight and selects a random monster from today's monsters
@@ -41,6 +42,7 @@ namespace OOP_RPG
 
             CurrentMonster = Monsters[new Random().Next(0, Monsters.Count)];
         }
+
 
 
         /*
@@ -90,7 +92,7 @@ namespace OOP_RPG
             return todaysMonsters;
         }
 
-        
+
 
         /*
         ======================================================================================== 
@@ -124,6 +126,7 @@ namespace OOP_RPG
                 }
             }
         }
+
 
 
         /*
@@ -162,6 +165,7 @@ namespace OOP_RPG
         }
 
 
+
         /*
         ======================================================================================== 
         MonsterTurn ---> Calculate the damage dealt to the Hero
@@ -193,6 +197,8 @@ namespace OOP_RPG
             }
         }
 
+
+
         /*
         ======================================================================================== 
         Win ---> Win Message and returns to the Main Menu
@@ -212,6 +218,7 @@ namespace OOP_RPG
             Thread.Sleep(1000);
             Console.Title = $"Main Menu";
         }
+
 
 
         /*

@@ -28,12 +28,11 @@
     Your final task is to make the game more interesting by allowing the hero to fight only a range of 5 monsters per day based on the weekday. 
     A monster should be selected randomly every time a new fight starts.
 */
-using System;
 namespace OOP_RPG
 {
     class RPG
     {
-        static void Main() 
+        static void Main()
         {
             // A new object named "game" is being instantiated from our Game Class. game is an instance of the Game Class. 
             // game is also a variable that is pointing to the instance of that Class
