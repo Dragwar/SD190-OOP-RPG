@@ -31,7 +31,7 @@ namespace OOP_RPG
 
         /*
         ======================================================================================== 
-        Fight
+        Fight ---> Initializes the fight and selects a random monster from today's monsters
         ======================================================================================== 
         */
         public Fight(Hero game)
@@ -39,16 +39,16 @@ namespace OOP_RPG
             Hero = game;
             Monsters = new List<Monster>(GetTodaysMonsters());
 
-            CurrentMonster = Monsters[new Random().Next(0, (Monsters.Count - 1))];
+            CurrentMonster = Monsters[new Random().Next(0, Monsters.Count)];
         }
 
 
         /*
         ======================================================================================== 
-        GetTodaysMonsters
+        GetTodaysMonsters ---> Gets all the monsters and only returns today's monsters
         ======================================================================================== 
         */
-        private List<Monster> GetTodaysMonsters()
+        public static List<Monster> GetTodaysMonsters()
         {
             List<Monster> todaysMonsters;
 
@@ -91,30 +91,10 @@ namespace OOP_RPG
         }
 
         
-        /*
-        ======================================================================================== 
-        AddMonster (+1 overloads)  NOT IN USE
-        ======================================================================================== 
-        */
-        // NOT IN USE
-        /*
-        private void AddMonster(int difficulty, string name, int strength, int defense, int hp)
-        {
-            var monster = new Monster(difficulty, name, strength, defense, hp, hp);
-
-            Monsters.Add(monster);
-        }
-
-        private void AddMonster(Monster monster)
-        {
-            Monsters.Add(monster);
-        }
-        */
-
 
         /*
         ======================================================================================== 
-        Start
+        Start ---> Fight menu (choose to fight, see stats, or maybe more options in the future)
         ======================================================================================== 
         */
         public void Start()
@@ -124,25 +104,23 @@ namespace OOP_RPG
             Console.WriteLine($"\nYou've encountered a {CurrentMonster.Name}! (Strength = {CurrentMonster.Strength} | Defense = {CurrentMonster.Defense} | HP = {CurrentMonster.CurrentHP})");
             Console.ResetColor();
 
-            DayOfTheWeekMonsters a = new DayOfTheWeekMonsters();
-
             while (CurrentMonster.CurrentHP > 0 && Hero.CurrentHP > 0)
             {
                 Console.Title = $"FIGHT!!! ({Hero.Name} vs {CurrentMonster.Name}) --> Your Current HP: {Hero.CurrentHP} | Enemy Current HP: {CurrentMonster.CurrentHP}";
                 Console.WriteLine($"\nWhat will you do?");
-                Console.WriteLine("1. Fight");
-                Console.WriteLine("2. See The Enemy's Status and Your Status");
+                Console.WriteLine("1. See The Enemy's Status and Your Status");
+                Console.WriteLine("2. Fight");
 
                 var input = Console.ReadLine();
 
                 if (input == "1")
                 {
-                    HeroTurn();
+                    Hero.ShowStats();
+                    CurrentMonster.ShowStats();
                 }
                 else if (input == "2")
                 {
-                    Hero.ShowStats();
-                    CurrentMonster.ShowStats();
+                    HeroTurn();
                 }
             }
         }
@@ -150,7 +128,7 @@ namespace OOP_RPG
 
         /*
         ======================================================================================== 
-        HeroTurn
+        HeroTurn ---> Calculate the damage that will be dealt to the currentMonster
         ======================================================================================== 
         */
         private void HeroTurn()
@@ -169,12 +147,9 @@ namespace OOP_RPG
                 CurrentMonster.CurrentHP -= damage;
             }
 
-
-
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine($"\nYou did {damage} damage!");
             Console.ResetColor();
-
 
             if (CurrentMonster.CurrentHP <= 0)
             {
@@ -189,7 +164,7 @@ namespace OOP_RPG
 
         /*
         ======================================================================================== 
-        MonsterTurn
+        MonsterTurn ---> Calculate the damage dealt to the Hero
         ======================================================================================== 
         */
         private void MonsterTurn()
@@ -220,7 +195,7 @@ namespace OOP_RPG
 
         /*
         ======================================================================================== 
-        Win
+        Win ---> Win Message and returns to the Main Menu
         ======================================================================================== 
         */
         private void Win()
@@ -241,7 +216,7 @@ namespace OOP_RPG
 
         /*
         ======================================================================================== 
-        Lose
+        Lose ---> Lose Message and exits the game
         ======================================================================================== 
         */
         private void Lose()
