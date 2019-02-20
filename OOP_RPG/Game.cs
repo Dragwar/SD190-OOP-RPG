@@ -64,7 +64,7 @@ namespace OOP_RPG
 
             string input = "0";
 
-            while (input != "5")
+            while (input != "6")
             {
                 Console.WriteLine("\n==============================================");
                 Console.WriteLine("\t\tMain Menu");
@@ -77,8 +77,9 @@ namespace OOP_RPG
                 Console.WriteLine("1. View Stats");
                 Console.WriteLine("2. View Inventory");
                 Console.WriteLine("3. View Today's Monsters");
-                Console.WriteLine("4. Fight Monster");
-                Console.WriteLine("5. Exit");
+                Console.WriteLine("4. Spend Experience Points");
+                Console.WriteLine("5. Fight Monster");
+                Console.WriteLine("6. Exit");
 
                 input = Console.ReadLine();
 
@@ -95,6 +96,10 @@ namespace OOP_RPG
                     ShowTodaysMonsters();
                 }
                 else if (input == "4")
+                {
+                    SpendExperiencePoints();
+                }
+                else if (input == "5")
                 {
                     FightMonster();
                 }
@@ -202,6 +207,95 @@ namespace OOP_RPG
             Fight fight = new Fight(Hero);
 
             fight.Start();
+        }
+
+
+
+        /*
+        ======================================================================================== 
+        SpendExperiencePoints ---> Allows Player To Level Up Their Character's Stats
+        ======================================================================================== 
+        */
+        public void SpendExperiencePoints()
+        {
+            Console.Clear();
+
+            string userInput = "";
+
+            while (userInput != "4")
+            {
+                Console.Title = $"Spend Your EXP | Current Experience Points: {Hero.ExperiencePoints} | Stats: [> str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <]";
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"**** Manage Experience Points ****");
+                Console.ResetColor();
+
+                Console.WriteLine("1. Level Up Strength");
+                Console.WriteLine("2. Level Up Defense");
+                Console.WriteLine("3. Level Up Max HP");
+                Console.WriteLine("4. Return To Main Menu\n");
+
+                userInput = Console.ReadLine().Trim();
+
+
+                if (userInput == "1")
+                {
+                    Console.WriteLine("================[Level Up Strength]================");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"Current Experience Points: {Hero.ExperiencePoints}");
+                    Console.WriteLine($"Current Strength: {Hero.Strength}");
+                    Console.ResetColor();
+
+                    Console.WriteLine("Level Up Strength by:\n");
+                    Hero.Strength = LevelUpHero(Hero.Strength);
+                }
+                else if (userInput == "2")
+                {
+                    Console.WriteLine("================[Level Up Defense]================");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"Current Experience Points: {Hero.ExperiencePoints}");
+                    Console.WriteLine($"Current Defense: {Hero.Defense}");
+                    Console.ResetColor();
+
+                    Console.WriteLine("Level Up Defense by:\n");
+                    Hero.Defense = LevelUpHero(Hero.Defense);
+                }
+                else if (userInput == "3")
+                {
+                    Console.WriteLine("================[Level Up OriginalHP]================");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"Current Experience Points: {Hero.ExperiencePoints}");
+                    Console.WriteLine($"Current OriginalHP: {Hero.OriginalHP}");
+                    Console.ResetColor();
+
+                    Console.WriteLine("Level Up OriginalHP by:\n");
+                    Hero.OriginalHP = LevelUpHero(Hero.OriginalHP);
+                }
+
+                Hero.ShowStats();
+                Console.WriteLine("\n");
+
+            }
+
+            Console.Title = $"Main Menu";
+        }
+
+        private int LevelUpHero(int heroPropValue)
+        {
+            bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int levelAmount);
+
+            if (isNumber && levelAmount <= Hero.ExperiencePoints)
+            {
+                heroPropValue += levelAmount;
+                Hero.RemoveExperiencePoints(levelAmount);
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Nothing Leveled Up (input wasn't a int or input was greater than current exp)\n");
+                Console.ResetColor();
+            }
+            return heroPropValue;
         }
     }
 }

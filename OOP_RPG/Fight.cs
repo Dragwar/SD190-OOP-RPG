@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace OOP_RPG
 {
@@ -27,8 +26,7 @@ namespace OOP_RPG
         private List<Monster> Monsters { get; }
         private Hero Hero { get; }
         private Monster CurrentMonster { get; }
-
-
+        private int MonstersEXPWorth { get; }
 
         /*
         ======================================================================================== 
@@ -39,8 +37,22 @@ namespace OOP_RPG
         {
             Hero = game;
             Monsters = new List<Monster>(GetTodaysMonsters());
+            Random rand = new Random();
+            CurrentMonster = Monsters[rand.Next(0, Monsters.Count)];
 
-            CurrentMonster = Monsters[new Random().Next(0, Monsters.Count)];
+            switch (CurrentMonster.Difficulty)
+            {
+                case (int)Difficulty.Hard:
+                    MonstersEXPWorth = rand.Next(8, 18);
+                    break;
+                case (int)Difficulty.Medium:
+                    MonstersEXPWorth = rand.Next(4, 12);
+                    break;
+
+                default:
+                    MonstersEXPWorth = rand.Next(1, 4);
+                    break;
+            }
         }
 
 
@@ -101,14 +113,13 @@ namespace OOP_RPG
         */
         public void Start()
         {
-
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine($"\nYou've encountered a {CurrentMonster.Name}! (Strength = {CurrentMonster.Strength} | Defense = {CurrentMonster.Defense} | HP = {CurrentMonster.CurrentHP})");
             Console.ResetColor();
 
             while (CurrentMonster.CurrentHP > 0 && Hero.CurrentHP > 0)
             {
-                Console.Title = $"FIGHT!!! ({Hero.Name} vs {CurrentMonster.Name}) --> Your Current HP: {Hero.CurrentHP} | Enemy Current HP: {CurrentMonster.CurrentHP}";
+                Console.Title = $"FIGHT!!! ({Hero.Name} vs {CurrentMonster.Name}) Your Current HP: {Hero.CurrentHP} | Enemy Current HP: {CurrentMonster.CurrentHP}";
                 Console.WriteLine($"\nWhat will you do?");
                 Console.WriteLine("1. See The Enemy's Status and Your Status");
                 Console.WriteLine("2. Fight");
@@ -152,6 +163,7 @@ namespace OOP_RPG
 
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine($"\nYou did {damage} damage!");
+            Console.WriteLine($"Monster's HP: {CurrentMonster.CurrentHP}/{CurrentMonster.OriginalHP}");
             Console.ResetColor();
 
             if (CurrentMonster.CurrentHP <= 0)
@@ -189,6 +201,7 @@ namespace OOP_RPG
 
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"\n{CurrentMonster.Name} does {damage} damage!");
+            Console.WriteLine($"{Hero.Name}'s HP: {Hero.CurrentHP}/{Hero.OriginalHP}");
             Console.ResetColor();
 
             if (Hero.CurrentHP <= 0)
@@ -206,16 +219,14 @@ namespace OOP_RPG
         */
         private void Win()
         {
-            Console.Title = $"VICTORY!!!";
+            Hero.AddExperiencePoints(MonstersEXPWorth);
 
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"{CurrentMonster.Name} has been defeated! You win the battle!");
+            Console.WriteLine($"{CurrentMonster.Name} has been defeated! (+ {MonstersEXPWorth} EXP) You win the battle!");
             Console.ResetColor();
-
 
             Hero.ShowStats();
 
-            Thread.Sleep(1000);
             Console.Title = $"Main Menu";
         }
 

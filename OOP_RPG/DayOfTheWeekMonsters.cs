@@ -69,15 +69,15 @@ namespace OOP_RPG
 
         public List<List<Monster>> GetAllMonsters()
         {
-            var allMonsters = new List<List<Monster>>()
+            List<List<Monster>> allMonsters = new List<List<Monster>>()
             {
-                SundayMonsters,
-                MondayMonsters,
-                TuesdayMonsters,
-                WednesdayMonsters,
-                ThursdayMonsters,
-                FridayMonsters,
-                SaturdayMonsters,
+                SundayMonsters, // 0
+                MondayMonsters, // 1
+                TuesdayMonsters, // 2
+                WednesdayMonsters, // 3
+                ThursdayMonsters, // 4
+                FridayMonsters, // 5
+                SaturdayMonsters, // 6
             };
             return allMonsters;
         }

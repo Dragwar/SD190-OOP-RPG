@@ -8,10 +8,11 @@ namespace OOP_RPG
     {
         // These are the Properties of our Class.
         public string Name { get; set; }
-        public int Strength { get; }
-        public int Defense { get; }
+        public int Strength { get; set; }
+        public int Defense { get; set; }
         public int OriginalHP { get; set; }
         public int CurrentHP { get; set; }
+        public int ExperiencePoints { get; private set; }
         public Weapon EquippedWeapon { get; private set; }
         public Armor EquippedArmor { get; private set; }
         public List<Armor> ArmorsBag { get; set; }
@@ -33,6 +34,7 @@ namespace OOP_RPG
             Defense = 10;
             OriginalHP = 30;
             CurrentHP = 30;
+            ExperiencePoints = 10;
         }
 
         // These are the Methods of our Class.
@@ -46,6 +48,7 @@ namespace OOP_RPG
             Console.WriteLine($"Strength: {Strength}");
             Console.WriteLine($"Defense: {Defense}");
             Console.WriteLine($"Hit-points: {CurrentHP}/{OriginalHP}");
+            Console.WriteLine($"Experience Points: {ExperiencePoints}");
             Console.ResetColor();
         }
 
@@ -107,6 +110,24 @@ namespace OOP_RPG
             {
                 EquippedArmor = ArmorsBag[0];
             }
+        }
+
+        public void AddExperiencePoints(int numberOfPoints)
+        {
+            if (numberOfPoints < 0)
+            {
+                throw new Exception("You can't add an int that is less than zero (exp error)");
+            }
+            ExperiencePoints += numberOfPoints;
+        }
+
+        public void RemoveExperiencePoints(int numberOfPoints)
+        {
+            if (numberOfPoints > ExperiencePoints)
+            {
+                throw new Exception("You can't spend more than what you have (exp error)");
+            }
+            ExperiencePoints -= numberOfPoints;
         }
     }
 }
