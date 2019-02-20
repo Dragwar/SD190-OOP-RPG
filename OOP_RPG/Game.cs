@@ -204,9 +204,9 @@ namespace OOP_RPG
         {
             Console.Clear();
 
-            Fight fight = new Fight(Hero);
+            Fight newFight = new Fight(Hero);
 
-            fight.Start();
+            newFight.Start();
         }
 
 

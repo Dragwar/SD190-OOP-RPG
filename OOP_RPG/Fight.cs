@@ -124,7 +124,7 @@ namespace OOP_RPG
                 Console.WriteLine("1. See The Enemy's Status and Your Status");
                 Console.WriteLine("2. Fight");
 
-                var input = Console.ReadLine();
+                string input = Console.ReadLine();
 
                 if (input == "1")
                 {
@@ -147,7 +147,7 @@ namespace OOP_RPG
         */
         private void HeroTurn()
         {
-            var compare = Hero.Strength - CurrentMonster.Defense;
+            int compare = Hero.Strength - CurrentMonster.Defense;
             int damage;
 
             if (compare <= 0)
@@ -186,7 +186,7 @@ namespace OOP_RPG
         private void MonsterTurn()
         {
             int damage;
-            var compare = CurrentMonster.Strength - Hero.Defense;
+            int compare = CurrentMonster.Strength - Hero.Defense;
 
             if (compare <= 0)
             {
