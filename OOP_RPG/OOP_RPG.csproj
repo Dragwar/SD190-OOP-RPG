@@ -48,9 +48,10 @@
     <Compile Include="DifficultyEnum.cs" />
     <Compile Include="Fight.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="HandleFightReward.cs" />
     <Compile Include="Hero.cs" />
     <Compile Include="Monster.cs" />
-    <Compile Include="DayOfTheWeekMonsters.cs" />
+    <Compile Include="WeekDayMonsters.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Weapon.cs" />

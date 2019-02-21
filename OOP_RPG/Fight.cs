@@ -10,6 +10,7 @@ namespace OOP_RPG
         private Hero Hero { get; }
         private Monster CurrentMonster { get; }
         private int MonstersEXPWorth { get; }
+        private int MonstersGoldCoinWorth { get; }
 
         // Not Implemented yet
         // private int TotalHeroPoints { get; }
@@ -19,9 +20,9 @@ namespace OOP_RPG
         Fight ---> Initializes the fight and selects a random monster from today's monsters
         ======================================================================================== 
         */
-        public Fight(Hero game)
+        public Fight(Hero hero)
         {
-            Hero = game;
+            Hero = hero;
 
             // Not Implemented yet
             // TODO: use this to up the difficulty for the monsters
@@ -31,20 +32,8 @@ namespace OOP_RPG
             Random rand = new Random();
             CurrentMonster = Monsters[rand.Next(0, Monsters.Count)];
 
-            switch (CurrentMonster.Difficulty)
-            {
-                case (int)Difficulty.Hard:
-                    MonstersEXPWorth = rand.Next(8, 19);
-                    break;
-
-                case (int)Difficulty.Medium:
-                    MonstersEXPWorth = rand.Next(4, 13);
-                    break;
-
-                default:
-                    MonstersEXPWorth = rand.Next(1, 5);
-                    break;
-            }
+            MonstersEXPWorth = HandleFightReward.GetMonstersEXPWorth(CurrentMonster.Difficulty);
+            MonstersGoldCoinWorth = HandleFightReward.GetMonstersGoldCoinWorth(CurrentMonster.Difficulty);
         }
 
 
@@ -56,7 +45,7 @@ namespace OOP_RPG
         */
         public static List<Monster> GetTodaysMonsters()
         {
-            List<Monster> allMonsters = new List<Monster>(DayOfTheWeekMonsters.InitialMonsters);
+            List<Monster> allMonsters = new List<Monster>(WeekDayMonsters.InitialMonsters);
 
             List<Monster> todaysMonsters = allMonsters
                 .Where(monster => monster.DayOfTheWeek == (int)DateTime.Now.DayOfWeek)
@@ -181,9 +170,12 @@ namespace OOP_RPG
         private void Win()
         {
             Hero.AddExperiencePoints(MonstersEXPWorth);
+            Hero.AddGoldCoins(MonstersGoldCoinWorth);
 
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"{CurrentMonster.Name} has been defeated! (+ {MonstersEXPWorth} EXP) You win the battle!");
+            Console.WriteLine($"{CurrentMonster.Name} has been defeated! You win the battle!");
+            Console.WriteLine($"(+ {MonstersGoldCoinWorth} Gold Coins)");
+            Console.WriteLine($"(+ {MonstersEXPWorth} EXP)");
             Console.ResetColor();
 
             Hero.ShowStats();

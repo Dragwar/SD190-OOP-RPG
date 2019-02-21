@@ -2,7 +2,7 @@
 
 namespace OOP_RPG
 {
-    public static class DayOfTheWeekMonsters
+    public static class WeekDayMonsters
     {
         public static List<Monster> InitialMonsters
         {

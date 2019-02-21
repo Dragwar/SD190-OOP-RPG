@@ -13,6 +13,7 @@ namespace OOP_RPG
         public int OriginalHP { get; set; }
         public int CurrentHP { get; set; }
         public int ExperiencePoints { get; private set; }
+        public int GoldCoins { get; private set; }
         public Weapon EquippedWeapon { get; private set; }
         public Armor EquippedArmor { get; private set; }
         public List<Armor> ArmorsBag { get; set; }
@@ -34,8 +35,11 @@ namespace OOP_RPG
             Defense = 10;
             OriginalHP = 30;
             CurrentHP = 30;
+            GoldCoins = 0;
             ExperiencePoints = 10;
         }
+
+
 
         // These are the Methods of our Class.
         public void ShowStats()
@@ -48,9 +52,12 @@ namespace OOP_RPG
             Console.WriteLine($"Strength: {Strength}");
             Console.WriteLine($"Defense: {Defense}");
             Console.WriteLine($"Hit-points: {CurrentHP}/{OriginalHP}");
+            Console.WriteLine($"Gold Coins: {GoldCoins}");
             Console.WriteLine($"Experience Points: {ExperiencePoints}");
             Console.ResetColor();
         }
+
+
 
         public void ShowInventory()
         {
@@ -96,6 +103,8 @@ namespace OOP_RPG
             Console.ResetColor();
         }
 
+
+
         public void EquipWeapon()
         {
             if (WeaponsBag.Any())
@@ -111,6 +120,8 @@ namespace OOP_RPG
                 EquippedArmor = ArmorsBag[0];
             }
         }
+
+
 
         public void AddExperiencePoints(int numberOfPoints)
         {
@@ -129,5 +140,30 @@ namespace OOP_RPG
             }
             ExperiencePoints -= numberOfPoints;
         }
+
+
+
+        public void AddGoldCoins(int numberOfCoins)
+        {
+            if (numberOfCoins < 0)
+            {
+                throw new Exception("You can't add an int that is less than zero (gold coin error)");
+            }
+            GoldCoins += numberOfCoins;
+        }
+
+        public void RemoveGoldCoins(int numberOfCoins)
+        {
+            if (numberOfCoins > GoldCoins)
+            {
+                throw new Exception("You can't spend more than what you have (gold coin error)");
+            }
+            GoldCoins -= numberOfCoins;
+        }
+
+
+
+
+
     }
 }
