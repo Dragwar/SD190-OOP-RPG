@@ -9,11 +9,11 @@ namespace OOP_RPG
             get => new List<Monster>()
             {
                 // Sunday (0)
-                new Monster((int) Difficulty.Easy, (int)DaysOfTheWeek.Sunday, "Lesser Squid", 15, 5, 20, 20), // Easy (40 max points)
-                new Monster((int) Difficulty.Easy, (int)DaysOfTheWeek.Sunday,  "Clam", 5, 35, 10, 10), // Easy (40 max points)
-                new Monster((int) Difficulty.Medium, (int)DaysOfTheWeek.Sunday,  "Eel", 25, 5, 20, 20), // Medium (60 max points)
-                new Monster((int) Difficulty.Medium, (int)DaysOfTheWeek.Sunday,  "Pirate", 35, 5, 20, 20), // Medium (60 max points)
-                new Monster((int) Difficulty.Hard, (int)DaysOfTheWeek.Sunday,  "Titan", 30, 10, 40, 40), // Hard (80 max points)
+                new Monster((int)Difficulty.Easy, (int)DaysOfTheWeek.Sunday, "Lesser Squid", 15, 5, 20, 20), // Easy (40 max points)
+                new Monster((int)Difficulty.Easy, (int)DaysOfTheWeek.Sunday,  "Clam", 5, 35, 10, 10), // Easy (40 max points)
+                new Monster((int)Difficulty.Medium, (int)DaysOfTheWeek.Sunday,  "Eel", 25, 5, 20, 20), // Medium (60 max points)
+                new Monster((int)Difficulty.Medium, (int)DaysOfTheWeek.Sunday,  "Pirate", 35, 5, 20, 20), // Medium (60 max points)
+                new Monster((int)Difficulty.Hard, (int)DaysOfTheWeek.Sunday,  "Titan", 30, 10, 40, 40), // Hard (80 max points)
 
 
                 // Monday (1)

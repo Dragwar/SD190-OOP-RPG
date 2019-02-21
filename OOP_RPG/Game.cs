@@ -127,8 +127,6 @@ namespace OOP_RPG
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("***** Today's Monsters ******\n");
 
-            List<string> difficulties = new List<string>() { "Easy", "Medium", "Hard" };
-
             foreach (Monster monster in Fight.GetTodaysMonsters())
             {
                 switch (monster.Difficulty)
@@ -145,7 +143,7 @@ namespace OOP_RPG
                         Console.ForegroundColor = ConsoleColor.DarkBlue;
                         break;
                 }
-                Console.WriteLine($"{monster.Name} - Difficulty: {difficulties[monster.Difficulty]}");
+                Console.WriteLine($"{monster.Name} - Difficulty: {(Difficulty)monster.Difficulty}");
             }
             Console.ResetColor();
 
