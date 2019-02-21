@@ -81,7 +81,7 @@ namespace OOP_RPG
                 Console.WriteLine("5. Fight Monster");
                 Console.WriteLine("6. Exit");
 
-                input = Console.ReadLine();
+                input = Console.ReadLine().Trim();
 
                 if (input == "1")
                 {

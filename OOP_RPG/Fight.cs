@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OOP_RPG
 {
@@ -15,7 +16,7 @@ namespace OOP_RPG
         Sunday = 0,
         Monday = 1,
         Tuesday = 2,
-        Wednsday = 3,
+        Wednesday = 3,
         Thursday = 4,
         Friday = 5,
         Saturday = 6,
@@ -28,6 +29,9 @@ namespace OOP_RPG
         private Monster CurrentMonster { get; }
         private int MonstersEXPWorth { get; }
 
+        // Not Implemented yet
+        // private int TotalHeroPoints { get; }
+
         /*
         ======================================================================================== 
         Fight ---> Initializes the fight and selects a random monster from today's monsters
@@ -36,6 +40,11 @@ namespace OOP_RPG
         public Fight(Hero game)
         {
             Hero = game;
+
+            // Not Implemented yet
+            // TODO: use this to up the difficulty for the monsters
+            // TotalHeroPoints = Hero.OriginalHP + Hero.Strength + Hero.Defense;
+
             Monsters = new List<Monster>(GetTodaysMonsters());
             Random rand = new Random();
             CurrentMonster = Monsters[rand.Next(0, Monsters.Count)];
@@ -43,14 +52,15 @@ namespace OOP_RPG
             switch (CurrentMonster.Difficulty)
             {
                 case (int)Difficulty.Hard:
-                    MonstersEXPWorth = rand.Next(8, 18);
+                    MonstersEXPWorth = rand.Next(8, 19);
                     break;
+
                 case (int)Difficulty.Medium:
-                    MonstersEXPWorth = rand.Next(4, 12);
+                    MonstersEXPWorth = rand.Next(4, 13);
                     break;
 
                 default:
-                    MonstersEXPWorth = rand.Next(1, 4);
+                    MonstersEXPWorth = rand.Next(1, 5);
                     break;
             }
         }
@@ -64,43 +74,12 @@ namespace OOP_RPG
         */
         public static List<Monster> GetTodaysMonsters()
         {
-            List<Monster> todaysMonsters;
+            List<Monster> allMonsters = new List<Monster>(DayOfTheWeekMonsters.InitialMonsters);
 
-            int currentDayOfTheWeek = (int)DateTime.Now.DayOfWeek;
+            List<Monster> todaysMonsters = allMonsters
+                .Where(monster => monster.DayOfTheWeek == (int)DateTime.Now.DayOfWeek)
+                .ToList();
 
-            DayOfTheWeekMonsters myMonsters = new DayOfTheWeekMonsters();
-            List<List<Monster>> allMonstersLists = myMonsters.GetAllMonsters();
-
-            switch (currentDayOfTheWeek)
-            {
-                case (int)DayOfWeek.Monday:
-                    todaysMonsters = allMonstersLists[(int)DayOfWeek.Monday];
-                    break;
-
-                case (int)DayOfWeek.Tuesday:
-                    todaysMonsters = allMonstersLists[(int)DayOfWeek.Tuesday];
-                    break;
-
-                case (int)DayOfWeek.Wednesday:
-                    todaysMonsters = allMonstersLists[(int)DayOfWeek.Wednesday];
-                    break;
-
-                case (int)DayOfWeek.Thursday:
-                    todaysMonsters = allMonstersLists[(int)DayOfWeek.Thursday];
-                    break;
-
-                case (int)DayOfWeek.Friday:
-                    todaysMonsters = allMonstersLists[(int)DayOfWeek.Friday];
-                    break;
-
-                case (int)DayOfWeek.Saturday:
-                    todaysMonsters = allMonstersLists[(int)DayOfWeek.Saturday];
-                    break;
-
-                default:
-                    todaysMonsters = allMonstersLists[(int)DayOfWeek.Sunday];
-                    break;
-            }
             return todaysMonsters;
         }
 
@@ -124,7 +103,7 @@ namespace OOP_RPG
                 Console.WriteLine("1. See The Enemy's Status and Your Status");
                 Console.WriteLine("2. Fight");
 
-                string input = Console.ReadLine();
+                string input = Console.ReadLine().Trim();
 
                 if (input == "1")
                 {
