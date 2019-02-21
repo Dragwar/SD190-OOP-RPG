@@ -64,7 +64,7 @@ namespace OOP_RPG
         public void Start()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine($"\nYou've encountered a {CurrentMonster.Name}! (Strength = {CurrentMonster.Strength} | Defense = {CurrentMonster.Defense} | HP = {CurrentMonster.CurrentHP})");
+            Console.WriteLine($"\nA {CurrentMonster.Name}! (Strength = {CurrentMonster.Strength} | Defense = {CurrentMonster.Defense} | HP = {CurrentMonster.CurrentHP})");
             Console.ResetColor();
 
             while (CurrentMonster.CurrentHP > 0 && Hero.CurrentHP > 0)

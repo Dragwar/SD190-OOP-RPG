@@ -76,7 +76,7 @@ namespace OOP_RPG
 
                 Console.WriteLine("1. View Stats");
                 Console.WriteLine("2. View Inventory");
-                Console.WriteLine("3. View Today's Monsters");
+                Console.WriteLine("3. View Shop");
                 Console.WriteLine("4. Spend Experience Points");
                 Console.WriteLine("5. Fight Monster");
                 Console.WriteLine("6. Exit");
@@ -93,7 +93,7 @@ namespace OOP_RPG
                 }
                 else if (input == "3")
                 {
-                    ShowTodaysMonsters();
+                    Shop();
                 }
                 else if (input == "4")
                 {
@@ -101,6 +101,11 @@ namespace OOP_RPG
                 }
                 else if (input == "5")
                 {
+                    ShowTodaysMonsters();
+
+                    LoadingSymbol loadingSymbol = new LoadingSymbol("Searching For Monsters", "You Encountered:");
+                    loadingSymbol.Excute(new Random().Next(1, 6));
+
                     FightMonster();
                 }
 
@@ -146,10 +151,7 @@ namespace OOP_RPG
                 Console.WriteLine($"{monster.Name} - Difficulty: {(Difficulty)monster.Difficulty}");
             }
             Console.ResetColor();
-
-            Console.WriteLine("\nPress any key to return to main menu.");
-            Console.ReadKey(false);
-            Console.Title = $"Main Menu";
+            Console.WriteLine();
         }
 
 
@@ -200,8 +202,6 @@ namespace OOP_RPG
         */
         private void FightMonster()
         {
-            Console.Clear();
-
             Fight newFight = new Fight(Hero);
 
             newFight.Start();
@@ -278,13 +278,20 @@ namespace OOP_RPG
             Console.Title = $"Main Menu";
         }
 
-        private int LevelUpHero(int heroPropValue)
+
+
+        /*
+        ======================================================================================== 
+        LevelUpHero ---> Adds the inputed number to level up the passed in stat
+        ======================================================================================== 
+        */
+        private int LevelUpHero(int heroStatValue)
         {
             bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int levelAmount);
 
             if (isNumber && levelAmount <= Hero.ExperiencePoints)
             {
-                heroPropValue += levelAmount;
+                heroStatValue += levelAmount;
                 Hero.RemoveExperiencePoints(levelAmount);
             }
             else
@@ -293,7 +300,19 @@ namespace OOP_RPG
                 Console.WriteLine("Nothing Leveled Up (input wasn't a int or input was greater than current exp)\n");
                 Console.ResetColor();
             }
-            return heroPropValue;
+            return heroStatValue;
+        }
+
+
+
+        /*
+        ======================================================================================== 
+        Shop ---> Where the Hero can spend his/her gold to buy weapons/armor
+        ======================================================================================== 
+        */
+        public void Shop()
+        {
+
         }
     }
 }
