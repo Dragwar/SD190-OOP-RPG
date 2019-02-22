@@ -35,7 +35,7 @@ namespace OOP_RPG
             Defense = 10;
             OriginalHP = 30;
             CurrentHP = 30;
-            GoldCoins = 0;
+            GoldCoins = 300;
             ExperiencePoints = 10;
         }
 
@@ -49,8 +49,8 @@ namespace OOP_RPG
             Console.ResetColor();
 
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Strength: {Strength}");
-            Console.WriteLine($"Defense: {Defense}");
+            Console.WriteLine($"Strength: {Strength} ({(EquippedWeapon != null ? $"+ {EquippedWeapon.Strength}" : "+ 0")})");
+            Console.WriteLine($"Defense: {Defense} ({(EquippedArmor != null ? $"+ {EquippedArmor.Defense}" : "+ 0")})");
             Console.WriteLine($"Hit-points: {CurrentHP}/{OriginalHP}");
             Console.WriteLine($"Gold Coins: {GoldCoins}");
             Console.WriteLine($"Experience Points: {ExperiencePoints}");
@@ -72,7 +72,9 @@ namespace OOP_RPG
                 Console.ForegroundColor = ConsoleColor.Green;
                 foreach (Weapon weapon in WeaponsBag)
                 {
-                    Console.WriteLine($"{weapon.Name} of {weapon.Strength} Strength");
+                    Console.WriteLine($"============({weapon.Name})============");
+                    Console.WriteLine($"Worth: - {weapon.Price} Gold Coins");
+                    Console.WriteLine($"+Strength: - {weapon.Strength}\n");
                 }
             }
             else
@@ -92,7 +94,9 @@ namespace OOP_RPG
                 Console.ForegroundColor = ConsoleColor.Green;
                 foreach (Armor armor in ArmorsBag)
                 {
-                    Console.WriteLine($"{armor.Name} of {armor.Defense} Defense");
+                    Console.WriteLine($"============({armor.Name})============");
+                    Console.WriteLine($"Worth: - {armor.Price} Gold Coins");
+                    Console.WriteLine($"+Defense: - {armor.Defense}\n");
                 }
             }
             else

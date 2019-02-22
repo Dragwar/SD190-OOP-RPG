@@ -50,10 +50,13 @@
     <Compile Include="Game.cs" />
     <Compile Include="HandleFightReward.cs" />
     <Compile Include="Hero.cs" />
+    <Compile Include="IBuyableItem.cs" />
+    <Compile Include="ItemCategoryEnum.cs" />
     <Compile Include="LoadingSymbol.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="MenuOption.cs" />
     <Compile Include="Monster.cs" />
+    <Compile Include="Shop.cs" />
     <Compile Include="WeekDayMonsters.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

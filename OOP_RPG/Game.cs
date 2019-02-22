@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OOP_RPG
 {
     public class Game
     {
         public Hero Hero { get; }
-
+        private Shop MyShop = new Shop();
 
 
         /*
@@ -312,7 +313,191 @@ namespace OOP_RPG
         */
         public void Shop()
         {
+            Console.Clear();
 
-        }
+            if (MyShop.AllBuyableItems.All(item => item.Sold))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Sorry The Entire Shop Is Out Of Stock. . .");
+                Console.ResetColor();
+                return;
+            }
+
+            string userInput = "";
+
+            while (userInput != "4")
+            {
+                Console.Title = $"Spend Your Gold Coins | Current Gold Coins: {Hero.GoldCoins}";
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("***** Shop ******\n");
+                Console.ResetColor();
+
+                Console.WriteLine("1. Buy Weapons");
+                Console.WriteLine("2. Buy Armor");
+                Console.WriteLine("3. Buy Any Type Of Item");
+                Console.WriteLine("4. Exit");
+
+                userInput = Console.ReadLine().Trim();
+
+
+                if (userInput == "1")
+                {
+                    Console.Clear();
+
+                    List<Weapon> shopWeapons = MyShop.GetCurrentWeapons();
+
+                    if (shopWeapons.Any())
+                    {
+                        Console.WriteLine("================[Strength Items]================");
+                        Console.WriteLine(MyShop.DisplayWeapons());
+
+                        Console.WriteLine("Tip: input item number to buy it");
+                        bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int inputtedIndex);
+
+
+                        Weapon selectedWeapon = isNumber && inputtedIndex > 0 && inputtedIndex <= shopWeapons.Count ? shopWeapons[inputtedIndex - 1] : null;
+
+
+                        if (isNumber && selectedWeapon != null && selectedWeapon.Price <= Hero.GoldCoins)
+                        {
+                            Hero.RemoveGoldCoins(selectedWeapon.Price);
+                            MyShop.ToggleSoldProperty(selectedWeapon);
+                            Hero.WeaponsBag.Add(selectedWeapon);
+
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine($"You just bought a new {selectedWeapon.Name}\n\n");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Nothing Was Bought . . .");
+                            Console.WriteLine("Because one of the following reasons:");
+                            Console.WriteLine("- item's price was greater than your current Gold Coins");
+                            Console.WriteLine("- input wasn't an item number");
+                            Console.WriteLine("- input was already sold\n");
+                            Console.ResetColor();
+                        }
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Sorry The Shop Is Out Of Stock. . .");
+                        Console.ResetColor();
+                    }
+
+                }
+                else if (userInput == "2")
+                {
+                    Console.Clear();
+
+                    List<Armor> shopArmor = MyShop.GetCurrentArmor();
+
+                    if (shopArmor.Any())
+                    {
+                        Console.WriteLine("================[Defense Items]================");
+                        Console.WriteLine(MyShop.DisplayArmor());
+
+                        Console.WriteLine("Tip: input item number to buy it");
+                        bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int inputtedIndex);
+
+
+                        Armor selectedArmor = isNumber && inputtedIndex > 0 && inputtedIndex <= shopArmor.Count ? shopArmor[inputtedIndex - 1] : null;
+
+
+                        if (isNumber && selectedArmor != null && selectedArmor.Price <= Hero.GoldCoins)
+                        {
+                            Hero.RemoveGoldCoins(selectedArmor.Price);
+                            MyShop.ToggleSoldProperty(selectedArmor);
+                            Hero.ArmorsBag.Add(selectedArmor);
+
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine($"You just bought a new {selectedArmor.Name}\n\n");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Nothing Was Bought . . .");
+                            Console.WriteLine("Because one of the following reasons:");
+                            Console.WriteLine("- item's price was greater than your current Gold Coins");
+                            Console.WriteLine("- input wasn't an item number");
+                            Console.WriteLine("- input was already sold\n");
+                            Console.ResetColor();
+                        }
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Sorry The Shop Is Out Of Stock. . .");
+                        Console.ResetColor();
+                    }
+                }
+                else if (userInput == "3")
+                {
+                    Console.Clear();
+
+                    List<IBuyableItem> buyableItems = MyShop.AllBuyableItems.Where(item => !item.Sold).ToList();
+
+                    if (buyableItems.Any())
+                    {
+                        Console.WriteLine("================[All Items]================");
+                        Console.WriteLine(MyShop.DisplayAllItems());
+
+                        Console.WriteLine("Tip: input item number to buy it");
+                        bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int inputtedIndex);
+
+
+                        IBuyableItem selectedItem = isNumber && inputtedIndex > 0 && inputtedIndex <= buyableItems.Count ? buyableItems[inputtedIndex - 1] : null;
+
+
+                        if (isNumber && selectedItem != null && selectedItem.Price <= Hero.GoldCoins)
+                        {
+                            Hero.RemoveGoldCoins(selectedItem.Price);
+
+                            if (selectedItem.ItemCategory == ItemCategoryEnum.Strength)
+                            {
+                                MyShop.ToggleSoldProperty((Weapon)selectedItem);
+                                Hero.WeaponsBag.Add((Weapon)selectedItem);
+                            }
+                            else
+                            {
+                                MyShop.ToggleSoldProperty((Armor)selectedItem);
+                                Hero.ArmorsBag.Add((Armor)selectedItem);
+                            }
+
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine($"You just bought a new {selectedItem.Name}\n\n");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Nothing Was Bought . . .");
+                            Console.WriteLine("Because one of the following reasons:");
+                            Console.WriteLine("- item's price was greater than your current Gold Coins");
+                            Console.WriteLine("- input wasn't an item number");
+                            Console.WriteLine("- input was already sold\n");
+                            Console.ResetColor();
+                        }
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Sorry The Shop Is Out Of Stock. . .");
+                        Console.ResetColor();
+                    }
+
+
+                }
+            } // End of While Loop
+
+            Console.Title = $"Main Menu";
+        }// End of Shop Method
+
+
+
+
     }
 }
