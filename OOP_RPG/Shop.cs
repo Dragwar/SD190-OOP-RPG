@@ -245,8 +245,6 @@ namespace OOP_RPG
 
                         if (isNumber && selectedItem != null && selectedItem.Price <= Hero.GoldCoins)
                         {
-                            Hero.RemoveGoldCoins(selectedItem.Price);
-
                             if (selectedItem.ItemCategory == ItemCategoryEnum.Strength)
                             {
                                 SellItem((Weapon)selectedItem);
