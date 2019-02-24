@@ -35,8 +35,8 @@ namespace OOP_RPG
             Defense = 10;
             OriginalHP = 30;
             CurrentHP = 30;
-            GoldCoins = 300;
-            ExperiencePoints = 10;
+            GoldCoins = 15;
+            ExperiencePoints = 5;
         }
 
         // These are the Methods of our Class.
