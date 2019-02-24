@@ -6,7 +6,9 @@ namespace OOP_RPG
     public class Weapon : IBuyableItem
     {
         public string Name { get; }
-        public int Strength { get; }
+        public int Strength { get; } // Base Damage
+        public int MaxDamage { get => Strength * 2; } // Maximum Damage
+        public int MinDamage { get => Strength / 2; } // Minimum Damage
         public int Price { get; }
         public ItemCategoryEnum ItemCategory { get; }
         public Guid ItemId { get; private set; }

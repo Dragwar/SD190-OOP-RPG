@@ -5,7 +5,9 @@ namespace OOP_RPG
     public class Armor : IBuyableItem
     {
         public string Name { get; }
-        public int Defense { get; }
+        public int Defense { get; } // Base Defense
+        public int MaxDefense { get => Defense * 2; } // Maximum Defense
+        public int MinDefense { get => Defense / 2; } // Minimum Defense
         public int Price { get; }
         public ItemCategoryEnum ItemCategory { get; }
         public Guid ItemId { get; private set; }

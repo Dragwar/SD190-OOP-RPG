@@ -51,7 +51,7 @@ namespace OOP_RPG
             Console.WriteLine($"\nHello {Hero.Name}");
 
             Main();
-        }
+        }// End of the Start Method
 
 
 
@@ -106,7 +106,7 @@ namespace OOP_RPG
                     ShowTodaysMonsters();
 
                     LoadingSymbol loadingSymbol = new LoadingSymbol("Searching For Monsters", "You Encountered:");
-                    loadingSymbol.Excute(new Random().Next(1, 6));
+                    loadingSymbol.Excute(new Random().Next(2, 7));
 
                     FightMonster();
                 }
@@ -116,7 +116,7 @@ namespace OOP_RPG
                     return;
                 }
             }
-        }
+        }// End of the Main Method
 
 
 
@@ -154,7 +154,7 @@ namespace OOP_RPG
             }
             Console.ResetColor();
             Console.WriteLine();
-        }
+        }// End of the ShowTodaysMonsters Method
 
 
 
@@ -174,13 +174,13 @@ namespace OOP_RPG
             Console.ReadKey(true);
 
             Console.Title = $"Main Menu";
-        }
+        }// End of the Stats Method
 
 
 
         /*
         ======================================================================================== 
-        Stats ---> Displays the Hero's Inventory and allows Hero to Equip Items from Inventory
+        Inventory ---> Displays the Hero's Inventory and Equip Items from Inventory
         ======================================================================================== 
         */
         private void Inventory()
@@ -319,7 +319,7 @@ namespace OOP_RPG
             }
 
             Console.Title = $"Main Menu";
-        }
+        }// End of the Inventory Method
 
 
 
@@ -333,7 +333,7 @@ namespace OOP_RPG
             Fight newFight = new Fight(Hero);
 
             newFight.Start();
-        }
+        }// End of the FightMonster Method
 
 
 
@@ -358,7 +358,7 @@ namespace OOP_RPG
 
                 Console.WriteLine("1. Level Up Strength");
                 Console.WriteLine("2. Level Up Defense");
-                Console.WriteLine("3. Level Up Max HP");
+                Console.WriteLine("3. Level Up HP");
                 Console.WriteLine("4. Return To Main Menu\n");
 
                 userInput = Console.ReadLine().Trim();
@@ -387,14 +387,30 @@ namespace OOP_RPG
                 }
                 else if (userInput == "3")
                 {
-                    Console.WriteLine("================[Level Up OriginalHP]================");
+                    Console.WriteLine("================[Level Up HP]================");
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"Current Experience Points: {Hero.ExperiencePoints}");
+                    Console.WriteLine($"Current CurrentHP: {Hero.CurrentHP}");
                     Console.WriteLine($"Current OriginalHP: {Hero.OriginalHP}");
                     Console.ResetColor();
 
-                    Console.WriteLine("Level Up OriginalHP by:\n");
-                    Hero.OriginalHP = LevelUpHero(Hero.OriginalHP);
+                    Console.WriteLine("Level Up HP by:\n");
+
+                    bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int levelAmount);
+
+                    if (isNumber && levelAmount <= Hero.ExperiencePoints)
+                    {
+                        Hero.OriginalHP += levelAmount;
+                        Hero.CurrentHP += levelAmount; // Heals The Hero As Well
+                        Hero.RemoveExperiencePoints(levelAmount);
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Nothing Leveled Up (input wasn't a int or input was greater than current exp)\n");
+                        Console.ResetColor();
+                    }
+
                 }
 
                 Hero.ShowStats();
@@ -403,7 +419,7 @@ namespace OOP_RPG
             }
 
             Console.Title = $"Main Menu";
-        }
+        }// End of the SpendExperiencePoints Method
 
 
 
@@ -428,7 +444,7 @@ namespace OOP_RPG
                 Console.ResetColor();
             }
             return heroStatValue;
-        }
+        }// End of the LevelUpHero Method
 
 
 
@@ -449,7 +465,7 @@ namespace OOP_RPG
             }
 
             Console.Title = $"Main Menu";
-        }// End of Shop Method
+        }// End of the Shop Method
 
 
     }

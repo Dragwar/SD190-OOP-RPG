@@ -97,8 +97,16 @@ namespace OOP_RPG
         */
         private void HeroTurn()
         {
-            int compare = Hero.Strength - CurrentMonster.Defense;
             int damage;
+            int compare = Hero.Strength - CurrentMonster.Defense;
+
+            if (Hero.EquippedWeapon != null)
+            {
+                Weapon weapon = Hero.EquippedWeapon;
+                int weaponDamage = new Random().Next(weapon.MinDamage, weapon.MaxDamage);
+                int finalDamage = Hero.Strength + weaponDamage;
+                compare = finalDamage - CurrentMonster.Defense;
+            }
 
             if (compare <= 0)
             {
@@ -137,6 +145,14 @@ namespace OOP_RPG
         {
             int damage;
             int compare = CurrentMonster.Strength - Hero.Defense;
+
+            if (Hero.EquippedArmor != null)
+            {
+                Armor armor = Hero.EquippedArmor;
+                int armorDefense = new Random().Next(armor.MinDefense, armor.MaxDefense);
+                int finalDefense = armorDefense + Hero.Defense;
+                compare =  CurrentMonster.Strength - finalDefense;
+            }
 
             if (compare <= 0)
             {
