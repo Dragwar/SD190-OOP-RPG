@@ -39,8 +39,6 @@ namespace OOP_RPG
             ExperiencePoints = 10;
         }
 
-
-
         // These are the Methods of our Class.
         public void ShowStats()
         {
@@ -49,8 +47,8 @@ namespace OOP_RPG
             Console.ResetColor();
 
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Strength: {Strength} ({(EquippedWeapon != null ? $"+ {EquippedWeapon.Strength}" : "+ 0")})");
-            Console.WriteLine($"Defense: {Defense} ({(EquippedArmor != null ? $"+ {EquippedArmor.Defense}" : "+ 0")})");
+            Console.WriteLine($"Strength: {Strength} {(EquippedWeapon != null ? $"(+ {EquippedWeapon.Strength})" : "")}");
+            Console.WriteLine($"Defense: {Defense} {(EquippedArmor != null ? $"(+ {EquippedArmor.Defense})" : "")}");
             Console.WriteLine($"Hit-points: {CurrentHP}/{OriginalHP}");
             Console.WriteLine($"Gold Coins: {GoldCoins}");
             Console.WriteLine($"Experience Points: {ExperiencePoints}");
@@ -63,18 +61,34 @@ namespace OOP_RPG
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("\n***** INVENTORY ******");
-
-            Console.WriteLine("Weapons: ");
             Console.ResetColor();
+
+            ShowInventoryWeapons();
+            ShowInventoryArmor();
+        }
+
+        public void ShowInventoryWeapons()
+        {
+            Console.WriteLine("Weapons: ");
 
             if (WeaponsBag.Any())
             {
-                Console.ForegroundColor = ConsoleColor.Green;
                 foreach (Weapon weapon in WeaponsBag)
                 {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    string equippedMessage = "";
+
+                    if (weapon.IsEquipped)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        equippedMessage = "CURRENTLY EQUIPPED\n";
+                    }
+
                     Console.WriteLine($"============({weapon.Name})============");
-                    Console.WriteLine($"Worth: - {weapon.Price} Gold Coins");
-                    Console.WriteLine($"+Strength: - {weapon.Strength}\n");
+                    Console.WriteLine($"Worth: {weapon.Price} Gold Coins");
+                    Console.WriteLine($"Strength: (+ {weapon.Strength})");
+                    Console.WriteLine(equippedMessage);
+                    Console.ResetColor();
                 }
             }
             else
@@ -83,20 +97,30 @@ namespace OOP_RPG
                 Console.WriteLine("You Have No Weapons . . .");
             }
             Console.ResetColor();
+        }
 
-
-            Console.ForegroundColor = ConsoleColor.Yellow;
+        public void ShowInventoryArmor()
+        {
             Console.WriteLine("Armor: ");
-            Console.ResetColor();
 
             if (ArmorsBag.Any())
             {
-                Console.ForegroundColor = ConsoleColor.Green;
                 foreach (Armor armor in ArmorsBag)
                 {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    string equippedMessage = "";
+
+                    if (armor.IsEquipped)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        equippedMessage = "CURRENTLY EQUIPPED\n";
+                    }
+
                     Console.WriteLine($"============({armor.Name})============");
-                    Console.WriteLine($"Worth: - {armor.Price} Gold Coins");
-                    Console.WriteLine($"+Defense: - {armor.Defense}\n");
+                    Console.WriteLine($"Worth: {armor.Price} Gold Coins");
+                    Console.WriteLine($"Defense: (+ {armor.Defense})");
+                    Console.WriteLine(equippedMessage);
+                    Console.ResetColor();
                 }
             }
             else
@@ -109,19 +133,43 @@ namespace OOP_RPG
 
 
 
-        public void EquipWeapon()
+        public void EquipWeapon(int weaponIndex)
         {
             if (WeaponsBag.Any())
             {
-                EquippedWeapon = WeaponsBag[0];
+                if (EquippedWeapon != null)
+                {
+                    EquippedWeapon.IsEquipped = false;
+                }
+
+                EquippedWeapon = WeaponsBag[weaponIndex];
+                WeaponsBag[weaponIndex].IsEquipped = true;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nYou don't have any weapons to equip!");
+                Console.ResetColor();
             }
         }
 
-        public void EquipArmor()
+        public void EquipArmor(int armorIndex)
         {
             if (ArmorsBag.Any())
             {
-                EquippedArmor = ArmorsBag[0];
+                if (EquippedArmor != null)
+                {
+                    EquippedArmor.IsEquipped = false;
+                }
+
+                EquippedArmor = ArmorsBag[armorIndex];
+                ArmorsBag[armorIndex].IsEquipped = true;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nYou don't have any armor to equip!");
+                Console.ResetColor();
             }
         }
 

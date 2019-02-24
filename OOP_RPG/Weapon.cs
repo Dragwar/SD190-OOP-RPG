@@ -12,6 +12,7 @@ namespace OOP_RPG
         public Guid ItemId { get; private set; }
         public int ModifiesHeroStat { get; }
         public bool Sold { get; set; }
+        public bool IsEquipped { get; set; }
 
         public Weapon(string name, int strength, int price)
         {
@@ -22,6 +23,7 @@ namespace OOP_RPG
             ItemId = Guid.NewGuid();
             ModifiesHeroStat = strength;
             Sold = false;
+            IsEquipped = false;
         }
     }
 }
