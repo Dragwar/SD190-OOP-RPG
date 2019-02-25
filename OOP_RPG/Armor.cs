@@ -7,7 +7,7 @@ namespace OOP_RPG
         public string Name { get; }
         public int Defense { get; } // Base Defense
         public int MaxDefense { get => (int)(Defense * 1.5); } // Maximum Defense
-        public int MinDefense { get => Defense / 2; } // Minimum Defense
+        public int MinDefense { get => (int)(Defense * 0.5); } // Minimum Defense
         public int Price { get; }
         public ItemCategoryEnum ItemCategory { get; }
         public Guid ItemId { get; private set; }

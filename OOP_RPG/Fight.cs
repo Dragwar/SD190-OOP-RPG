@@ -6,6 +6,7 @@ namespace OOP_RPG
 {
     public class Fight
     {
+        private Random Random { get; }
         private List<Monster> Monsters { get; }
         private Hero Hero { get; }
         private Monster CurrentMonster { get; }
@@ -23,7 +24,7 @@ namespace OOP_RPG
         public Fight(Hero hero)
         {
             Hero = hero;
-
+            Random = new Random();
             // Not Implemented yet
             // TODO: use this to up the difficulty for the monsters
             // TotalHeroPoints = Hero.OriginalHP + Hero.Strength + Hero.Defense;
@@ -103,7 +104,7 @@ namespace OOP_RPG
             if (Hero.EquippedWeapon != null)
             {
                 Weapon weapon = Hero.EquippedWeapon;
-                int weaponDamage = new Random().Next(weapon.MinDamage, weapon.MaxDamage + 1);
+                int weaponDamage = Random.Next(weapon.MinDamage, weapon.MaxDamage + 1);
                 int finalDamage = Hero.Strength + weaponDamage;
                 compare = finalDamage - CurrentMonster.Defense;
             }
@@ -149,7 +150,7 @@ namespace OOP_RPG
             if (Hero.EquippedArmor != null)
             {
                 Armor armor = Hero.EquippedArmor;
-                int armorDefense = new Random().Next(armor.MinDefense, armor.MaxDefense + 1);
+                int armorDefense = Random.Next(armor.MinDefense, armor.MaxDefense + 1);
                 int finalDefense = armorDefense + Hero.Defense;
                 compare =  CurrentMonster.Strength - finalDefense;
             }

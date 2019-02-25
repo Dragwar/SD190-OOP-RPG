@@ -178,10 +178,6 @@ namespace OOP_RPG
                 Console.WriteLine($"{EquippedArmor} was unequipped!");
                 Console.ResetColor();
             }
-            else
-            {
-                throw new Exception("No armor was equipped to be unequipped");
-            }
         }
 
         public void UnEquipWeapon(Weapon weapon)
@@ -192,10 +188,6 @@ namespace OOP_RPG
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine($"{EquippedWeapon} was unequipped!");
                 Console.ResetColor();
-            }
-            else
-            {
-                throw new Exception("No weapon was equipped to be unequipped");
             }
         }
 
