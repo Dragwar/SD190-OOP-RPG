@@ -103,7 +103,7 @@ namespace OOP_RPG
             if (Hero.EquippedWeapon != null)
             {
                 Weapon weapon = Hero.EquippedWeapon;
-                int weaponDamage = new Random().Next(weapon.MinDamage, weapon.MaxDamage);
+                int weaponDamage = new Random().Next(weapon.MinDamage, weapon.MaxDamage + 1);
                 int finalDamage = Hero.Strength + weaponDamage;
                 compare = finalDamage - CurrentMonster.Defense;
             }
@@ -149,7 +149,7 @@ namespace OOP_RPG
             if (Hero.EquippedArmor != null)
             {
                 Armor armor = Hero.EquippedArmor;
-                int armorDefense = new Random().Next(armor.MinDefense, armor.MaxDefense);
+                int armorDefense = new Random().Next(armor.MinDefense, armor.MaxDefense + 1);
                 int finalDefense = armorDefense + Hero.Defense;
                 compare =  CurrentMonster.Strength - finalDefense;
             }

@@ -137,10 +137,7 @@ namespace OOP_RPG
         {
             if (WeaponsBag.Any())
             {
-                if (EquippedWeapon != null)
-                {
-                    EquippedWeapon.IsEquipped = false;
-                }
+                UnEquipWeapon(EquippedWeapon);
 
                 EquippedWeapon = WeaponsBag[weaponIndex];
                 WeaponsBag[weaponIndex].IsEquipped = true;
@@ -157,10 +154,7 @@ namespace OOP_RPG
         {
             if (ArmorsBag.Any())
             {
-                if (EquippedArmor != null)
-                {
-                    EquippedArmor.IsEquipped = false;
-                }
+                UnEquipArmor(EquippedArmor);
 
                 EquippedArmor = ArmorsBag[armorIndex];
                 ArmorsBag[armorIndex].IsEquipped = true;
@@ -173,6 +167,37 @@ namespace OOP_RPG
             }
         }
 
+
+
+        public void UnEquipArmor(Armor armor)
+        {
+            if (EquippedArmor != null)
+            {
+                EquippedArmor.IsEquipped = false;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"{EquippedArmor} was unequipped!");
+                Console.ResetColor();
+            }
+            else
+            {
+                throw new Exception("No armor was equipped to be unequipped");
+            }
+        }
+
+        public void UnEquipWeapon(Weapon weapon)
+        {
+            if (EquippedWeapon != null)
+            {
+                EquippedWeapon.IsEquipped = false;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"{EquippedWeapon} was unequipped!");
+                Console.ResetColor();
+            }
+            else
+            {
+                throw new Exception("No weapon was equipped to be unequipped");
+            }
+        }
 
 
         public void AddExperiencePoints(int numberOfPoints)
