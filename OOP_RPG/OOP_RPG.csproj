@@ -49,6 +49,7 @@
     <Compile Include="Fight.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="HandleFightReward.cs" />
+    <Compile Include="HealthPotion.cs" />
     <Compile Include="Hero.cs" />
     <Compile Include="IBuyableItem.cs" />
     <Compile Include="ItemCategoryEnum.cs" />

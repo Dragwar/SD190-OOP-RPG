@@ -21,6 +21,10 @@ namespace OOP_RPG
                 new Armor("Wooden Armor", 10, 8),
                 new Armor("Metal Armor", 12, 14),
                 new Armor("Golden Armor", 15, 18),
+
+                new HealthPotion("Health Potion", 7, 5),
+                new HealthPotion("Strong Health Potion", 11, 10),
+                new HealthPotion("Great Health Potion", 16, 15),
             };
         }
 
@@ -32,190 +36,83 @@ namespace OOP_RPG
                 Console.WriteLine("Sorry The Entire Shop Is Out Of Stock. . .");
                 Console.ResetColor();
                 return false;
-            } else
+            }
+            else
             {
                 return true;
             }
         }
 
-        private void SellItem(Weapon weapon)
+        private void SellItem(IBuyableItem item)
         {
-            Hero.RemoveGoldCoins(weapon.Price);
-            ToggleSoldProperty(weapon);
-            Hero.WeaponsBag.Add(weapon);
+            Hero.RemoveGoldCoins(item.Price);
+            ToggleSoldProperty(item);
+
+            if (item.ItemCategory == ItemCategoryEnum.Strength)
+            {
+                Hero.WeaponsBag.Add((Weapon)item);
+            }
+            else if (item.ItemCategory == ItemCategoryEnum.Defence)
+            {
+                Hero.ArmorBag.Add((Armor)item);
+            }
+            else
+            {
+                Hero.HealthPotionBag.Add((HealthPotion)item);
+            }
         }
 
-        private void SellItem(Armor armor)
-        {
-            Hero.RemoveGoldCoins(armor.Price);
-            ToggleSoldProperty(armor);
-            Hero.ArmorsBag.Add(armor);
-        }
 
         public List<Weapon> GetCurrentWeapons() => AllBuyableItems
-                .Where(item => (item.ItemCategory == ItemCategoryEnum.Strength) && (!item.Sold))
+                .Where(item => (item.ItemCategory == ItemCategoryEnum.Strength) && (!item.Sold || item.CanBeSoldMultipleTimes))
                 .Cast<Weapon>()
                 .ToList();
 
         public List<Armor> GetCurrentArmor() => AllBuyableItems
-                .Where(item => (item.ItemCategory == ItemCategoryEnum.Defence) && (!item.Sold))
+                .Where(item => (item.ItemCategory == ItemCategoryEnum.Defence) && (!item.Sold || item.CanBeSoldMultipleTimes))
                 .Cast<Armor>()
                 .ToList();
 
 
-        private void ToggleSoldProperty(Weapon weapon) => weapon.Sold = weapon.Sold ? false : true;
-        private void ToggleSoldProperty(Armor armor) => armor.Sold = armor.Sold ? false : true;
+        private void ToggleSoldProperty(IBuyableItem item) => item.Sold = item.Sold ? false : true;
 
 
-        private string DisplayWeapons(int startingIndex = 1)
+        private void DisplayAllItems()
         {
-            List<Weapon> allWeapons = GetCurrentWeapons();
-
-            string output = "";
-
-            for (int i = startingIndex; i < allWeapons.Count + 1; i++)
-            {
-                output += $" {i}. ({(allWeapons[i - 1].ItemCategory == ItemCategoryEnum.Strength ? "Weapon" : "Armor")})\n";
-                output += $"    - Name: {allWeapons[i - 1].Name}\n";
-                output += $"    - Cost: {allWeapons[i - 1].Price}\n";
-                output += $"    - {allWeapons[i - 1].ItemCategory}: {allWeapons[i - 1].ModifiesHeroStat}\n\n";
-            }
-
-            return output;
-        }
-
-        private string DisplayArmor(int startingIndex = 1)
-        {
-            List<Armor> allArmor = GetCurrentArmor();
-
-            string output = "";
-
-            for (int i = startingIndex; i < allArmor.Count + 1; i++)
-            {
-                output += $" {i}. ({(allArmor[i - 1].ItemCategory == ItemCategoryEnum.Strength ? "Weapon" : "Armor")})\n";
-                output += $"    - Name: {allArmor[i - 1].Name}\n";
-                output += $"    - Cost: {allArmor[i - 1].Price}\n";
-                output += $"    - {allArmor[i - 1].ItemCategory}: {allArmor[i - 1].ModifiesHeroStat}\n\n";
-            }
-
-            return output;
-        }
-
-        private string DisplayAllItems()
-        {
-            List<IBuyableItem> allItems = AllBuyableItems.Where(item => !item.Sold).ToList();
-
-            string output = "";
+            List<IBuyableItem> allItems = AllBuyableItems.Where(item => (!item.Sold || item.CanBeSoldMultipleTimes)).ToList();
 
             for (int i = 1; i < allItems.Count + 1; i++)
             {
-                output += $" {i}. ({(allItems[i - 1].ItemCategory == ItemCategoryEnum.Strength ? "Weapon" : "Armor")})\n";
-                output += $"    - Name: {allItems[i - 1].Name}\n";
-                output += $"    - Cost: {allItems[i - 1].Price}\n";
-                output += $"    - {allItems[i - 1].ItemCategory}: {allItems[i - 1].ModifiesHeroStat}\n\n";
-            }
-
-            return output;
-        }
-
-        private void BuyWeapon()
-        {
-            Console.Clear();
-
-            List<Weapon> shopWeapons = GetCurrentWeapons();
-
-            if (shopWeapons.Any())
-            {
-                Console.WriteLine("================[Strength Items]================");
-                Console.WriteLine(DisplayWeapons());
-
-                Console.WriteLine("Tip: input item number to buy it");
-                bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int inputtedIndex);
-
-
-                Weapon selectedWeapon = isNumber && inputtedIndex > 0 && inputtedIndex <= shopWeapons.Count ? shopWeapons[inputtedIndex - 1] : null;
-
-
-                if (isNumber && selectedWeapon != null && selectedWeapon.Price <= Hero.GoldCoins)
+                if (allItems[i - 1].ItemCategory == ItemCategoryEnum.Strength)
                 {
-                    SellItem(selectedWeapon);
-
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"You just bought a new {selectedWeapon.Name}\n\n");
-                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    Console.WriteLine(allItems[i - 1].ShowItemStats(i));
+                }
+                else if (allItems[i - 1].ItemCategory == ItemCategoryEnum.Defence)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    Console.WriteLine(allItems[i - 1].ShowItemStats(i));
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Nothing Was Bought . . .");
-                    Console.WriteLine("Because one of the following reasons:");
-                    Console.WriteLine("- item's price was greater than your current Gold Coins");
-                    Console.WriteLine("- input wasn't an item number\n");
-                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.WriteLine(allItems[i - 1].ShowItemStats(i));
                 }
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Sorry The Shop Is Out Of Stock. . .");
                 Console.ResetColor();
             }
         }
 
-        private void BuyArmor()
+
+        private void BuyItem()
         {
             Console.Clear();
 
-            List<Armor> shopArmor = GetCurrentArmor();
-
-            if (shopArmor.Any())
-            {
-                Console.WriteLine("================[Defense Items]================");
-                Console.WriteLine(DisplayArmor());
-
-                Console.WriteLine("Tip: input item number to buy it");
-                bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int inputtedIndex);
-
-
-                Armor selectedArmor = isNumber && inputtedIndex > 0 && inputtedIndex <= shopArmor.Count ? shopArmor[inputtedIndex - 1] : null;
-
-
-                if (isNumber && selectedArmor != null && selectedArmor.Price <= Hero.GoldCoins)
-                {
-                    SellItem(selectedArmor);
-
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"You just bought a new {selectedArmor.Name}");
-                    Console.ResetColor();
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Nothing Was Bought . . .");
-                    Console.WriteLine("Because one of the following reasons:");
-                    Console.WriteLine("- item's price was greater than your current Gold Coins");
-                    Console.WriteLine("- input wasn't an item number\n");
-                    Console.ResetColor();
-                }
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Sorry The Shop Is Out Of Stock. . .");
-                Console.ResetColor();
-            }
-        }
-
-        private void BuyAnyItem()
-        {
-            Console.Clear();
-
-            List<IBuyableItem> buyableItems = AllBuyableItems.Where(item => !item.Sold).ToList();
+            List<IBuyableItem> buyableItems = AllBuyableItems.Where(item => (!item.Sold || item.CanBeSoldMultipleTimes)).ToList();
 
             if (buyableItems.Any())
             {
                 Console.WriteLine("================[All Items]================");
-                Console.WriteLine(DisplayAllItems());
+                DisplayAllItems();
 
                 Console.WriteLine("Tip: input item number to buy it");
                 bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int inputtedIndex);
@@ -226,14 +123,7 @@ namespace OOP_RPG
 
                 if (isNumber && selectedItem != null && selectedItem.Price <= Hero.GoldCoins)
                 {
-                    if (selectedItem.ItemCategory == ItemCategoryEnum.Strength)
-                    {
-                        SellItem((Weapon)selectedItem);
-                    }
-                    else
-                    {
-                        SellItem((Armor)selectedItem);
-                    }
+                    SellItem(selectedItem);
 
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"You just bought a new {selectedItem.Name}\n\n");
@@ -252,7 +142,7 @@ namespace OOP_RPG
             else
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Sorry The Shop Is Out Of Stock. . .");
+                Console.WriteLine("Sorry The Shop Is Out Of Stock . . .");
                 Console.ResetColor();
             }
         }
@@ -261,7 +151,7 @@ namespace OOP_RPG
         {
             string userInput = "";
 
-            while (userInput != "4")
+            while (userInput != "2")
             {
                 Console.Title = $"Spend Your Gold Coins | Current Gold Coins: {Hero.GoldCoins}";
 
@@ -269,25 +159,15 @@ namespace OOP_RPG
                 Console.WriteLine("***** Shop ******\n");
                 Console.ResetColor();
 
-                Console.WriteLine("1. Buy Weapons");
-                Console.WriteLine("2. Buy Armor");
-                Console.WriteLine("3. Buy Any Type Of Item");
-                Console.WriteLine("4. Exit");
+                Console.WriteLine("1. Buy Any Type Of Item");
+                Console.WriteLine("2. Exit");
 
                 userInput = Console.ReadLine().Trim();
 
 
                 if (userInput == "1")
                 {
-                    BuyWeapon();
-                }
-                else if (userInput == "2")
-                {
-                    BuyArmor();
-                }
-                else if (userInput == "3")
-                {
-                    BuyAnyItem();
+                    BuyItem();
                 }
             } // End of While Loop
         }

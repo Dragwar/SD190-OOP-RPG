@@ -167,7 +167,7 @@ namespace OOP_RPG
         {
             Console.Clear();
 
-            Console.Title = $"{Hero.Name}'s Stats";
+            Console.Title = $"{Hero.Name}'s Stats: [> Str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <]";
             Hero.ShowStats();
 
             Console.WriteLine("Press any key to return to main menu.");
@@ -189,16 +189,28 @@ namespace OOP_RPG
 
 
             string userInput = "0";
+            string successMessage = "";
+            string errorMessage = "";
 
-            while (userInput != "3")
+            while (userInput != "4")
             {
-                Console.Title = $"{Hero.Name}'s Inventory";
+                Console.Title = $"{Hero.Name}'s Inventory | Stats: [> Str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <]";
                 Hero.ShowInventory();
 
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine(successMessage);
+                Console.ResetColor();
+                successMessage = "";
 
-                Console.WriteLine("1. equip a weapon.");
-                Console.WriteLine("2. equip armor.");
-                Console.WriteLine("3. exit\n");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(errorMessage);
+                Console.ResetColor();
+                errorMessage = "";
+
+                Console.WriteLine("1. equip a Weapon.");
+                Console.WriteLine("2. equip Armor.");
+                Console.WriteLine("3. use Health Potion.");
+                Console.WriteLine("4. exit\n");
 
                 userInput = Console.ReadLine().Trim();
 
@@ -247,16 +259,12 @@ namespace OOP_RPG
                         {
                             Hero.EquipWeapon(userIndex);
 
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"You equipped your {Hero.EquippedWeapon.Name}!");
-                            Console.ResetColor();
+                            successMessage = $"You equipped your {Hero.EquippedWeapon.Name}!";
                         }
                     }
                     else
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("You have nothing to equip. . .");
-                        Console.ResetColor();
+                        errorMessage = "You have nothing to equip . . .";
                     }
                 }
                 else if (userInput == "2")
@@ -267,7 +275,7 @@ namespace OOP_RPG
                     Console.WriteLine("******* Unequipped Armor *******");
                     Console.ResetColor();
 
-                    List<Armor> armor = Hero.ArmorsBag.ToList();
+                    List<Armor> armor = Hero.ArmorBag.ToList();
 
                     if (armor.Any())
                     {
@@ -304,15 +312,64 @@ namespace OOP_RPG
                         {
                             Hero.EquipArmor(userIndex);
 
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"You equipped your {Hero.EquippedArmor.Name}!");
+                            successMessage = $"You equipped your {Hero.EquippedArmor.Name}!";
+                        }
+                    }
+                    else
+                    {
+                        errorMessage = "You have nothing to equip . . .";
+                    }
+                }
+                else if (userInput == "3")
+                {
+                    Console.Clear();
+
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("******* Your Health Potions *******");
+                    Console.ResetColor();
+
+                    List<HealthPotion> healthPotions = Hero.HealthPotionBag.ToList();
+
+                    if (healthPotions.Any())
+                    {
+                        for (int i = 1; i < healthPotions.Count + 1; i++)
+                        {
+                            Console.WriteLine($"{i}. {healthPotions[i - 1].Name} --> (+ {healthPotions[i - 1].HealAmount} HP)");
+                        }
+
+                        bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int userIndex);
+
+                        // account for index offset of 1
+                        userIndex--;
+
+                        if (!isNumber || (userIndex < 0 || userIndex >= healthPotions.Count))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Nothing was used because of one of the following errors:");
+                            Console.WriteLine("- did not input a number");
+                            Console.WriteLine("- inputted number was too small");
+                            Console.WriteLine("- inputted number was too big");
                             Console.ResetColor();
+                            return;
+                        }
+                        else
+                        {
+                            if (Hero.CurrentHP >= Hero.OriginalHP)
+                            {
+                                errorMessage = "Sorry you can't heal past you Original HP\n";
+                            }
+                            else
+                            {
+                                successMessage = $"You used your {healthPotions[userIndex].Name}!";
+
+                                Hero.UseHealthPotion(userIndex);
+                            }
                         }
                     }
                     else
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("You have nothing to equip. . .");
+                        Console.WriteLine("You have nothing to use. . .");
                         Console.ResetColor();
                     }
                 }
@@ -350,7 +407,7 @@ namespace OOP_RPG
 
             while (userInput != "4")
             {
-                Console.Title = $"Spend Your EXP | Current Experience Points: {Hero.ExperiencePoints} | Stats: [> str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <]";
+                Console.Title = $"Spend Your EXP | Current Experience Points: {Hero.ExperiencePoints} | Stats: [> Str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <]";
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine($"**** Manage Experience Points ****");
@@ -358,7 +415,7 @@ namespace OOP_RPG
 
                 Console.WriteLine("1. Level Up Strength");
                 Console.WriteLine("2. Level Up Defense");
-                Console.WriteLine("3. Level Up HP");
+                Console.WriteLine("3. Level Up Original HP");
                 Console.WriteLine("4. Return To Main Menu\n");
 
                 userInput = Console.ReadLine().Trim();
@@ -387,30 +444,15 @@ namespace OOP_RPG
                 }
                 else if (userInput == "3")
                 {
-                    Console.WriteLine("================[Level Up HP]================");
+                    Console.WriteLine("================[Level Up Original HP]================");
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"Current Experience Points: {Hero.ExperiencePoints}");
-                    Console.WriteLine($"Current CurrentHP: {Hero.CurrentHP}");
                     Console.WriteLine($"Current OriginalHP: {Hero.OriginalHP}");
                     Console.ResetColor();
 
                     Console.WriteLine("Level Up HP by:\n");
 
-                    bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int levelAmount);
-
-                    if (isNumber && levelAmount <= Hero.ExperiencePoints)
-                    {
-                        Hero.OriginalHP += levelAmount;
-                        Hero.CurrentHP += levelAmount; // Heals The Hero As Well
-                        Hero.RemoveExperiencePoints(levelAmount);
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Nothing Leveled Up (input wasn't a int or input was greater than current exp)\n");
-                        Console.ResetColor();
-                    }
-
+                    Hero.OriginalHP = LevelUpHero(Hero.OriginalHP);
                 }
 
                 Hero.ShowStats();

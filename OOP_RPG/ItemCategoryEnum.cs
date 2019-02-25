@@ -10,5 +10,6 @@ namespace OOP_RPG
     {
         Strength,
         Defence,
+        CurrentHP,
     }
 }

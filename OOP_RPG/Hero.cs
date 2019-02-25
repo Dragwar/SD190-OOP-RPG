@@ -16,8 +16,9 @@ namespace OOP_RPG
         public int GoldCoins { get; private set; }
         public Weapon EquippedWeapon { get; private set; }
         public Armor EquippedArmor { get; private set; }
-        public List<Armor> ArmorsBag { get; set; }
+        public List<Armor> ArmorBag { get; set; }
         public List<Weapon> WeaponsBag { get; set; }
+        public List<HealthPotion> HealthPotionBag { get; set; }
 
         /*
             This is a Constructor.
@@ -29,8 +30,9 @@ namespace OOP_RPG
         */
         public Hero()
         {
-            ArmorsBag = new List<Armor>();
+            ArmorBag = new List<Armor>();
             WeaponsBag = new List<Weapon>();
+            HealthPotionBag = new List<HealthPotion>();
             Strength = 10;
             Defense = 10;
             OriginalHP = 30;
@@ -65,6 +67,7 @@ namespace OOP_RPG
 
             ShowInventoryWeapons();
             ShowInventoryArmor();
+            ShowInventoryHealthPotions();
         }
 
         public void ShowInventoryWeapons()
@@ -85,7 +88,7 @@ namespace OOP_RPG
                     }
 
                     Console.WriteLine($"============({weapon.Name})============");
-                    Console.WriteLine($"Worth: {weapon.Price} Gold Coins");
+                    Console.WriteLine($"Worth: {weapon.SellingPrice} Gold Coins");
                     Console.WriteLine($"Strength: (+ {weapon.Strength})");
                     Console.WriteLine(equippedMessage);
                     Console.ResetColor();
@@ -103,9 +106,9 @@ namespace OOP_RPG
         {
             Console.WriteLine("Armor: ");
 
-            if (ArmorsBag.Any())
+            if (ArmorBag.Any())
             {
-                foreach (Armor armor in ArmorsBag)
+                foreach (Armor armor in ArmorBag)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     string equippedMessage = "";
@@ -117,7 +120,7 @@ namespace OOP_RPG
                     }
 
                     Console.WriteLine($"============({armor.Name})============");
-                    Console.WriteLine($"Worth: {armor.Price} Gold Coins");
+                    Console.WriteLine($"Worth: {armor.SellingPrice} Gold Coins");
                     Console.WriteLine($"Defense: (+ {armor.Defense})");
                     Console.WriteLine(equippedMessage);
                     Console.ResetColor();
@@ -127,6 +130,30 @@ namespace OOP_RPG
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("You Have No Armor . . .");
+            }
+            Console.ResetColor();
+        }
+
+        public void ShowInventoryHealthPotions()
+        {
+            Console.WriteLine("HealthPotions: ");
+
+            if (HealthPotionBag.Any())
+            {
+                foreach (HealthPotion healthPotion in HealthPotionBag)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.WriteLine($"============({healthPotion.Name})============");
+                    Console.WriteLine($"Worth: {healthPotion.SellingPrice} Gold Coins");
+                    Console.WriteLine($"Heal Amount: (+ {healthPotion.HealAmount} HP)");
+                    Console.WriteLine();
+                    Console.ResetColor();
+                }
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("You Have No Health Potions . . .");
             }
             Console.ResetColor();
         }
@@ -152,12 +179,12 @@ namespace OOP_RPG
 
         public void EquipArmor(int armorIndex)
         {
-            if (ArmorsBag.Any())
+            if (ArmorBag.Any())
             {
                 UnEquipArmor(EquippedArmor);
 
-                EquippedArmor = ArmorsBag[armorIndex];
-                ArmorsBag[armorIndex].IsEquipped = true;
+                EquippedArmor = ArmorBag[armorIndex];
+                ArmorBag[armorIndex].IsEquipped = true;
             }
             else
             {
@@ -231,7 +258,28 @@ namespace OOP_RPG
         }
 
 
+        public void UseHealthPotion(int healthPotionIndex)
+        {
+            if (HealthPotionBag.Any())
+            {
+                CurrentHP += HealthPotionBag[healthPotionIndex].HealAmount;
 
+                // Allows user to heal to max hp but not allow to go above original hp
+                // example: curHP: 25 oriHP: 30 --> I was a health potion that heals for 7
+                // then my curHP would go to 30 and not past it.
+                CurrentHP = CurrentHP > OriginalHP ? OriginalHP : CurrentHP;
+
+                Console.WriteLine($"You used {HealthPotionBag[healthPotionIndex].Name}");
+                Console.WriteLine($"Your HP: {CurrentHP}/{OriginalHP}");
+                HealthPotionBag.RemoveAt(healthPotionIndex);
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nYou don't have any armor to equip!");
+                Console.ResetColor();
+            }
+        }
 
 
     }

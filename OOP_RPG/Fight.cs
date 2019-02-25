@@ -72,19 +72,29 @@ namespace OOP_RPG
             {
                 Console.Title = $"FIGHT!!! ({Hero.Name} vs {CurrentMonster.Name}) Your Current HP: {Hero.CurrentHP} | Enemy Current HP: {CurrentMonster.CurrentHP}";
                 Console.WriteLine($"\nWhat will you do?");
-                Console.WriteLine("1. See The Enemy's Status and Your Status");
-                Console.WriteLine("2. Fight");
+                Console.WriteLine("1. Fight");
+                Console.WriteLine("2. Use Health Potion");
+                Console.WriteLine("3. See The Enemy's Status and Your Status");
+                Console.WriteLine("4. Flee");
 
                 string input = Console.ReadLine().Trim();
 
                 if (input == "1")
                 {
-                    Hero.ShowStats();
-                    CurrentMonster.ShowStats();
+                    HeroTurn();
                 }
                 else if (input == "2")
                 {
-                    HeroTurn();
+                    //UseHealthPotion
+                }
+                else if (input == "3")
+                {
+                    Hero.ShowStats();
+                    CurrentMonster.ShowStats();
+                }
+                else if (input == "4")
+                {
+                    //Flee();
                 }
             }
         }
@@ -152,7 +162,7 @@ namespace OOP_RPG
                 Armor armor = Hero.EquippedArmor;
                 int armorDefense = Random.Next(armor.MinDefense, armor.MaxDefense + 1);
                 int finalDefense = armorDefense + Hero.Defense;
-                compare =  CurrentMonster.Strength - finalDefense;
+                compare = CurrentMonster.Strength - finalDefense;
             }
 
             if (compare <= 0)

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OOP_RPG
 {
@@ -12,7 +8,11 @@ namespace OOP_RPG
         Guid ItemId { get; }
         string Name { get; }
         int Price { get; }
+        int SellingPrice { get; }
         int ModifiesHeroStat { get; }
         bool Sold { get; set; }
+        bool CanBeSoldMultipleTimes { get; set; }
+        string ShowItemStats();
+        string ShowItemStats(int itemIndex);
     }
 }

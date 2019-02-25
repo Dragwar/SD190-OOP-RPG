@@ -1,48 +1,50 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace OOP_RPG
 {
-    public class Weapon : IBuyableItem
+    public class HealthPotion : IBuyableItem
     {
         public string Name { get; }
-        public int Strength { get; } // Base Damage
-        public int MaxDamage { get => (int)(Strength * 1.5); } // Maximum Damage
-        public int MinDamage { get => (int)(Strength * 0.5); } // Minimum Damage
+        public int HealAmount { get; }
         public int Price { get; }
+        public int SellingPrice { get; }
         public ItemCategoryEnum ItemCategory { get; }
         public Guid ItemId { get; private set; }
         public int ModifiesHeroStat { get; }
         public bool Sold { get; set; }
         public bool IsEquipped { get; set; }
         public bool CanBeSoldMultipleTimes { get; set; }
-        public int SellingPrice { get; }
 
-        public Weapon(string name, int strength, int price)
+        public HealthPotion(string name, int healAmount, int price)
         {
             Name = name;
-            Strength = strength;
+            HealAmount = healAmount;
             Price = price;
             SellingPrice = price / 2;
-            ItemCategory = ItemCategoryEnum.Strength;
+            ItemCategory = ItemCategoryEnum.CurrentHP;
             ItemId = Guid.NewGuid();
-            ModifiesHeroStat = strength;
+            ModifiesHeroStat = healAmount;
             Sold = false;
-            CanBeSoldMultipleTimes = false;
+            CanBeSoldMultipleTimes = true;
             IsEquipped = false;
         }
 
         public string ShowItemStats(int itemIndex) =>
-            $"{itemIndex}. (Weapon)\n" +
+            $"{itemIndex}. (Healing Item)\n" +
             $"   - Name: {Name}\n" +
             $"   - Cost: {Price} Gold {(Price > 1 ? $"Coins" : $"Coin")}\n" +
             $"   - SellingPrice: {SellingPrice} Gold {(SellingPrice > 1 ? $"Coins" : $"Coin")}\n" +
-            $"   - Strength: (+ {Strength})\n";
+            $"   - Heal Amount: (+ {HealAmount} cHP)\n";
 
         public string ShowItemStats() =>
-            $"(Weapon)\n" +
+            $"(Healing Item)\n" +
             $"   - Name: {Name}\n" +
             $"   - Cost: {Price} Gold {(Price > 1 ? $"Coins" : $"Coin")}\n" +
             $"   - SellingPrice: {SellingPrice} Gold {(SellingPrice > 1 ? $"Coins" : $"Coin")}\n" +
-            $"   - Strength: (+ {Strength})\n";
+            $"   - Heal Amount: (+ {HealAmount} cHP)\n";
     }
 }
