@@ -7,8 +7,8 @@ namespace OOP_RPG
     {
         public string Name { get; }
         public int Strength { get; } // Base Damage
-        public int MaxDamage { get => Strength * 2; } // Maximum Damage
-        public int MinDamage { get => Strength / 2; } // Minimum Damage
+        public int MaxDamage { get => (int)(Strength * 1.5); } // Maximum Damage
+        public int MinDamage { get => (int)(Strength / 1.5); } // Minimum Damage
         public int Price { get; }
         public ItemCategoryEnum ItemCategory { get; }
         public Guid ItemId { get; private set; }
