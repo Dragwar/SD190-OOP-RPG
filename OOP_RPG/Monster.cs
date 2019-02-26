@@ -27,7 +27,7 @@ namespace OOP_RPG
 
         /*
         ======================================================================================== 
-        ShowStats ---> Prints all monster stats that are relvant to the user
+        ShowStats ---> Prints all monster stats that are relevant to the user
         ======================================================================================== 
         */
         public void ShowStats()

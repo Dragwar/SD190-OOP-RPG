@@ -8,10 +8,12 @@ namespace OOP_RPG
     {
         public Hero Hero { get; }
         private Shop MyShop { get; }
+        public HandleAchievements ManageAchievements { get; }
 
         public Game()
         {
-            Hero = new Hero(); // only one hero per game
+            ManageAchievements = new HandleAchievements(); // only one HandleAchievements per game
+            Hero = new Hero(ManageAchievements); // only one hero per game
             MyShop = new Shop(Hero); // only one shop per game
         }
 
@@ -124,7 +126,7 @@ namespace OOP_RPG
             Console.Clear();
 
             Console.Title = $"{Hero.Name}'s Stats: [> Str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <]";
-            Hero.ShowStats();
+            Hero.ShowStats(true);
 
             Console.WriteLine("Press any key to return to main menu.");
             Console.ReadKey(true);
@@ -157,7 +159,7 @@ namespace OOP_RPG
         */
         private void FightMonster()
         {
-            Fight newFight = new Fight(Hero);
+            Fight newFight = new Fight(ManageAchievements, Hero);
 
             newFight.Start();
         }// End of the FightMonster Method

@@ -7,6 +7,7 @@ namespace OOP_RPG
     public class Fight
     {
         private Random Random { get; }
+        private HandleAchievements ManageAchievements { get; }
         private List<Monster> Monsters { get; }
         private Hero Hero { get; }
         private Monster CurrentMonster { get; }
@@ -21,10 +22,11 @@ namespace OOP_RPG
         Fight ---> Initializes the fight and selects a random monster from today's monsters
         ======================================================================================== 
         */
-        public Fight(Hero hero)
+        public Fight(HandleAchievements manageAchievements, Hero hero)
         {
             Hero = hero;
             Random = new Random();
+            ManageAchievements = manageAchievements;
 
             // Not Implemented yet
             // TODO: use this to up the difficulty for the monsters
@@ -94,7 +96,7 @@ namespace OOP_RPG
                 }
                 else if (input == "4")
                 {
-                    Hero.ShowStats();
+                    Hero.ShowStats(false);
                     CurrentMonster.ShowStats();
                 }
             }
@@ -316,6 +318,7 @@ namespace OOP_RPG
                 Console.WriteLine($"(+ {MonstersGoldCoinWorth} Gold Coins)");
                 Console.WriteLine($"(+ {MonstersEXPWorth} EXP)");
                 Console.ResetColor();
+                ManageAchievements.AddDeadMonster(CurrentMonster);
             }
             else if (howHeroWon == WinConditionEnum.Flee)
             {
@@ -323,7 +326,7 @@ namespace OOP_RPG
                 Console.WriteLine($"You have successfully fled the battle!");
                 Console.ResetColor();
             }
-            Hero.ShowStats();
+            Hero.ShowStats(false);
 
             Console.Title = $"Main Menu";
         }

@@ -18,8 +18,9 @@ namespace OOP_RPG
         public List<Armor> ArmorBag { get; private set; }
         public List<Weapon> WeaponsBag { get; private set; }
         public List<HealthPotion> HealthPotionBag { get; private set; }
+        public HandleAchievements ManageAchievements { get; private set; }
 
-        public Hero()
+        public Hero(HandleAchievements manageAchievements)
         {
             ArmorBag = new List<Armor>();
             WeaponsBag = new List<Weapon>();
@@ -30,6 +31,7 @@ namespace OOP_RPG
             CurrentHP = 30;
             GoldCoins = 300;
             ExperiencePoints = 50;
+            ManageAchievements = manageAchievements;
         }
 
 
@@ -55,7 +57,7 @@ namespace OOP_RPG
         ShowStats ---> Simple method prints all the current stat values
         ======================================================================================== 
         */
-        public void ShowStats()
+        public void ShowStats(bool showAchievements)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\n***** {Name} *****");
@@ -67,7 +69,13 @@ namespace OOP_RPG
             Console.WriteLine($"Hit-points: {CurrentHP}/{OriginalHP}");
             Console.WriteLine($"Gold Coins: {GoldCoins}");
             Console.WriteLine($"Experience Points: {ExperiencePoints}");
+            Console.WriteLine($"Achievement Points: {HandleAchievements.TotalPoints}");
             Console.ResetColor();
+            if (showAchievements)
+            {
+                Console.WriteLine($"Achievements:");
+                ManageAchievements.PrintAllAchievements();
+            }
         }
 
 
@@ -539,7 +547,7 @@ namespace OOP_RPG
 
         /*
         ======================================================================================== 
-        TakeDamage ---> Simple Method to remove gold coins from total coins
+        TakeDamage ---> Simple Method to remove CurrentHP from the hero
         ======================================================================================== 
         */
         public void TakeDamage(int damage)
@@ -648,7 +656,7 @@ namespace OOP_RPG
                 Console.WriteLine("Level Up HP by:\n");
                 OriginalHP = LevelUp(OriginalHP);
             }
-            ShowStats();
+            ShowStats(false);
             Console.WriteLine("\n");
         }
 
