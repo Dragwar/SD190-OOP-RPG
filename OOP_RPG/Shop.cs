@@ -270,6 +270,11 @@ namespace OOP_RPG
                     {
                         Hero.HealthPotionBag.Remove((HealthPotion)deleteThisItem);
                     }
+
+                    // Make sold item available in the shop again
+                    IBuyableItem shopItem = AllBuyableItems.Where(item => item.ItemId == foundId).FirstOrDefault();
+                    shopItem.Sold = false;
+
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"You just sold your {deleteThisItem.Name} for {deleteThisItem.SellingPrice} Gold Coins");
                     Console.ResetColor();
