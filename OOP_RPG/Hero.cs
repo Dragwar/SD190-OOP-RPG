@@ -36,6 +36,22 @@ namespace OOP_RPG
 
         /*
         ======================================================================================== 
+        GetMasterInventoryList ---> 
+        ======================================================================================== 
+        */
+        public List<IBuyableItem> GetMasterInventoryList()
+        {
+            List<IBuyableItem> masterList = new List<IBuyableItem>();
+            masterList.AddRange(ArmorBag);
+            masterList.AddRange(WeaponsBag);
+            masterList.AddRange(HealthPotionBag);
+            return masterList;
+        }
+
+
+
+        /*
+        ======================================================================================== 
         ShowStats ---> Simple method prints all the current stat values
         ======================================================================================== 
         */

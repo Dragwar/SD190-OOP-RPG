@@ -147,11 +147,13 @@ namespace OOP_RPG
             }
         }
 
+
+
         public void OpenShopAndTakeUserOrder()
         {
             string userInput = "";
 
-            while (userInput != "2")
+            while (userInput != "3")
             {
                 Console.Title = $"Spend Your Gold Coins | Current Gold Coins: {Hero.GoldCoins}";
 
@@ -159,8 +161,9 @@ namespace OOP_RPG
                 Console.WriteLine("***** Shop ******\n");
                 Console.ResetColor();
 
-                Console.WriteLine("1. Buy Any Type Of Item");
-                Console.WriteLine("2. Exit");
+                Console.WriteLine("1. Buy An Item");
+                Console.WriteLine("2. Sell An Item");
+                Console.WriteLine("3. Exit");
 
                 userInput = Console.ReadLine().Trim();
 
@@ -169,7 +172,123 @@ namespace OOP_RPG
                 {
                     BuyItem();
                 }
+                else if (userInput == "2")
+                {
+                    BuyHeroItem();
+                }
             } // End of While Loop
+        }
+
+
+
+        private void BuyHeroItem()// PREVENT USER FROM SELLING EQUIPPED ITEMS
+        {
+            Console.Clear();
+
+            List<IBuyableItem> heroItems;
+            if (Hero.EquippedArmor != null && Hero.EquippedWeapon != null)
+            {
+                heroItems = Hero.GetMasterInventoryList()
+                     .Where(item => (item.ItemId != Hero.EquippedWeapon.ItemId) && (item.ItemId != Hero.EquippedArmor.ItemId))
+                     .ToList();
+            }
+            else if (Hero.EquippedArmor != null)
+            {
+                heroItems = Hero.GetMasterInventoryList()
+                     .Where(item => (item.ItemId != Hero.EquippedArmor.ItemId))
+                     .ToList();
+            }
+            else if (Hero.EquippedWeapon != null)
+            {
+                heroItems = Hero.GetMasterInventoryList()
+                     .Where(item => (item.ItemId != Hero.EquippedWeapon.ItemId))
+                     .ToList();
+            }
+            else
+            {
+                heroItems = Hero.GetMasterInventoryList().ToList();
+            }
+
+            if (heroItems.Any())
+            {
+                for (int i = 0; i < heroItems.Count; i++)
+                {
+                    if (heroItems[i].ItemCategory == ItemCategoryEnum.Strength)
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkCyan;
+                        Console.WriteLine($"{i + 1}. Sell your {heroItems[i].Name} for {heroItems[i].SellingPrice} Gold Coins");
+                    }
+                    else if (heroItems[i].ItemCategory == ItemCategoryEnum.Defence)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine($"{i + 1}. Sell your {heroItems[i].Name} for {heroItems[i].SellingPrice} Gold Coins");
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"{i + 1}. Sell your {heroItems[i].Name} for {heroItems[i].SellingPrice} Gold Coins");
+                    }
+                    Console.ResetColor();
+                }
+
+                Console.WriteLine("\nPlease input a item number to sell it\n");
+
+                bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int userIndex);
+
+                userIndex--;
+
+                bool invalidIndex = userIndex > heroItems.Count || userIndex < 0 ? true : false;
+
+                if (isNumber && !invalidIndex)
+                {
+                    Guid foundId = heroItems[userIndex].ItemId;
+                    IBuyableItem deleteThisItem = Hero.ArmorBag.Where(item => item.ItemId == foundId).FirstOrDefault();
+
+                    if (deleteThisItem == null)
+                    {
+                        deleteThisItem = Hero.WeaponsBag.Where(item => item.ItemId == foundId).FirstOrDefault();
+                    }
+                    if (deleteThisItem == null)
+                    {
+                        deleteThisItem = Hero.HealthPotionBag.Where(item => item.ItemId == foundId).FirstOrDefault();
+                    }
+                    if (deleteThisItem == null)
+                    {
+                        throw new Exception("No Item was found to sell");
+                    }
+
+                    Hero.AddGoldCoins(deleteThisItem.SellingPrice);
+                    if (deleteThisItem.ItemCategory == ItemCategoryEnum.Strength)
+                    {
+                        Hero.WeaponsBag.Remove((Weapon)deleteThisItem);
+                    }
+                    else if (deleteThisItem.ItemCategory == ItemCategoryEnum.Defence)
+                    {
+                        Hero.ArmorBag.Remove((Armor)deleteThisItem);
+                    }
+                    else
+                    {
+                        Hero.HealthPotionBag.Remove((HealthPotion)deleteThisItem);
+                    }
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"You just sold your {deleteThisItem.Name} for {deleteThisItem.SellingPrice} Gold Coins");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Did not sell an item because of one of the following statements:");
+                    Console.WriteLine(" - didn't input a number");
+                    Console.WriteLine(" - inputted number wasn't within a valid range");
+                    Console.ResetColor();
+                }
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("You Have No Items To Sell");
+                Console.ResetColor();
+            }
         }
     }
 }
