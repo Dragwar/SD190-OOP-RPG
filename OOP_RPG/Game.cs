@@ -9,12 +9,6 @@ namespace OOP_RPG
         public Hero Hero { get; }
         private Shop MyShop { get; }
 
-
-        /*
-        ======================================================================================== 
-        Game ---> Instantiates the Hero property when a new game gets created (see Program.cs)
-        ======================================================================================== 
-        */
         public Game()
         {
             Hero = new Hero(); // only one hero per game
@@ -103,7 +97,7 @@ namespace OOP_RPG
                 }
                 else if (input == "5")
                 {
-                    ShowTodaysMonsters();
+                    Monster.ShowTodaysMonsters();
 
                     LoadingSymbol loadingSymbol = new LoadingSymbol("Searching For Monsters", "You Encountered:");
                     loadingSymbol.Excute(new Random().Next(2, 7));
@@ -117,44 +111,6 @@ namespace OOP_RPG
                 }
             }
         }// End of the Main Method
-
-
-
-        /*
-        ======================================================================================== 
-        ShowTodaysMonsters ---> Displays today's monsters (color coded, darker == harder)
-        ======================================================================================== 
-        */
-        private void ShowTodaysMonsters()
-        {
-            Console.Clear();
-
-            Console.Title = $"Today's Monsters";
-
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("***** Today's Monsters ******\n");
-
-            foreach (Monster monster in Fight.GetTodaysMonsters())
-            {
-                switch (monster.Difficulty)
-                {
-                    case (int)Difficulty.Easy:
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        break;
-
-                    case (int)Difficulty.Medium:
-                        Console.ForegroundColor = ConsoleColor.DarkCyan;
-                        break;
-
-                    default:
-                        Console.ForegroundColor = ConsoleColor.DarkBlue;
-                        break;
-                }
-                Console.WriteLine($"{monster.Name} - Difficulty: {(Difficulty)monster.Difficulty}");
-            }
-            Console.ResetColor();
-            Console.WriteLine();
-        }// End of the ShowTodaysMonsters Method
 
 
 
@@ -187,193 +143,7 @@ namespace OOP_RPG
         {
             Console.Clear();
 
-
-            string userInput = "0";
-            string successMessage = "";
-            string errorMessage = "";
-
-            while (userInput != "4")
-            {
-                Console.Title = $"{Hero.Name}'s Inventory | Stats: [> Str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <]";
-                Hero.ShowInventory();
-
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine(successMessage);
-                Console.ResetColor();
-                successMessage = "";
-
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(errorMessage);
-                Console.ResetColor();
-                errorMessage = "";
-
-                Console.WriteLine("1. equip a Weapon.");
-                Console.WriteLine("2. equip Armor.");
-                Console.WriteLine("3. use Health Potion.");
-                Console.WriteLine("4. exit\n");
-
-                userInput = Console.ReadLine().Trim();
-
-                if (userInput == "1")
-                {
-                    Console.Clear();
-
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("******* Unequipped Weapons *******");
-                    Console.ResetColor();
-
-                    List<Weapon> weapons = Hero.WeaponsBag.ToList();
-                    if (weapons.Any())
-                    {
-                        for (int i = 1; i < weapons.Count + 1; i++)
-                        {
-                            if (weapons[i - 1].IsEquipped)
-                            {
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"{i}. {weapons[i - 1].Name} --> (+ {weapons[i - 1].Strength}) Strength (Already Equipped)");
-                                Console.ResetColor();
-
-                            }
-                            else
-                            {
-                                Console.WriteLine($"{i}. {weapons[i - 1].Name} --> (+ {weapons[i - 1].Strength}) Strength");
-                            }
-                        }
-
-                        bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int userIndex);
-
-                        // account for index offset of 1
-                        userIndex--;
-
-                        if (!isNumber || (userIndex < 0 || userIndex >= weapons.Count))
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Nothing was equipped because of one of the following errors:");
-                            Console.WriteLine("- did not input a number");
-                            Console.WriteLine("- inputted number was too small");
-                            Console.WriteLine("- inputted number was too big");
-                            Console.ResetColor();
-                            return;
-                        }
-                        else
-                        {
-                            Hero.EquipWeapon(userIndex);
-
-                            successMessage = $"You equipped your {Hero.EquippedWeapon.Name}!";
-                        }
-                    }
-                    else
-                    {
-                        errorMessage = "You have nothing to equip . . .";
-                    }
-                }
-                else if (userInput == "2")
-                {
-                    Console.Clear();
-
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("******* Unequipped Armor *******");
-                    Console.ResetColor();
-
-                    List<Armor> armor = Hero.ArmorBag.ToList();
-
-                    if (armor.Any())
-                    {
-                        for (int i = 1; i < armor.Count + 1; i++)
-                        {
-                            if (armor[i - 1].IsEquipped)
-                            {
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"{i}. {armor[i - 1].Name} --> (+ {armor[i - 1].Defense}) Defense (Already Equipped)");
-                                Console.ResetColor();
-                            }
-                            else
-                            {
-                                Console.WriteLine($"{i}. {armor[i - 1].Name} --> (+ {armor[i - 1].Defense}) Defense");
-                            }
-                        }
-
-                        bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int userIndex);
-
-                        // account for index offset of 1
-                        userIndex--;
-
-                        if (!isNumber || (userIndex < 0 || userIndex >= armor.Count))
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Nothing was equipped because of one of the following errors:");
-                            Console.WriteLine("- did not input a number");
-                            Console.WriteLine("- inputted number was too small");
-                            Console.WriteLine("- inputted number was too big");
-                            Console.ResetColor();
-                            return;
-                        }
-                        else
-                        {
-                            Hero.EquipArmor(userIndex);
-
-                            successMessage = $"You equipped your {Hero.EquippedArmor.Name}!";
-                        }
-                    }
-                    else
-                    {
-                        errorMessage = "You have nothing to equip . . .";
-                    }
-                }
-                else if (userInput == "3")
-                {
-                    Console.Clear();
-
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("******* Your Health Potions *******");
-                    Console.ResetColor();
-
-                    List<HealthPotion> healthPotions = Hero.HealthPotionBag.ToList();
-
-                    if (healthPotions.Any())
-                    {
-                        for (int i = 1; i < healthPotions.Count + 1; i++)
-                        {
-                            Console.WriteLine($"{i}. {healthPotions[i - 1].Name} --> (+ {healthPotions[i - 1].HealAmount} HP)");
-                        }
-
-                        bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int userIndex);
-
-                        // account for index offset of 1
-                        userIndex--;
-
-                        if (!isNumber || (userIndex < 0 || userIndex >= healthPotions.Count))
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Nothing was used because of one of the following errors:");
-                            Console.WriteLine("- did not input a number");
-                            Console.WriteLine("- inputted number was too small");
-                            Console.WriteLine("- inputted number was too big");
-                            Console.ResetColor();
-                            return;
-                        }
-                        else
-                        {
-                            if (Hero.CurrentHP >= Hero.OriginalHP)
-                            {
-                                errorMessage = "Sorry you can't heal past you Original HP\n";
-                            }
-                            else
-                            {
-                                successMessage = $"You used your {healthPotions[userIndex].Name}!";
-
-                                Hero.UseHealthPotion(userIndex);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("You have nothing to use. . .");
-                        Console.ResetColor();
-                    }
-                }
-            }
+            Hero.ManageInventory();
 
             Console.Title = $"Main Menu";
         }// End of the Inventory Method
@@ -420,74 +190,11 @@ namespace OOP_RPG
 
                 userInput = Console.ReadLine().Trim();
 
-                if (userInput == "1")
-                {
-                    Console.WriteLine("================[Level Up Strength]================");
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"Current Experience Points: {Hero.ExperiencePoints}");
-                    Console.WriteLine($"Current Strength: {Hero.Strength}");
-                    Console.ResetColor();
+                Hero.SpendExperiencePoints(userInput);
 
-                    Console.WriteLine("Level Up Strength by:\n");
-                    Hero.Strength = LevelUpHero(Hero.Strength);
-                }
-                else if (userInput == "2")
-                {
-                    Console.WriteLine("================[Level Up Defense]================");
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"Current Experience Points: {Hero.ExperiencePoints}");
-                    Console.WriteLine($"Current Defense: {Hero.Defense}");
-                    Console.ResetColor();
-
-                    Console.WriteLine("Level Up Defense by:\n");
-                    Hero.Defense = LevelUpHero(Hero.Defense);
-                }
-                else if (userInput == "3")
-                {
-                    Console.WriteLine("================[Level Up Original HP]================");
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"Current Experience Points: {Hero.ExperiencePoints}");
-                    Console.WriteLine($"Current OriginalHP: {Hero.OriginalHP}");
-                    Console.ResetColor();
-
-                    Console.WriteLine("Level Up HP by:\n");
-
-                    Hero.OriginalHP = LevelUpHero(Hero.OriginalHP);
-                }
-
-                Hero.ShowStats();
-                Console.WriteLine("\n");
-
-            }
-
-            Console.Title = $"Main Menu";
-        }// End of the SpendExperiencePoints Method
-
-
-
-        /*
-        ======================================================================================== 
-        LevelUpHero ---> Adds the inputed number to level up the passed in stat
-        ======================================================================================== 
-        */
-        private int LevelUpHero(int heroStatValue)
-        {
-            bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int levelAmount);
-
-            if (isNumber && levelAmount <= Hero.ExperiencePoints)
-            {
-                heroStatValue += levelAmount;
-                Hero.RemoveExperiencePoints(levelAmount);
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Nothing Leveled Up (input wasn't a int or input was greater than current exp)\n");
-                Console.ResetColor();
-            }
-            return heroStatValue;
-        }// End of the LevelUpHero Method
-
+                Console.Title = $"Main Menu";
+            }// End of the SpendExperiencePoints Method
+        }
 
 
         /*

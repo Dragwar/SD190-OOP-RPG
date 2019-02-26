@@ -6,28 +6,19 @@ namespace OOP_RPG
 {
     public class Hero
     {
-        // These are the Properties of our Class.
         public string Name { get; set; }
-        public int Strength { get; set; }
-        public int Defense { get; set; }
-        public int OriginalHP { get; set; }
-        public int CurrentHP { get; set; }
+        public int Strength { get; private set; }
+        public int Defense { get; private set; }
+        public int OriginalHP { get; private set; }
+        public int CurrentHP { get; private set; }
         public int ExperiencePoints { get; private set; }
         public int GoldCoins { get; private set; }
         public Weapon EquippedWeapon { get; private set; }
         public Armor EquippedArmor { get; private set; }
-        public List<Armor> ArmorBag { get; set; }
-        public List<Weapon> WeaponsBag { get; set; }
-        public List<HealthPotion> HealthPotionBag { get; set; }
+        public List<Armor> ArmorBag { get; private set; }
+        public List<Weapon> WeaponsBag { get; private set; }
+        public List<HealthPotion> HealthPotionBag { get; private set; }
 
-        /*
-            This is a Constructor.
-            When we create a new object from our Hero class, the instance of this class, our hero, has:
-            an empty List that has to contain instances of the Armor class,
-            an empty List that has to contain instance of the Weapon class,
-            stats of the "int" data type, including an initial strength and defense,
-            original hit-points that are going to be the same as the current hit-points.
-        */
         public Hero()
         {
             ArmorBag = new List<Armor>();
@@ -41,7 +32,13 @@ namespace OOP_RPG
             ExperiencePoints = 50;
         }
 
-        // These are the Methods of our Class.
+
+
+        /*
+        ======================================================================================== 
+        ShowStats ---> Simple method prints all the current stat values
+        ======================================================================================== 
+        */
         public void ShowStats()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -59,6 +56,11 @@ namespace OOP_RPG
 
 
 
+        /*
+        ======================================================================================== 
+        ShowInventory ---> Simple method prints all the items that the user has
+        ======================================================================================== 
+        */
         public void ShowInventory()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -70,6 +72,13 @@ namespace OOP_RPG
             ShowInventoryHealthPotions();
         }
 
+
+
+        /*
+        ======================================================================================== 
+        ShowInventoryWeapons ---> Simple method that prints each weapon item that the hero has
+        ======================================================================================== 
+        */
         public void ShowInventoryWeapons()
         {
             Console.WriteLine("Weapons: ");
@@ -102,6 +111,13 @@ namespace OOP_RPG
             Console.ResetColor();
         }
 
+
+
+        /*
+        ======================================================================================== 
+        ShowInventoryArmor ---> Simple method that prints each armor item that the hero has
+        ======================================================================================== 
+        */
         public void ShowInventoryArmor()
         {
             Console.WriteLine("Armor: ");
@@ -134,6 +150,13 @@ namespace OOP_RPG
             Console.ResetColor();
         }
 
+
+
+        /*
+        ======================================================================================== 
+        ShowInventoryHealthPotions ---> Simple method that prints each potion that the hero has
+        ======================================================================================== 
+        */
         public void ShowInventoryHealthPotions()
         {
             Console.WriteLine("HealthPotions: ");
@@ -160,11 +183,213 @@ namespace OOP_RPG
 
 
 
+        /*
+        ======================================================================================== 
+        ManageInventory ---> Shows INV and Handles user choosing to equip and use potions
+        ======================================================================================== 
+        */
+        public void ManageInventory()
+        {
+            string userInput = "0";
+            string successMessage = "";
+            string errorMessage = "";
+
+            while (userInput != "4")
+            {
+                Console.Title = $"{Name}'s Inventory | Stats: [> Str: {Strength} | Def: {Defense} | HP: {CurrentHP}/{OriginalHP} <]";
+                ShowInventory();
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine(successMessage);
+                Console.ResetColor();
+                successMessage = "";
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(errorMessage);
+                Console.ResetColor();
+                errorMessage = "";
+
+                Console.WriteLine("1. equip a Weapon.");
+                Console.WriteLine("2. equip Armor.");
+                Console.WriteLine("3. use Health Potion.");
+                Console.WriteLine("4. exit\n");
+
+                userInput = Console.ReadLine().Trim();
+
+                if (userInput == "1")
+                {
+                    Console.Clear();
+
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("******* Unequipped Weapons *******");
+                    Console.ResetColor();
+
+                    List<Weapon> weapons = WeaponsBag.ToList();
+                    if (weapons.Any())
+                    {
+                        for (int i = 1; i < weapons.Count + 1; i++)
+                        {
+                            if (weapons[i - 1].IsEquipped)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"{i}. {weapons[i - 1].Name} --> (+ {weapons[i - 1].Strength}) Strength (Already Equipped)");
+                                Console.ResetColor();
+
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{i}. {weapons[i - 1].Name} --> (+ {weapons[i - 1].Strength}) Strength");
+                            }
+                        }
+
+                        bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int userIndex);
+
+                        // account for index offset of 1
+                        userIndex--;
+
+                        if (!isNumber || (userIndex < 0 || userIndex >= weapons.Count))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Nothing was equipped because of one of the following errors:");
+                            Console.WriteLine("- did not input a number");
+                            Console.WriteLine("- inputted number was too small");
+                            Console.WriteLine("- inputted number was too big");
+                            Console.ResetColor();
+                            return;
+                        }
+                        else
+                        {
+                            EquipWeapon(userIndex);
+
+                            successMessage = $"You equipped your {EquippedWeapon.Name}!";
+                        }
+                    }
+                    else
+                    {
+                        errorMessage = "You have nothing to equip . . .";
+                    }
+                }
+                else if (userInput == "2")
+                {
+                    Console.Clear();
+
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("******* Unequipped Armor *******");
+                    Console.ResetColor();
+
+                    List<Armor> armor = ArmorBag.ToList();
+
+                    if (armor.Any())
+                    {
+                        for (int i = 1; i < armor.Count + 1; i++)
+                        {
+                            if (armor[i - 1].IsEquipped)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"{i}. {armor[i - 1].Name} --> (+ {armor[i - 1].Defense}) Defense (Already Equipped)");
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{i}. {armor[i - 1].Name} --> (+ {armor[i - 1].Defense}) Defense");
+                            }
+                        }
+
+                        bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int userIndex);
+
+                        // account for index offset of 1
+                        userIndex--;
+
+                        if (!isNumber || (userIndex < 0 || userIndex >= armor.Count))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Nothing was equipped because of one of the following errors:");
+                            Console.WriteLine("- did not input a number");
+                            Console.WriteLine("- inputted number was too small");
+                            Console.WriteLine("- inputted number was too big");
+                            Console.ResetColor();
+                            return;
+                        }
+                        else
+                        {
+                            EquipArmor(userIndex);
+
+                            successMessage = $"You equipped your {EquippedArmor.Name}!";
+                        }
+                    }
+                    else
+                    {
+                        errorMessage = "You have nothing to equip . . .";
+                    }
+                }
+                else if (userInput == "3")
+                {
+                    Console.Clear();
+
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("******* Your Health Potions *******");
+                    Console.ResetColor();
+
+                    List<HealthPotion> healthPotions = HealthPotionBag.ToList();
+
+                    if (healthPotions.Any())
+                    {
+                        for (int i = 1; i < healthPotions.Count + 1; i++)
+                        {
+                            Console.WriteLine($"{i}. {healthPotions[i - 1].Name} --> (+ {healthPotions[i - 1].HealAmount} HP)");
+                        }
+
+                        bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int userIndex);
+
+                        // account for index offset of 1
+                        userIndex--;
+
+                        if (!isNumber || (userIndex < 0 || userIndex >= healthPotions.Count))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Nothing was used because of one of the following errors:");
+                            Console.WriteLine("- did not input a number");
+                            Console.WriteLine("- inputted number was too small");
+                            Console.WriteLine("- inputted number was too big");
+                            Console.ResetColor();
+                            return;
+                        }
+                        else
+                        {
+                            if (CurrentHP >= OriginalHP)
+                            {
+                                errorMessage = "Sorry you can't heal past you Original HP\n";
+                            }
+                            else
+                            {
+                                successMessage = $"You used your {healthPotions[userIndex].Name}!";
+
+                                UseHealthPotion(userIndex);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("You have nothing to use. . .");
+                        Console.ResetColor();
+                    }
+                }
+            }
+        }
+
+
+
+        /*
+        ======================================================================================== 
+        EquipWeapon ---> Simple method to equip a weapon via index
+        ======================================================================================== 
+        */
         public void EquipWeapon(int weaponIndex)
         {
             if (WeaponsBag.Any())
             {
-                UnEquipWeapon(EquippedWeapon);
+                UnEquipItem(EquippedWeapon);
 
                 EquippedWeapon = WeaponsBag[weaponIndex];
                 WeaponsBag[weaponIndex].IsEquipped = true;
@@ -177,11 +402,18 @@ namespace OOP_RPG
             }
         }
 
+
+
+        /*
+        ======================================================================================== 
+        EquipArmor ---> Simple method to equip a armor via index
+        ======================================================================================== 
+        */
         public void EquipArmor(int armorIndex)
         {
             if (ArmorBag.Any())
             {
-                UnEquipArmor(EquippedArmor);
+                UnEquipItem(EquippedArmor);
 
                 EquippedArmor = ArmorBag[armorIndex];
                 ArmorBag[armorIndex].IsEquipped = true;
@@ -196,29 +428,46 @@ namespace OOP_RPG
 
 
 
-        public void UnEquipArmor(Armor armor)
+        /*
+        ======================================================================================== 
+        UnEquipItem ---> Simple method to unequip a armor/weapon depending on what is passed in
+        ======================================================================================== 
+        */
+        public void UnEquipItem(IBuyableItem item)
         {
-            if (EquippedArmor != null)
+            if (item is Armor)
             {
-                EquippedArmor.IsEquipped = false;
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"{EquippedArmor} was unequipped!");
-                Console.ResetColor();
+                if (EquippedArmor != null)
+                {
+                    EquippedArmor.IsEquipped = false;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"{EquippedArmor.Name} was unequipped!");
+                    Console.ResetColor();
+                }
+            }
+            else if (item is Weapon)
+            {
+                if (EquippedWeapon != null)
+                {
+                    EquippedWeapon.IsEquipped = false;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"{EquippedWeapon.Name} was unequipped!");
+                    Console.ResetColor();
+                }
+            }
+            else
+            {
+                throw new Exception($"Couldn't unequip {item}");
             }
         }
 
-        public void UnEquipWeapon(Weapon weapon)
-        {
-            if (EquippedWeapon != null)
-            {
-                EquippedWeapon.IsEquipped = false;
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"{EquippedWeapon} was unequipped!");
-                Console.ResetColor();
-            }
-        }
 
 
+        /*
+        ======================================================================================== 
+        AddExperiencePoints ---> Simple method to add exp to total exp
+        ======================================================================================== 
+        */
         public void AddExperiencePoints(int numberOfPoints)
         {
             if (numberOfPoints < 0)
@@ -228,6 +477,13 @@ namespace OOP_RPG
             ExperiencePoints += numberOfPoints;
         }
 
+
+
+        /*
+        ======================================================================================== 
+        RemoveExperiencePoints ---> Simple method to remove exp from total exp
+        ======================================================================================== 
+        */
         public void RemoveExperiencePoints(int numberOfPoints)
         {
             if (numberOfPoints > ExperiencePoints)
@@ -239,6 +495,11 @@ namespace OOP_RPG
 
 
 
+        /*
+        ======================================================================================== 
+        AddGoldCoins ---> Simple method to add coins to total coins
+        ======================================================================================== 
+        */
         public void AddGoldCoins(int numberOfCoins)
         {
             if (numberOfCoins < 0)
@@ -248,6 +509,13 @@ namespace OOP_RPG
             GoldCoins += numberOfCoins;
         }
 
+
+
+        /*
+        ======================================================================================== 
+        RemoveGoldCoins ---> Simple Method to remove gold coins from total coins
+        ======================================================================================== 
+        */
         public void RemoveGoldCoins(int numberOfCoins)
         {
             if (numberOfCoins > GoldCoins)
@@ -258,6 +526,28 @@ namespace OOP_RPG
         }
 
 
+
+        /*
+        ======================================================================================== 
+        TakeDamage ---> Simple Method to remove gold coins from total coins
+        ======================================================================================== 
+        */
+        public void TakeDamage(int damage)
+        {
+            if (damage < 0)
+            {
+                throw new Exception("You can't take negative damage (damage error)");
+            }
+            CurrentHP -= damage;
+        }
+
+
+
+        /*
+        ======================================================================================== 
+        UseHealthPotion ---> Selects Health potion via index and heals then removes it from bag
+        ======================================================================================== 
+        */
         public void UseHealthPotion(int healthPotionIndex)
         {
             if (HealthPotionBag.Any())
@@ -279,6 +569,77 @@ namespace OOP_RPG
                 Console.WriteLine("\nYou don't have any armor to equip!");
                 Console.ResetColor();
             }
+        }
+
+
+
+        /*
+        ======================================================================================== 
+        LevelUp ---> Adds the inputed number to level up the passed in stat
+        ======================================================================================== 
+        */
+        public int LevelUp(int heroStatValue)
+        {
+            bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int levelAmount);
+
+            if (isNumber && levelAmount <= ExperiencePoints)
+            {
+                heroStatValue += levelAmount;
+                RemoveExperiencePoints(levelAmount);
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Nothing Leveled Up (input wasn't a int or input was greater than current exp)\n");
+                Console.ResetColor();
+            }
+            return heroStatValue;
+        }
+
+
+
+        /*
+        ======================================================================================== 
+        SpendExperiencePoints ---> Allows Player To Level Up Their Character's Stats
+        ======================================================================================== 
+        */
+        public void SpendExperiencePoints(string userInput)
+        {
+            if (userInput == "1")
+            {
+                Console.WriteLine("================[Level Up Strength]================");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Current Experience Points: {ExperiencePoints}");
+                Console.WriteLine($"Current Strength: {Strength}");
+                Console.ResetColor();
+
+                Console.WriteLine("Level Up Strength by:\n");
+                Strength = LevelUp(Strength);
+            }
+            else if (userInput == "2")
+            {
+                Console.WriteLine("================[Level Up Defense]================");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Current Experience Points: {ExperiencePoints}");
+                Console.WriteLine($"Current Defense: {Defense}");
+                Console.ResetColor();
+
+                Console.WriteLine("Level Up Defense by:\n");
+                Defense = LevelUp(Defense);
+            }
+            else if (userInput == "3")
+            {
+                Console.WriteLine("================[Level Up Original HP]================");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Current Experience Points: {ExperiencePoints}");
+                Console.WriteLine($"Current OriginalHP: {OriginalHP}");
+                Console.ResetColor();
+
+                Console.WriteLine("Level Up HP by:\n");
+                OriginalHP = LevelUp(OriginalHP);
+            }
+            ShowStats();
+            Console.WriteLine("\n");
         }
 
 

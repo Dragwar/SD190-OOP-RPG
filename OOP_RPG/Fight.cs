@@ -25,16 +25,17 @@ namespace OOP_RPG
         {
             Hero = hero;
             Random = new Random();
+
             // Not Implemented yet
             // TODO: use this to up the difficulty for the monsters
             // TotalHeroPoints = Hero.OriginalHP + Hero.Strength + Hero.Defense;
 
             Monsters = new List<Monster>(GetTodaysMonsters());
-            Random rand = new Random();
-            CurrentMonster = Monsters[rand.Next(0, Monsters.Count)];
 
-            MonstersEXPWorth = HandleFightReward.GetMonstersEXPWorth(CurrentMonster.Difficulty);
-            MonstersGoldCoinWorth = HandleFightReward.GetMonstersGoldCoinWorth(CurrentMonster.Difficulty);
+            CurrentMonster = Monsters[Random.Next(0, Monsters.Count)];
+
+            MonstersEXPWorth = CurrentMonster.GetMonstersEXPWorth();
+            MonstersGoldCoinWorth = CurrentMonster.GetMonstersGoldCoinWorth();
         }
 
 
@@ -49,7 +50,7 @@ namespace OOP_RPG
             List<Monster> allMonsters = new List<Monster>(WeekDayMonsters.InitialMonsters);
 
             List<Monster> todaysMonsters = allMonsters
-                .Where(monster => monster.DayOfTheWeek == (int)DateTime.Now.DayOfWeek)
+                .Where(monster => monster.DayOfTheWeek == DateTime.Now.DayOfWeek)
                 .ToList();
 
             return todaysMonsters;
@@ -85,7 +86,7 @@ namespace OOP_RPG
                 }
                 else if (input == "2")
                 {
-                    //UseHealthPotion
+                    //UseHealthPotion();
                 }
                 else if (input == "3")
                 {
@@ -168,12 +169,12 @@ namespace OOP_RPG
             if (compare <= 0)
             {
                 damage = 1;
-                Hero.CurrentHP -= damage;
+                Hero.TakeDamage(damage);
             }
             else
             {
                 damage = compare;
-                Hero.CurrentHP -= damage;
+                Hero.TakeDamage(damage);
             }
 
             Console.ForegroundColor = ConsoleColor.Red;
@@ -226,7 +227,7 @@ namespace OOP_RPG
             Console.ResetColor();
 
             Console.WriteLine("Press any key to exit the game");
-            Console.ReadKey();
+            Console.ReadKey(true);
         }
     }
 }

@@ -44,11 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Armor.cs" />
-    <Compile Include="DaysOfTheWeekEnum.cs" />
     <Compile Include="DifficultyEnum.cs" />
     <Compile Include="Fight.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="HandleFightReward.cs" />
     <Compile Include="HealthPotion.cs" />
     <Compile Include="Hero.cs" />
     <Compile Include="IBuyableItem.cs" />
