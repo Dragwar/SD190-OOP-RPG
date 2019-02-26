@@ -75,8 +75,8 @@ namespace OOP_RPG
                 Console.WriteLine($"\nWhat will you do?");
                 Console.WriteLine("1. Fight");
                 Console.WriteLine("2. Use Health Potion");
-                Console.WriteLine("3. See The Enemy's Status and Your Status");
-                Console.WriteLine("4. Flee");
+                Console.WriteLine("3. Flee");
+                Console.WriteLine("4. See The Enemy's Status and Your Status");
 
                 string input = Console.ReadLine().Trim();
 
@@ -90,13 +90,57 @@ namespace OOP_RPG
                 }
                 else if (input == "3")
                 {
-                    Hero.ShowStats();
-                    CurrentMonster.ShowStats();
+                    Flee();
                 }
                 else if (input == "4")
                 {
-                    //Flee();
+                    Hero.ShowStats();
+                    CurrentMonster.ShowStats();
                 }
+            }
+        }
+
+
+
+        /*
+        ======================================================================================== 
+        Flee ---> Try to run from monster (if fails to flee hero is still in the fight)
+        ======================================================================================== 
+        */
+        private void Flee()
+        {
+            int randNum = Random.Next(0, 100);
+            bool hasFled = false;
+
+            switch (CurrentMonster.Difficulty)
+            {
+                case Difficulty.Easy:
+                    hasFled = randNum <= 50 && randNum >= 0 ? true : false;
+                    break;
+
+                case Difficulty.Medium:
+                    hasFled = randNum <= 25 && randNum >= 0 ? true : false;
+                    break;
+
+                case Difficulty.Hard:
+                    hasFled = randNum <= 5 && randNum >= 0 ? true : false;
+                    break;
+
+                default:
+                    throw new Exception("This shouldn't happen (flee error)");
+            }
+
+            if (hasFled)
+            {
+                CurrentMonster.CurrentHP -= CurrentMonster.CurrentHP; // This will skip past the while loop in Start()
+                Win(WinConditionEnum.Flee);
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("You have failed to flee the battle");
+                Console.ResetColor();
+                MonsterTurn();
             }
         }
 
@@ -203,7 +247,7 @@ namespace OOP_RPG
 
             if (CurrentMonster.CurrentHP <= 0)
             {
-                Win();
+                Win(WinConditionEnum.Kill);
             }
             else
             {
@@ -260,17 +304,25 @@ namespace OOP_RPG
         Win ---> Win Message and returns to the Main Menu
         ======================================================================================== 
         */
-        private void Win()
+        private void Win(WinConditionEnum howHeroWon)
         {
-            Hero.AddExperiencePoints(MonstersEXPWorth);
-            Hero.AddGoldCoins(MonstersGoldCoinWorth);
+            if (howHeroWon == WinConditionEnum.Kill)
+            {
+                Hero.AddExperiencePoints(MonstersEXPWorth);
+                Hero.AddGoldCoins(MonstersGoldCoinWorth);
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"{CurrentMonster.Name} has been defeated! You win the battle!");
-            Console.WriteLine($"(+ {MonstersGoldCoinWorth} Gold Coins)");
-            Console.WriteLine($"(+ {MonstersEXPWorth} EXP)");
-            Console.ResetColor();
-
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"{CurrentMonster.Name} has been defeated! You win the battle!");
+                Console.WriteLine($"(+ {MonstersGoldCoinWorth} Gold Coins)");
+                Console.WriteLine($"(+ {MonstersEXPWorth} EXP)");
+                Console.ResetColor();
+            }
+            else if (howHeroWon == WinConditionEnum.Flee)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"You have successfully fled the battle!");
+                Console.ResetColor();
+            }
             Hero.ShowStats();
 
             Console.Title = $"Main Menu";

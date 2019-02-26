@@ -36,7 +36,7 @@ namespace OOP_RPG
 
         /*
         ======================================================================================== 
-        GetMasterInventoryList ---> 
+        GetMasterInventoryList ---> Gets a list that contains all the items that the hero owns
         ======================================================================================== 
         */
         public List<IBuyableItem> GetMasterInventoryList()
