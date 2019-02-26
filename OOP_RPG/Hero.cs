@@ -455,10 +455,6 @@ namespace OOP_RPG
                     Console.ResetColor();
                 }
             }
-            else
-            {
-                throw new Exception($"Couldn't unequip {item}");
-            }
         }
 
 
