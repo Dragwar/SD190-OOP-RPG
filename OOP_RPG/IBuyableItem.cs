@@ -9,7 +9,6 @@ namespace OOP_RPG
         string Name { get; }
         int Price { get; }
         int SellingPrice { get; }
-        int ModifiesHeroStat { get; }
         bool Sold { get; set; }
         bool CanBeSoldMultipleTimes { get; set; }
         string ShowItemStats();

@@ -14,7 +14,6 @@ namespace OOP_RPG
         public int SellingPrice { get; }
         public ItemCategoryEnum ItemCategory { get; }
         public Guid ItemId { get; private set; }
-        public int ModifiesHeroStat { get; }
         public bool Sold { get; set; }
         public bool IsEquipped { get; set; }
         public bool CanBeSoldMultipleTimes { get; set; }
@@ -27,7 +26,6 @@ namespace OOP_RPG
             SellingPrice = price / 2;
             ItemCategory = ItemCategoryEnum.CurrentHP;
             ItemId = Guid.NewGuid();
-            ModifiesHeroStat = healAmount;
             Sold = false;
             CanBeSoldMultipleTimes = true;
             IsEquipped = false;

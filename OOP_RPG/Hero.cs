@@ -370,9 +370,7 @@ namespace OOP_RPG
                     }
                     else
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("You have nothing to use. . .");
-                        Console.ResetColor();
+                        errorMessage = "You have nothing to use . . .";
                     }
                 }
             }

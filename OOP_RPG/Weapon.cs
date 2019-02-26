@@ -11,7 +11,6 @@ namespace OOP_RPG
         public int Price { get; }
         public ItemCategoryEnum ItemCategory { get; }
         public Guid ItemId { get; private set; }
-        public int ModifiesHeroStat { get; }
         public bool Sold { get; set; }
         public bool IsEquipped { get; set; }
         public bool CanBeSoldMultipleTimes { get; set; }
@@ -25,7 +24,6 @@ namespace OOP_RPG
             SellingPrice = price / 2;
             ItemCategory = ItemCategoryEnum.Strength;
             ItemId = Guid.NewGuid();
-            ModifiesHeroStat = strength;
             Sold = false;
             CanBeSoldMultipleTimes = false;
             IsEquipped = false;
