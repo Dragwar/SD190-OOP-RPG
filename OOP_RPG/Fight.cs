@@ -86,7 +86,7 @@ namespace OOP_RPG
                 }
                 else if (input == "2")
                 {
-                    //UseHealthPotion();
+                    UseHealthPotion();
                 }
                 else if (input == "3")
                 {
@@ -97,6 +97,71 @@ namespace OOP_RPG
                 {
                     //Flee();
                 }
+            }
+        }
+
+
+
+        /*
+        ======================================================================================== 
+        HeroTurn ---> Calculate the damage that will be dealt to the currentMonster
+        ======================================================================================== 
+        */
+        private void UseHealthPotion()
+        {
+            Console.Clear();
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("******* Your Health Potions *******");
+            Console.ResetColor();
+
+            List<HealthPotion> healthPotions = Hero.HealthPotionBag.ToList();
+
+            if (healthPotions.Any())
+            {
+                for (int i = 1; i < healthPotions.Count + 1; i++)
+                {
+                    Console.WriteLine($"{i}. {healthPotions[i - 1].Name} --> (+ {healthPotions[i - 1].HealAmount} HP)");
+                }
+
+                bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int userIndex);
+
+                // account for index offset of 1
+                userIndex--;
+
+                if (!isNumber || (userIndex < 0 || userIndex >= healthPotions.Count))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Nothing was used because of one of the following errors:");
+                    Console.WriteLine("- did not input a number");
+                    Console.WriteLine("- inputted number was too small");
+                    Console.WriteLine("- inputted number was too big");
+                    Console.ResetColor();
+                    return;
+                }
+                else
+                {
+                    if (Hero.CurrentHP >= Hero.OriginalHP)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Sorry you can't heal past you Original HP\n");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"You used your {healthPotions[userIndex].Name}!");
+                        Console.ResetColor();
+
+                        Hero.UseHealthPotion(userIndex);
+                    }
+                }
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("You have nothing to use. . .");
+                Console.ResetColor();
             }
         }
 
