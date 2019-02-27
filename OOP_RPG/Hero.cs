@@ -28,12 +28,12 @@ namespace OOP_RPG
             WeaponsBag = new List<Weapon>();
             ShieldBag = new List<Shield>();
             HealthPotionBag = new List<HealthPotion>();
-            Strength = 10;
-            Defense = 10;
-            OriginalHP = 30;
-            CurrentHP = 30;
-            GoldCoins = 300;
-            ExperiencePoints = 50;
+            Strength = 5;
+            Defense = 5;
+            OriginalHP = 20;
+            CurrentHP = 20;
+            GoldCoins = 25;
+            ExperiencePoints = 10;
             ManageAchievements = manageAchievements;
         }
 
