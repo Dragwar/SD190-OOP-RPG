@@ -281,7 +281,7 @@ namespace OOP_RPG
             string successMessage = "";
             string errorMessage = "";
 
-            while (userInput != "5")
+            while (userInput != "6")
             {
                 Console.Title = $"{Name}'s Inventory | Stats: [> Str: {Strength} | Def: {Defense} | HP: {CurrentHP}/{OriginalHP} <]";
                 ShowInventory();
@@ -299,8 +299,9 @@ namespace OOP_RPG
                 Console.WriteLine("1. equip a Weapon.");
                 Console.WriteLine("2. equip Armor.");
                 Console.WriteLine("3. equip Shield.");
-                Console.WriteLine("4. use Health Potion.");
-                Console.WriteLine("5. exit\n");
+                Console.WriteLine("4. unequip all items.");
+                Console.WriteLine("5. use Health Potion.");
+                Console.WriteLine("6. exit\n");
 
                 userInput = Console.ReadLine().Trim();
 
@@ -465,6 +466,12 @@ namespace OOP_RPG
                 }
                 else if (userInput == "4")
                 {
+                    UnEquipItem(EquippedWeapon);
+                    UnEquipItem(EquippedArmor);
+                    UnEquipItem(EquippedShield);
+                }
+                else if (userInput == "5")
+                {
                     Console.Clear();
 
                     Console.ForegroundColor = ConsoleColor.Yellow;
@@ -606,6 +613,7 @@ namespace OOP_RPG
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"{EquippedArmor.Name} was unequipped!");
                     Console.ResetColor();
+                    EquippedArmor = null;
                 }
             }
             else if (item is Weapon)
@@ -616,6 +624,18 @@ namespace OOP_RPG
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"{EquippedWeapon.Name} was unequipped!");
                     Console.ResetColor();
+                    EquippedWeapon = null;
+                }
+            }
+            else if (item is Shield)
+            {
+                if (EquippedShield != null)
+                {
+                    EquippedShield.IsEquipped = false;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"{EquippedShield.Name} was unequipped!");
+                    Console.ResetColor();
+                    EquippedShield = null;
                 }
             }
         }
