@@ -71,6 +71,7 @@ namespace OOP_RPG
             Console.WriteLine($"Experience Points: {ExperiencePoints}");
             Console.WriteLine($"Achievement Points: {HandleAchievements.TotalPoints}");
             Console.ResetColor();
+
             if (showAchievements)
             {
                 Console.WriteLine($"Achievements:");
@@ -584,7 +585,7 @@ namespace OOP_RPG
             else
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nYou don't have any armor to equip!");
+                Console.WriteLine("\nYou don't have any health potion to use!");
                 Console.ResetColor();
             }
         }

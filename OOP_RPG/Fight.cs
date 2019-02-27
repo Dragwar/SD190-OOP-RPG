@@ -73,7 +73,7 @@ namespace OOP_RPG
 
             while (CurrentMonster.CurrentHP > 0 && Hero.CurrentHP > 0)
             {
-                Console.Title = $"FIGHT!!! ({Hero.Name} vs {CurrentMonster.Name}) Your Current HP: {Hero.CurrentHP} | Enemy Current HP: {CurrentMonster.CurrentHP}";
+                Console.Title = $"FIGHT!!! ({Hero.Name} vs {CurrentMonster.Name}) Stats: [> Str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <] | Enemy Current HP: {CurrentMonster.CurrentHP}";
                 Console.WriteLine($"\nWhat will you do?");
                 Console.WriteLine("1. Fight");
                 Console.WriteLine("2. Use Health Potion");

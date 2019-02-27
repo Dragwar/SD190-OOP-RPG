@@ -28,6 +28,13 @@ namespace OOP_RPG
             };
         }
 
+
+
+        /*
+        ======================================================================================== 
+        CheckIfThereIsAnyStock ---> Simple
+        ======================================================================================== 
+        */
         public bool CheckIfThereIsAnyStock()
         {
             if (AllBuyableItems.All(item => item.Sold))
@@ -43,6 +50,13 @@ namespace OOP_RPG
             }
         }
 
+
+
+        /*
+        ======================================================================================== 
+        SellItem ---> Allows transfers the sold item to the hero
+        ======================================================================================== 
+        */
         private void SellItem(IBuyableItem item)
         {
             Hero.RemoveGoldCoins(item.Price);
@@ -77,6 +91,12 @@ namespace OOP_RPG
         private void ToggleSoldProperty(IBuyableItem item) => item.Sold = item.Sold ? false : true;
 
 
+
+        /*
+        ======================================================================================== 
+        DisplayAllItems ---> Prints all shop items and color codes items by their catagerooy 
+        ======================================================================================== 
+        */
         private void DisplayAllItems()
         {
             List<IBuyableItem> allItems = AllBuyableItems.Where(item => (!item.Sold || item.CanBeSoldMultipleTimes)).ToList();
@@ -103,7 +123,13 @@ namespace OOP_RPG
         }
 
 
-        private void BuyItem()
+
+        /*
+        ======================================================================================== 
+        BuyShopItem ---> Allows hero to buy the shops items
+        ======================================================================================== 
+        */
+        private void SellShopItem()
         {
             Console.Clear();
 
@@ -149,6 +175,11 @@ namespace OOP_RPG
 
 
 
+        /*
+        ======================================================================================== 
+        OpenShopAndTakeUserOrder ---> When hero steps into shop a list of options appear
+        ======================================================================================== 
+        */
         public void OpenShopAndTakeUserOrder()
         {
             string userInput = "";
@@ -170,7 +201,7 @@ namespace OOP_RPG
 
                 if (userInput == "1")
                 {
-                    BuyItem();
+                    SellShopItem();
                 }
                 else if (userInput == "2")
                 {
@@ -181,6 +212,11 @@ namespace OOP_RPG
 
 
 
+        /*
+        ======================================================================================== 
+        BuyHeroItem ---> Allows hero to sell his/her items to the shop
+        ======================================================================================== 
+        */
         private void BuyHeroItem()// PREVENT USER FROM SELLING EQUIPPED ITEMS
         {
             Console.Clear();

@@ -25,7 +25,7 @@ namespace OOP_RPG
         (
             $"\n=========({Title})=========\n" +
             $"Reward: {RewardPoints} {(RewardPoints > 1 ? "points" : "point")}\n" +
-            $"Status: {(IsCompleted ? "Already Completed" : "Not Completed")}\n"
+            $"Status: {(IsCompleted ? $"Already Completed On {DateTime.Now.ToLongDateString()} ({DateTime.Now.ToShortTimeString()})" : "Not Completed")}\n"
         );
     }
 }

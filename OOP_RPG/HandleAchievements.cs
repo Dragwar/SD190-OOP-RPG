@@ -54,6 +54,7 @@ namespace OOP_RPG
             return foundAchievement;
         }
 
+        // YOU CAN ONLY COMPLETE ONE ACHIEVENMENT AT A TIME
         private Achievement CheckForNumberOfKilledMonstersAchievements()
         {
             Achievement foundAchievement = null;
@@ -101,7 +102,7 @@ namespace OOP_RPG
                 foundAchievement.IsCompleted = true;
                 TotalPoints += foundAchievement.RewardPoints;
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"You Completed An Achievement ({foundAchievement.Title})");
+                Console.WriteLine($"\nYou Completed An Achievement ({foundAchievement.Title})");
                 Console.WriteLine($"(+ {foundAchievement.RewardPoints} AP)\n");
                 Console.ResetColor();
             }
