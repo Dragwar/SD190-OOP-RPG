@@ -22,6 +22,10 @@ namespace OOP_RPG
                 new Armor("Metal Armor", 12, 14),
                 new Armor("Golden Armor", 15, 18),
 
+                new Shield("Wooden Shield", 3, 10),
+                new Shield("Battle Shield", 4, 12),
+                new Shield("Dragon Shield", 7, 15),
+
                 new HealthPotion("Health Potion", 7, 5),
                 new HealthPotion("Strong Health Potion", 11, 10),
                 new HealthPotion("Great Health Potion", 16, 15),
@@ -68,7 +72,14 @@ namespace OOP_RPG
             }
             else if (item.ItemCategory == ItemCategoryEnum.Defence)
             {
-                Hero.ArmorBag.Add((Armor)item);
+                if (item is Armor)
+                {
+                    Hero.ArmorBag.Add((Armor)item);
+                }
+                else if (item is Shield)
+                {
+                    Hero.ShieldBag.Add((Shield)item);
+                }
             }
             else
             {
@@ -83,8 +94,13 @@ namespace OOP_RPG
                 .ToList();
 
         public List<Armor> GetCurrentArmor() => AllBuyableItems
-                .Where(item => (item.ItemCategory == ItemCategoryEnum.Defence) && (!item.Sold || item.CanBeSoldMultipleTimes))
+                .Where(item => (item.ItemCategory == ItemCategoryEnum.Defence && item is Armor) && (!item.Sold || item.CanBeSoldMultipleTimes))
                 .Cast<Armor>()
+                .ToList();
+
+        public List<Shield> GetCurrentShields() => AllBuyableItems
+                .Where(item => (item.ItemCategory == ItemCategoryEnum.Defence && item is Shield) && (!item.Sold || item.CanBeSoldMultipleTimes))
+                .Cast<Shield>()
                 .ToList();
 
 
@@ -94,7 +110,7 @@ namespace OOP_RPG
 
         /*
         ======================================================================================== 
-        DisplayAllItems ---> Prints all shop items and color codes items by their catagerooy 
+        DisplayAllItems ---> Prints all shop items and color codes items by their category 
         ======================================================================================== 
         */
         private void DisplayAllItems()
@@ -282,6 +298,10 @@ namespace OOP_RPG
 
                     if (deleteThisItem == null)
                     {
+                        deleteThisItem = Hero.ShieldBag.Where(item => item.ItemId == foundId).FirstOrDefault();
+                    }
+                    if (deleteThisItem == null)
+                    {
                         deleteThisItem = Hero.WeaponsBag.Where(item => item.ItemId == foundId).FirstOrDefault();
                     }
                     if (deleteThisItem == null)
@@ -300,7 +320,14 @@ namespace OOP_RPG
                     }
                     else if (deleteThisItem.ItemCategory == ItemCategoryEnum.Defence)
                     {
-                        Hero.ArmorBag.Remove((Armor)deleteThisItem);
+                        if (deleteThisItem is Armor)
+                        {
+                            Hero.ArmorBag.Remove((Armor)deleteThisItem);
+                        }
+                        else if (deleteThisItem is Shield)
+                        {
+                            Hero.ShieldBag.Remove((Shield)deleteThisItem);
+                        }
                     }
                     else
                     {

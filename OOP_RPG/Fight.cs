@@ -269,11 +269,27 @@ namespace OOP_RPG
             int damage;
             int compare = CurrentMonster.Strength - Hero.Defense;
 
-            if (Hero.EquippedArmor != null)
+            if (Hero.EquippedArmor != null && Hero.EquippedShield != null)
+            {
+                Armor armor = Hero.EquippedArmor;
+                Shield shield = Hero.EquippedShield;
+                int armorDefense = Random.Next(armor.MinDefense, armor.MaxDefense + 1);
+                int shieldDefense = Random.Next(shield.MinDefense, shield.MaxDefense + 1);
+                int finalDefense = (shieldDefense + armorDefense) + Hero.Defense;
+                compare = CurrentMonster.Strength - finalDefense;
+            }
+            else if (Hero.EquippedArmor != null)
             {
                 Armor armor = Hero.EquippedArmor;
                 int armorDefense = Random.Next(armor.MinDefense, armor.MaxDefense + 1);
                 int finalDefense = armorDefense + Hero.Defense;
+                compare = CurrentMonster.Strength - finalDefense;
+            }
+            else if (Hero.EquippedShield != null)
+            {
+                Shield shield = Hero.EquippedShield;
+                int shieldDefense = Random.Next(shield.MinDefense, shield.MaxDefense + 1);
+                int finalDefense = shieldDefense + Hero.Defense;
                 compare = CurrentMonster.Strength - finalDefense;
             }
 

@@ -15,15 +15,18 @@ namespace OOP_RPG
         public int GoldCoins { get; private set; }
         public Weapon EquippedWeapon { get; private set; }
         public Armor EquippedArmor { get; private set; }
+        public Shield EquippedShield { get; private set; }
         public List<Armor> ArmorBag { get; private set; }
         public List<Weapon> WeaponsBag { get; private set; }
         public List<HealthPotion> HealthPotionBag { get; private set; }
+        public List<Shield> ShieldBag { get; private set; }
         public HandleAchievements ManageAchievements { get; private set; }
 
         public Hero(HandleAchievements manageAchievements)
         {
             ArmorBag = new List<Armor>();
             WeaponsBag = new List<Weapon>();
+            ShieldBag = new List<Shield>();
             HealthPotionBag = new List<HealthPotion>();
             Strength = 10;
             Defense = 10;
@@ -44,8 +47,9 @@ namespace OOP_RPG
         public List<IBuyableItem> GetMasterInventoryList()
         {
             List<IBuyableItem> masterList = new List<IBuyableItem>();
-            masterList.AddRange(ArmorBag);
             masterList.AddRange(WeaponsBag);
+            masterList.AddRange(ArmorBag);
+            masterList.AddRange(ShieldBag);
             masterList.AddRange(HealthPotionBag);
             return masterList;
         }
@@ -63,9 +67,27 @@ namespace OOP_RPG
             Console.WriteLine($"\n***** {Name} *****");
             Console.ResetColor();
 
+            string addedDefense = "";
+            if (EquippedArmor != null && EquippedShield != null)
+            {
+                addedDefense = $"Defense: {Defense} (+ {EquippedArmor.Defense + EquippedShield.Defense})";
+            }
+            else if (EquippedArmor != null)
+            {
+                addedDefense = $"Defense: {Defense} (+ {EquippedArmor.Defense})";
+            }
+            else if (EquippedShield != null)
+            {
+                addedDefense = $"Defense: {Defense} (+ {EquippedShield.Defense})";
+            }
+            else
+            {
+                addedDefense = $"Defense: {Defense}";
+            }
+
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Strength: {Strength} {(EquippedWeapon != null ? $"(+ {EquippedWeapon.Strength})" : "")}");
-            Console.WriteLine($"Defense: {Defense} {(EquippedArmor != null ? $"(+ {EquippedArmor.Defense})" : "")}");
+            Console.WriteLine(addedDefense);
             Console.WriteLine($"Hit-points: {CurrentHP}/{OriginalHP}");
             Console.WriteLine($"Gold Coins: {GoldCoins}");
             Console.WriteLine($"Experience Points: {ExperiencePoints}");
@@ -94,6 +116,7 @@ namespace OOP_RPG
 
             ShowInventoryWeapons();
             ShowInventoryArmor();
+            ShowInventoryShield();
             ShowInventoryHealthPotions();
         }
 
@@ -179,6 +202,45 @@ namespace OOP_RPG
 
         /*
         ======================================================================================== 
+        ShowInventoryShield ---> Simple method that prints each shield item that the hero has
+        ======================================================================================== 
+        */
+        public void ShowInventoryShield()
+        {
+            Console.WriteLine("Shields: ");
+
+            if (ShieldBag.Any())
+            {
+                foreach (Shield shield in ShieldBag)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    string equippedMessage = "";
+
+                    if (shield.IsEquipped)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        equippedMessage = "CURRENTLY EQUIPPED\n";
+                    }
+
+                    Console.WriteLine($"============({shield.Name})============");
+                    Console.WriteLine($"Worth: {shield.SellingPrice} Gold Coins");
+                    Console.WriteLine($"Defense: (+ {shield.Defense})");
+                    Console.WriteLine(equippedMessage);
+                    Console.ResetColor();
+                }
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("You Have No Shields . . .");
+            }
+            Console.ResetColor();
+        }
+
+
+
+        /*
+        ======================================================================================== 
         ShowInventoryHealthPotions ---> Simple method that prints each potion that the hero has
         ======================================================================================== 
         */
@@ -219,7 +281,7 @@ namespace OOP_RPG
             string successMessage = "";
             string errorMessage = "";
 
-            while (userInput != "4")
+            while (userInput != "5")
             {
                 Console.Title = $"{Name}'s Inventory | Stats: [> Str: {Strength} | Def: {Defense} | HP: {CurrentHP}/{OriginalHP} <]";
                 ShowInventory();
@@ -236,8 +298,9 @@ namespace OOP_RPG
 
                 Console.WriteLine("1. equip a Weapon.");
                 Console.WriteLine("2. equip Armor.");
-                Console.WriteLine("3. use Health Potion.");
-                Console.WriteLine("4. exit\n");
+                Console.WriteLine("3. equip Shield.");
+                Console.WriteLine("4. use Health Potion.");
+                Console.WriteLine("5. exit\n");
 
                 userInput = Console.ReadLine().Trim();
 
@@ -352,6 +415,59 @@ namespace OOP_RPG
                     Console.Clear();
 
                     Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("******* Unequipped Shields *******");
+                    Console.ResetColor();
+
+                    List<Shield> shields = ShieldBag.ToList();
+
+                    if (shields.Any())
+                    {
+                        for (int i = 1; i < shields.Count + 1; i++)
+                        {
+                            if (shields[i - 1].IsEquipped)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"{i}. {shields[i - 1].Name} --> (+ {shields[i - 1].Defense}) Defense (Already Equipped)");
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{i}. {shields[i - 1].Name} --> (+ {shields[i - 1].Defense}) Defense");
+                            }
+                        }
+
+                        bool isNumber = int.TryParse(Console.ReadLine().Trim(), out int userIndex);
+
+                        // account for index offset of 1
+                        userIndex--;
+
+                        if (!isNumber || (userIndex < 0 || userIndex >= shields.Count))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Nothing was equipped because of one of the following errors:");
+                            Console.WriteLine("- did not input a number");
+                            Console.WriteLine("- inputted number was too small");
+                            Console.WriteLine("- inputted number was too big");
+                            Console.ResetColor();
+                            return;
+                        }
+                        else
+                        {
+                            EquipShield(userIndex);
+
+                            successMessage = $"You equipped your {EquippedShield.Name}!";
+                        }
+                    }
+                    else
+                    {
+                        errorMessage = "You have nothing to equip . . .";
+                    }
+                }
+                else if (userInput == "4")
+                {
+                    Console.Clear();
+
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine("******* Your Health Potions *******");
                     Console.ResetColor();
 
@@ -445,6 +561,30 @@ namespace OOP_RPG
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\nYou don't have any armor to equip!");
+                Console.ResetColor();
+            }
+        }
+
+
+
+        /*
+        ======================================================================================== 
+        EquipShield ---> Simple method to equip a shield via index
+        ======================================================================================== 
+        */
+        public void EquipShield(int shieldIndex)
+        {
+            if (ShieldBag.Any())
+            {
+                UnEquipItem(EquippedShield);
+
+                EquippedShield = ShieldBag[shieldIndex];
+                ShieldBag[shieldIndex].IsEquipped = true;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nYou don't have any shield to equip!");
                 Console.ResetColor();
             }
         }
