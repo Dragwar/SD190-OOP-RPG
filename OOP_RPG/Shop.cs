@@ -99,12 +99,12 @@ namespace OOP_RPG
             {
                 if (allItems[i - 1].ItemCategory == ItemCategoryEnum.Strength)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine(allItems[i - 1].ShowItemStats(i));
                 }
                 else if (allItems[i - 1].ItemCategory == ItemCategoryEnum.Defence)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    Console.ForegroundColor = allItems[i - 1] is Armor ? ConsoleColor.DarkBlue : ConsoleColor.Blue;
                     Console.WriteLine(allItems[i - 1].ShowItemStats(i));
                 }
                 else
@@ -223,7 +223,7 @@ namespace OOP_RPG
                 {
                     if (heroItems[i].ItemCategory == ItemCategoryEnum.Strength)
                     {
-                        Console.ForegroundColor = ConsoleColor.DarkCyan;
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         if (heroItems[i] is Weapon weapon)
                         {
                             if (weapon.IsEquipped)
