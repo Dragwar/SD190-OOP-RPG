@@ -72,17 +72,21 @@ namespace OOP_RPG
             {
                 addedDefense = $"Defense: {Defense} (+ {EquippedArmor.Defense + EquippedShield.Defense})";
             }
-            else if (EquippedArmor != null)
+            else if (EquippedArmor != null && EquippedShield == null)
             {
                 addedDefense = $"Defense: {Defense} (+ {EquippedArmor.Defense})";
             }
-            else if (EquippedShield != null)
+            else if (EquippedShield != null && EquippedArmor == null)
             {
                 addedDefense = $"Defense: {Defense} (+ {EquippedShield.Defense})";
             }
-            else
+            else if (EquippedShield == null && EquippedArmor == null)
             {
                 addedDefense = $"Defense: {Defense}";
+            }
+            else
+            {
+                throw new NotImplementedException("new defense item not implemented yet");
             }
 
             Console.ForegroundColor = ConsoleColor.Green;
@@ -607,7 +611,7 @@ namespace OOP_RPG
         {
             if (item is Armor)
             {
-                if (EquippedArmor != null)
+                if (EquippedArmor != null && item.ItemId == EquippedArmor.ItemId)
                 {
                     EquippedArmor.IsEquipped = false;
                     Console.ForegroundColor = ConsoleColor.Yellow;
@@ -618,7 +622,7 @@ namespace OOP_RPG
             }
             else if (item is Weapon)
             {
-                if (EquippedWeapon != null)
+                if (EquippedWeapon != null && item.ItemId == EquippedWeapon.ItemId)
                 {
                     EquippedWeapon.IsEquipped = false;
                     Console.ForegroundColor = ConsoleColor.Yellow;
@@ -629,7 +633,7 @@ namespace OOP_RPG
             }
             else if (item is Shield)
             {
-                if (EquippedShield != null)
+                if (EquippedShield != null && item.ItemId == EquippedShield.ItemId)
                 {
                     EquippedShield.IsEquipped = false;
                     Console.ForegroundColor = ConsoleColor.Yellow;
