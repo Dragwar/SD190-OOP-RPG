@@ -50,6 +50,7 @@
     <Compile Include="Fight.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="HandleAchievements.cs" />
+    <Compile Include="HandleCheatCodes.cs" />
     <Compile Include="HealthPotion.cs" />
     <Compile Include="Hero.cs" />
     <Compile Include="IBuyableItem.cs" />

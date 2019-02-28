@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace OOP_RPG
 {
@@ -43,6 +41,7 @@ namespace OOP_RPG
                 Hero.Name = Console.ReadLine().Trim();
             }
 
+            HandleCheatCodes.HeroNameCheat(Hero, Hero.Name);
 
             Console.WriteLine($"\nHello {Hero.Name}");
 
@@ -208,12 +207,8 @@ namespace OOP_RPG
         {
             Console.Clear();
 
-            bool isAnyStockLeft = MyShop.CheckIfThereIsAnyStock();
+            MyShop.OpenShopAndTakeUserOrder();
 
-            if (isAnyStockLeft)
-            {
-                MyShop.OpenShopAndTakeUserOrder();
-            }
 
             Console.Title = $"Main Menu";
         }// End of the Shop Method

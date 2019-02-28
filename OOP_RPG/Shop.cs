@@ -36,28 +36,6 @@ namespace OOP_RPG
 
         /*
         ======================================================================================== 
-        CheckIfThereIsAnyStock ---> Simple
-        ======================================================================================== 
-        */
-        public bool CheckIfThereIsAnyStock()
-        {
-            if (AllBuyableItems.All(item => item.Sold))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Sorry The Entire Shop Is Out Of Stock. . .");
-                Console.ResetColor();
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-
-
-        /*
-        ======================================================================================== 
         SellItem ---> Allows transfers the sold item to the hero
         ======================================================================================== 
         */
@@ -89,7 +67,7 @@ namespace OOP_RPG
 
 
         public List<Weapon> GetCurrentWeapons() => AllBuyableItems
-                .Where(item => (item.ItemCategory == ItemCategoryEnum.Strength) && (!item.Sold || item.CanBeSoldMultipleTimes))
+                .Where(item => (item.ItemCategory == ItemCategoryEnum.Strength && item is Weapon) && (!item.Sold || item.CanBeSoldMultipleTimes))
                 .Cast<Weapon>()
                 .ToList();
 
@@ -233,33 +211,11 @@ namespace OOP_RPG
         BuyHeroItem ---> Allows hero to sell his/her items to the shop
         ======================================================================================== 
         */
-        private void BuyHeroItem()// PREVENT USER FROM SELLING EQUIPPED ITEMS
+        private void BuyHeroItem()
         {
             Console.Clear();
 
-            List<IBuyableItem> heroItems;
-            if (Hero.EquippedArmor != null && Hero.EquippedWeapon != null)
-            {
-                heroItems = Hero.GetMasterInventoryList()
-                     .Where(item => (item.ItemId != Hero.EquippedWeapon.ItemId) && (item.ItemId != Hero.EquippedArmor.ItemId))
-                     .ToList();
-            }
-            else if (Hero.EquippedArmor != null)
-            {
-                heroItems = Hero.GetMasterInventoryList()
-                     .Where(item => (item.ItemId != Hero.EquippedArmor.ItemId))
-                     .ToList();
-            }
-            else if (Hero.EquippedWeapon != null)
-            {
-                heroItems = Hero.GetMasterInventoryList()
-                     .Where(item => (item.ItemId != Hero.EquippedWeapon.ItemId))
-                     .ToList();
-            }
-            else
-            {
-                heroItems = Hero.GetMasterInventoryList().ToList();
-            }
+            List<IBuyableItem> heroItems = Hero.GetMasterInventoryList().ToList();
 
             if (heroItems.Any())
             {
@@ -268,12 +224,51 @@ namespace OOP_RPG
                     if (heroItems[i].ItemCategory == ItemCategoryEnum.Strength)
                     {
                         Console.ForegroundColor = ConsoleColor.DarkCyan;
-                        Console.WriteLine($"{i + 1}. Sell your {heroItems[i].Name} for {heroItems[i].SellingPrice} Gold Coins");
+                        if (heroItems[i] is Weapon weapon)
+                        {
+                            if (weapon.IsEquipped)
+                            {
+                                Console.WriteLine($"{i + 1}. Sell your {weapon.Name} for {weapon.SellingPrice} Gold Coins (Currently Equipped)");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{i + 1}. Sell your {weapon.Name} for {weapon.SellingPrice} Gold Coins");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{i + 1}. Sell your {heroItems[i].Name} for {heroItems[i].SellingPrice} Gold Coins");
+                        }
                     }
                     else if (heroItems[i].ItemCategory == ItemCategoryEnum.Defence)
                     {
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine($"{i + 1}. Sell your {heroItems[i].Name} for {heroItems[i].SellingPrice} Gold Coins");
+                        Console.ForegroundColor = heroItems[i] is Armor ? ConsoleColor.DarkBlue : ConsoleColor.Blue;
+                        if (heroItems[i] is Armor armor)
+                        {
+                            if (armor.IsEquipped)
+                            {
+                                Console.WriteLine($"{i + 1}. Sell your {armor.Name} for {armor.SellingPrice} Gold Coins (Currently Equipped)");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{i + 1}. Sell your {armor.Name} for {armor.SellingPrice} Gold Coins");
+                            }
+                        }
+                        else if (heroItems[i] is Shield shield)
+                        {
+                            if (shield.IsEquipped)
+                            {
+                                Console.WriteLine($"{i + 1}. Sell your {shield.Name} for {shield.SellingPrice} Gold Coins (Currently Equipped)");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{i + 1}. Sell your {shield.Name} for {shield.SellingPrice} Gold Coins");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{i + 1}. Sell your {heroItems[i].Name} for {heroItems[i].SellingPrice} Gold Coins");
+                        }
                     }
                     else
                     {
@@ -313,6 +308,7 @@ namespace OOP_RPG
                         throw new Exception("No Item was found to sell");
                     }
 
+                    Hero.UnEquipItem(deleteThisItem);
                     Hero.AddGoldCoins(deleteThisItem.SellingPrice);
                     if (deleteThisItem.ItemCategory == ItemCategoryEnum.Strength)
                     {

@@ -100,6 +100,7 @@ namespace OOP_RPG
             {
                 // Display newly completed achievement
                 foundAchievement.IsCompleted = true;
+                foundAchievement.CompletedDate = $"{DateTime.Now.ToShortDateString()} ({DateTime.Now.ToShortTimeString()})";
                 TotalPoints += foundAchievement.RewardPoints;
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine($"\nYou Completed An Achievement ({foundAchievement.Title})");

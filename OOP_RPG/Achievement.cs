@@ -12,6 +12,7 @@ namespace OOP_RPG
         public AchievementEnum EnumTitle { get; }
         public int RewardPoints { get; }
         public bool IsCompleted { get; set; }
+        public string CompletedDate { get; set; }
 
         public Achievement(string title, AchievementEnum enumTitle, int rewardPoints)
         {
@@ -19,13 +20,14 @@ namespace OOP_RPG
             EnumTitle = enumTitle;
             RewardPoints = rewardPoints;
             IsCompleted = false;
+            CompletedDate = null;
         }
 
         public override string ToString() =>
         (
             $"\n=========({Title})=========\n" +
             $"Reward: {RewardPoints} {(RewardPoints > 1 ? "points" : "point")}\n" +
-            $"Status: {(IsCompleted ? $"Already Completed On {DateTime.Now.ToLongDateString()} ({DateTime.Now.ToShortTimeString()})" : "Not Completed")}\n"
+            $"Status: {(IsCompleted ? $"Completed On {CompletedDate}" : "Not Completed")}\n"
         );
     }
 }
