@@ -41,7 +41,7 @@ namespace OOP_RPG
                 Hero.Name = Console.ReadLine().Trim();
             }
 
-            HandleCheatCodes.HeroNameCheat(Hero, Hero.Name);
+            HandleCheatCodes.HeroNameCheat(Hero, MyShop, Hero.Name);
 
             Console.WriteLine($"\nHello {Hero.Name}");
 
