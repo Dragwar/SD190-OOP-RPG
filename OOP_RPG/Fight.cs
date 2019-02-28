@@ -112,24 +112,20 @@ namespace OOP_RPG
         private void Flee()
         {
             int randNum = Random.Next(0, 100);
+            int chance = CurrentMonster.GetRunAwayChance(CurrentMonster);
             bool hasFled = false;
 
-            switch (CurrentMonster.Difficulty)
+            if (randNum <= chance)
             {
-                case Difficulty.Easy:
-                    hasFled = randNum <= 50 && randNum >= 0 ? true : false;
-                    break;
-
-                case Difficulty.Medium:
-                    hasFled = randNum <= 25 && randNum >= 0 ? true : false;
-                    break;
-
-                case Difficulty.Hard:
-                    hasFled = randNum <= 5 && randNum >= 0 ? true : false;
-                    break;
-
-                default:
-                    throw new Exception("This shouldn't happen (flee error)");
+                hasFled = true;
+            }
+            else if (randNum > chance)
+            {
+                hasFled = false;
+            }
+            else
+            {
+                throw new Exception("Oof");
             }
 
             if (hasFled)

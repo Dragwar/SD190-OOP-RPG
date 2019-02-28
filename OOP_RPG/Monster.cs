@@ -142,5 +142,33 @@ namespace OOP_RPG
         }
 
 
+
+        /*
+        ======================================================================================== 
+        ShowTodaysMonsters ---> Displays today's monsters (color coded, darker == harder)
+        ======================================================================================== 
+        */
+        public int GetRunAwayChance(Monster currentMonster)
+        {
+            int chance;
+            switch (currentMonster.Difficulty)
+            {
+                case Difficulty.Easy:
+                    chance = 50;
+                    break;
+
+                case Difficulty.Medium:
+                    chance = 25;
+                    break;
+
+                case Difficulty.Hard:
+                    chance = 5;
+                    break;
+
+                default:
+                    throw new Exception("This shouldn't happen (flee error)");
+            }
+            return chance;
+        }
     }
 }
