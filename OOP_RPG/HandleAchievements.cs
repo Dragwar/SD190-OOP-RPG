@@ -6,7 +6,7 @@ namespace OOP_RPG
 {
     public class HandleAchievements
     {
-        public static int TotalPoints { get; private set; }
+        public int TotalPoints { get; private set; }
         public List<Achievement> AllAchievements { get; }
         public List<Monster> AllKilledMonsters { get; }
 
@@ -25,6 +25,11 @@ namespace OOP_RPG
         public List<Achievement> GetCompletedAchievements() => AllAchievements.Where(ach => ach.IsCompleted).ToList();
         public List<Achievement> GetUnCompletedAchievements() => AllAchievements.Where(ach => !ach.IsCompleted).ToList();
 
+        private List<Monster> GetUniqueDeadMonsters() => AllKilledMonsters
+                .GroupBy(x => x.Name)
+                .Select(y => y.FirstOrDefault())
+                .ToList();
+
         public void AddDeadMonster(Monster deadMonster)
         {
             if (deadMonster.CurrentHP > 0)
@@ -32,29 +37,42 @@ namespace OOP_RPG
                 throw new Exception("The monster is still alive (Achievement error)");
             }
             AllKilledMonsters.Add(deadMonster);
-            CheckForAllAchievements();
+
+
+            // This will check and complete multiple Achievements
+            // example:
+            // 1st Achievement = "Kill 1 monster"
+            // 2nd Achievement = "Kill 1 unique monster"
+            // This for loop will loop over uncompleted Achievements then will complete both
+            // *Hero Kills 1 Monster*
+            // 1st Achievement and the 2nd Achievement will get completed
+            int numberOfUnCompletedAchievements = GetUnCompletedAchievements().Count;
+            for (int i = 0; i < numberOfUnCompletedAchievements; i++)
+            {
+                CheckForAllAchievements();
+            }
         }
 
         private Achievement CheckForNumberOfKilledUniqueMonstersAchievements()
         {
             Achievement foundAchievement = null;
 
-            List<Monster> uniqueMonsters = AllKilledMonsters
-                .GroupBy(x => x.Name)
-                .Select(y => y.FirstOrDefault())
-                .ToList();
+            List<Monster> uniqueMonsters = GetUniqueDeadMonsters();
 
-            if (uniqueMonsters.Count >= 5)
+            switch (uniqueMonsters.Count)
             {
-                foundAchievement = AllAchievements
-                    .Where(ach => ach.EnumTitle == AchievementEnum.KillFiveDifferentMonsters)
-                    .FirstOrDefault();
-            }
+                case 5:
+                    foundAchievement = GetUnCompletedAchievements()
+                       .Where(ach => ach.EnumTitle == AchievementEnum.KillFiveDifferentMonsters)
+                       .FirstOrDefault();
+                    break;
 
+                default:
+                    break;
+            }
             return foundAchievement;
         }
 
-        // YOU CAN ONLY COMPLETE ONE ACHIEVENMENT AT A TIME
         private Achievement CheckForNumberOfKilledMonstersAchievements()
         {
             Achievement foundAchievement = null;
@@ -111,7 +129,7 @@ namespace OOP_RPG
 
         public void PrintAllAchievements()
         {
-            foreach(Achievement achievement in AllAchievements)
+            foreach (Achievement achievement in AllAchievements)
             {
                 if (achievement.IsCompleted)
                 {

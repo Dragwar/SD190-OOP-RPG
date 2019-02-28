@@ -21,6 +21,7 @@ namespace OOP_RPG
         public List<HealthPotion> HealthPotionBag { get; private set; }
         public List<Shield> ShieldBag { get; private set; }
         public HandleAchievements ManageAchievements { get; private set; }
+        public int AchievementPoints { get => ManageAchievements.TotalPoints; }
 
         public Hero(HandleAchievements manageAchievements)
         {
@@ -95,7 +96,7 @@ namespace OOP_RPG
             Console.WriteLine($"Hit-points: {CurrentHP}/{OriginalHP}");
             Console.WriteLine($"Gold Coins: {GoldCoins}");
             Console.WriteLine($"Experience Points: {ExperiencePoints}");
-            Console.WriteLine($"Achievement Points: {HandleAchievements.TotalPoints}");
+            Console.WriteLine($"Achievement Points: {AchievementPoints}");
             Console.ResetColor();
 
             if (showAchievements)
