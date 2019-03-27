@@ -1,10 +1,11 @@
+using OOP_RPG.SaveSystemRepo;
 using System;
 
 namespace OOP_RPG
 {
     public class Game
     {
-        public Hero Hero { get; }
+        public Hero Hero { get; private set; }
         private Shop MyShop { get; }
         public HandleAchievements ManageAchievements { get; }
 
@@ -25,6 +26,21 @@ namespace OOP_RPG
         public void Start()
         {
             Console.Title = $"Welcome!!!";
+            FileSaveRepo fileSaveRepo = new FileSaveRepo(null);
+            if (fileSaveRepo.DoesSaveFileExist())
+            {
+            LoadQuestion:
+                Console.WriteLine("Save Detected");
+                Console.WriteLine("Do you want to load from it or start from scratch?");
+                Console.WriteLine("'y' to load or 'n' to start from scratch");
+                ConsoleKey key = Console.ReadKey(true).Key;
+                switch (key)
+                {
+                    case ConsoleKey.Y: LoadGame(); goto MainMenu;
+                    case ConsoleKey.N: break;
+                    default: goto LoadQuestion;
+                }
+            }
 
             Console.WriteLine("Welcome hero!");
             Console.WriteLine("Please enter your name:");
@@ -43,6 +59,7 @@ namespace OOP_RPG
 
             HandleCheatCodes.HeroNameCheat(Hero, MyShop, Hero.Name);
 
+        MainMenu:
             Console.WriteLine($"\nHello {Hero.Name}");
 
             Main();
@@ -58,11 +75,11 @@ namespace OOP_RPG
         private void Main()
         {
             Console.Title = $"Main Menu";
-
             string input = "0";
 
             while (input != "6")
             {
+                SaveGame();
                 Console.WriteLine("\n==============================================");
                 Console.WriteLine("\t\tMain Menu");
                 Console.WriteLine("==============================================\n");
@@ -194,8 +211,8 @@ namespace OOP_RPG
                 Hero.SpendExperiencePoints(userInput);
 
                 Console.Title = $"Main Menu";
-            }// End of the SpendExperiencePoints Method
-        }
+            }
+        }// End of the SpendExperiencePoints Method
 
 
         /*
@@ -214,5 +231,43 @@ namespace OOP_RPG
         }// End of the Shop Method
 
 
+        /*
+        ======================================================================================== 
+        SaveGame ---> Use this method to save the game to a file
+        ======================================================================================== 
+        */
+        public void SaveGame()
+        {
+            Console.WriteLine("Saving . . .");
+            FileSaveRepo fileSave = new FileSaveRepo(Hero);
+            fileSave.SaveStateToFile();
+            Console.WriteLine("Saved!");
+        }// End of the SaveGame Method
+
+
+        /*
+        ======================================================================================== 
+        LoadGame ---> Use this method to load the hero from the save file
+        ======================================================================================== 
+        */
+        public void LoadGame()
+        {
+            Console.WriteLine("Loading . . .");
+            FileSaveRepo fileSave = new FileSaveRepo(Hero);
+            bool successfulLoad = fileSave.LoadStateFromFile();
+
+            if (successfulLoad)
+            {
+                Hero = fileSave.HeroState;
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("Load Successful!");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Load Unsuccessful!");
+            }
+            Console.ResetColor();
+        }// End of the SaveGame Method
     }
 }

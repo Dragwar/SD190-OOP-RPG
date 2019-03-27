@@ -7,7 +7,7 @@ namespace OOP_RPG
     public class HandleAchievements
     {
         public int TotalPoints { get; private set; }
-        public List<Achievement> AllAchievements { get; }
+        public List<Achievement> AllAchievements { get; set; }
         public List<Monster> AllKilledMonsters { get; }
 
         public HandleAchievements()
