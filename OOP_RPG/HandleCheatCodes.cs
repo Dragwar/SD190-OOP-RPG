@@ -2,88 +2,76 @@
 {
     public static class HandleCheatCodes
     {
-        private static void CreateAndAddCheatItem(Hero hero, Shop shop, IBuyableItem cheatItem)
-        {
-            if (cheatItem is Weapon)
-            {
-                hero.WeaponsBag.Add((Weapon)cheatItem);
-                shop.AllBuyableItems.Add(cheatItem);
-                hero.EquipWeapon(hero.WeaponsBag.IndexOf((Weapon)cheatItem));
-            }
-            else if (cheatItem is Armor)
-            {
-                hero.ArmorBag.Add((Armor)cheatItem);
-                shop.AllBuyableItems.Add(cheatItem);
-                hero.EquipArmor(hero.ArmorBag.IndexOf((Armor)cheatItem));
-            }
-            else if (cheatItem is Shield)
-            {
-                hero.ShieldBag.Add((Shield)cheatItem);
-                shop.AllBuyableItems.Add(cheatItem);
-                hero.EquipShield(hero.ShieldBag.IndexOf((Shield)cheatItem));
-            }
-            else
-            {
-                throw new System.NotImplementedException("item type N/A");
-            }
-        }
-
         public static void HeroNameCheat(Hero hero, Shop shop, string heroName)
         {
             switch (heroName)
             {
-                case "everett":
                 case "Everett":
                     hero.AddGoldCoins(1000);
                     hero.AddExperiencePoints(1000);
                     break;
 
-                case "gui":
                 case "Gui":
                     Weapon steelSword = new Weapon("Steel Straight Sword", 20, 25) { Sold = true };
-                    CreateAndAddCheatItem(hero, shop, steelSword);
+                    hero.WeaponsBag.Add(steelSword);
+                    shop.AllBuyableItems.Add(steelSword);
+                    hero.EquipWeapon(hero.WeaponsBag.IndexOf(steelSword));
 
                     Armor steelArmor = new Armor("Hardened Steel Armor", 20, 45) { Sold = true };
-                    CreateAndAddCheatItem(hero, shop, steelArmor);
+                    hero.ArmorBag.Add(steelArmor);
+                    shop.AllBuyableItems.Add(steelArmor);
+                    hero.EquipArmor(hero.ArmorBag.IndexOf(steelArmor));
 
                     Shield steelShield = new Shield("Tower Steel Shield", 15, 60) { Sold = true };
-                    CreateAndAddCheatItem(hero, shop, steelShield);
+                    hero.ShieldBag.Add(steelShield);
+                    shop.AllBuyableItems.Add(steelShield);
+                    hero.EquipShield(hero.ShieldBag.IndexOf(steelShield));
                     break;
 
-                case "john":
                 case "John":
                     Weapon rapier = new Weapon("Rapier", 40, 50) { Sold = true };
-                    CreateAndAddCheatItem(hero, shop, rapier);
+                    hero.WeaponsBag.Add(rapier);
+                    shop.AllBuyableItems.Add(rapier);
+                    hero.EquipWeapon(hero.WeaponsBag.IndexOf(rapier));
 
                     Armor lightSteelArmor = new Armor("Light Steel Armor", 12, 20) { Sold = true };
-                    CreateAndAddCheatItem(hero, shop, lightSteelArmor);
+                    hero.ArmorBag.Add(lightSteelArmor);
+                    shop.AllBuyableItems.Add(lightSteelArmor);
+                    hero.EquipArmor(hero.ArmorBag.IndexOf(lightSteelArmor));
 
                     Shield parryShield = new Shield("Parrying Shield", 7, 12) { Sold = true };
-                    CreateAndAddCheatItem(hero, shop, parryShield);
+                    hero.ShieldBag.Add(parryShield);
+                    shop.AllBuyableItems.Add(parryShield);
+                    hero.EquipShield(hero.ShieldBag.IndexOf(parryShield));
                     break;
 
-                case "darius":
                 case "Darius":
                     Weapon greatWarAxe = new Weapon("Great War Axe", 120, 135) { Sold = true };
-                    CreateAndAddCheatItem(hero, shop, greatWarAxe);
+                    hero.WeaponsBag.Add(greatWarAxe);
+                    shop.AllBuyableItems.Add(greatWarAxe);
+                    hero.EquipWeapon(hero.WeaponsBag.IndexOf(greatWarAxe));
 
                     Armor largeIronArmor = new Armor("Heavy Iron Armor", 35, 40) { Sold = true };
-                    CreateAndAddCheatItem(hero, shop, largeIronArmor);
+                    hero.ArmorBag.Add(largeIronArmor);
+                    shop.AllBuyableItems.Add(largeIronArmor);
+                    hero.EquipArmor(hero.ArmorBag.IndexOf(largeIronArmor));
                     break;
 
-                case "jk":
                 case "JK":
                     hero.AddGoldCoins(1000);
                     hero.AddExperiencePoints(1000);
                     break;
 
-                case "guts":
                 case "Guts":
                     Weapon dragonSlayer = new Weapon("DragonSlayer", 120, 200) { Sold = true };
-                    CreateAndAddCheatItem(hero, shop, dragonSlayer);
+                    hero.WeaponsBag.Add(dragonSlayer);
+                    shop.AllBuyableItems.Add(dragonSlayer);
+                    hero.EquipWeapon(hero.WeaponsBag.IndexOf(dragonSlayer));
 
                     Armor berserkerArmor = new Armor("Berserker Armor", 80, 150) { Sold = true };
-                    CreateAndAddCheatItem(hero, shop, berserkerArmor);
+                    hero.ArmorBag.Add(berserkerArmor);
+                    shop.AllBuyableItems.Add(berserkerArmor);
+                    hero.EquipArmor(hero.ArmorBag.IndexOf(berserkerArmor));
                     break;
             }
         }
