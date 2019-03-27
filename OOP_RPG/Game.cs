@@ -212,7 +212,5 @@ namespace OOP_RPG
 
             Console.Title = $"Main Menu";
         }// End of the Shop Method
-
-
     }
 }
