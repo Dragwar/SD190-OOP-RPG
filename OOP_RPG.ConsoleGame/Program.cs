@@ -1,12 +1,18 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace OOP_RPG.ConsoleGame
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            using (ServiceProvider provider = BuildServiceProvider())
+            {
+            }
         }
+
+        public static ServiceProvider BuildServiceProvider() =>
+            new ServiceCollection()
+            .BuildServiceProvider();
     }
 }
