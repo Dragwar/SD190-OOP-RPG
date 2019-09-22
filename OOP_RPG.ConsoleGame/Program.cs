@@ -8,6 +8,8 @@ namespace OOP_RPG.ConsoleGame
         {
             using (ServiceProvider provider = BuildServiceProvider())
             {
+                var newGame = new Game();
+                newGame.Start();
             }
         }
 
