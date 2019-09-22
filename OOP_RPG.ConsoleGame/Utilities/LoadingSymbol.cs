@@ -3,18 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace OOP_RPG.ConsoleGame
+namespace OOP_RPG.ConsoleGame.Utilities
 {
     public class LoadingSymbol
     {
+        private List<char> _spinnerCharacters;
+
         public string Name { get; set; }
         public string LoadingMessage { get; set; }
         public string FinishedLoadingMessage { get; set; }
-        public List<char> SpinnerCharacters { get; set; }
-        public int AnimationDelay { get; set; }
-        public int Counter { get; set; }
 
-        // Constructor
+        public List<char> SpinnerCharacters
+        {
+            get => _spinnerCharacters;
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+                else if (value.Count != 4)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value), "The count of the spinner characters must be 4");
+                }
+                else
+                {
+                    _spinnerCharacters = value;
+                }
+            }
+        }
+
+        public int AnimationDelay { get; set; }
+        public int Counter { get; private set; }
+
         public LoadingSymbol(string name, string loadingMessage, string finishedLoadingMessage, int animationDelay, List<char> spinnerCharacters)
         {
             Name = name;
@@ -25,7 +46,6 @@ namespace OOP_RPG.ConsoleGame
             Counter = 0;
         }
 
-        // Constructor
         public LoadingSymbol(List<char> spinnerCharacters, int animationDelay)
         {
             Name = "Loading Symbol";
@@ -36,7 +56,6 @@ namespace OOP_RPG.ConsoleGame
             Counter = 0;
         }
 
-        // Constructor
         public LoadingSymbol(int animationDelay)
         {
             Name = "Loading Symbol";
@@ -47,7 +66,6 @@ namespace OOP_RPG.ConsoleGame
             Counter = 0;
         }
 
-        // Constructor
         public LoadingSymbol(string loadingMessage, string finishedLoadingMessage)
         {
             Name = "Loading Symbol";
@@ -58,7 +76,6 @@ namespace OOP_RPG.ConsoleGame
             Counter = 0;
         }
 
-        // Constructor
         public LoadingSymbol()
         {
             Name = "Loading Symbol";
@@ -82,6 +99,12 @@ namespace OOP_RPG.ConsoleGame
 
             while (endTime > DateTimeOffset.UtcNow)
             {
+                // Disregard user input during animation
+                if (Console.KeyAvailable)
+                {
+                    Console.ReadKey(true);
+                }
+
                 Turn();
             }
 
@@ -93,35 +116,26 @@ namespace OOP_RPG.ConsoleGame
         // Gets called within a loop to repeat to the user defined time
         public void Turn()
         {
-            if (SpinnerCharacters.Any())
-            {
-                Console.ForegroundColor = (ConsoleColor)new Random().Next(1, 15);
-                Counter++;
-                switch (Counter % SpinnerCharacters.Count)
-                {
-                    case 0:
-                        Console.Write(SpinnerCharacters[0]);
-                        break;
-                    case 1:
-                        Console.Write(SpinnerCharacters[1]);
-                        break;
-                    case 2:
-                        Console.Write(SpinnerCharacters[2]);
-                        break;
-                    case 3:
-                        Console.Write(SpinnerCharacters[3]);
-                        break;
-                }
-
-                // Set cursor position back to the original position to print the char in the same spot
-                Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
-                Thread.Sleep(AnimationDelay);
-                Console.ResetColor();
-            }
-            else
+            if (!SpinnerCharacters.Any())
             {
                 throw new Exception("You need to have at least 1 char in the spinner list");
             }
+
+
+            Console.ForegroundColor = (ConsoleColor)RNG.Next(1, 15);
+            Counter++;
+            switch (Counter % SpinnerCharacters.Count)
+            {
+                case 0: Console.Write(SpinnerCharacters[0]); break;
+                case 1: Console.Write(SpinnerCharacters[1]); break;
+                case 2: Console.Write(SpinnerCharacters[2]); break;
+                case 3: Console.Write(SpinnerCharacters[3]); break;
+            }
+
+            // Set cursor position back to the original position to print the char in the same spot
+            Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
+            Thread.Sleep(AnimationDelay);
+            Console.ResetColor();
         }
     }
 }
