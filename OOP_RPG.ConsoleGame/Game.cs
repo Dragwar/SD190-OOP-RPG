@@ -102,7 +102,7 @@ namespace OOP_RPG.ConsoleGame
                     Monster.ShowTodaysMonsters();
 
                     var loadingSymbol = new LoadingSymbol("Searching For Monsters", "You Encountered:");
-                    loadingSymbol.Excute(new Random().Next(2, 7));
+                    loadingSymbol.Excute(RNG.Next(2, 7));
 
                     FightMonster();
                 }

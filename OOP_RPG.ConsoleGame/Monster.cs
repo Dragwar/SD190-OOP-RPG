@@ -1,3 +1,4 @@
+using OOP_RPG.ConsoleGame.Utilities;
 using OOP_RPG.Models.Enumerations;
 using System;
 
@@ -53,25 +54,18 @@ namespace OOP_RPG.ConsoleGame
         */
         public int GetMonstersEXPWorth()
         {
-            int monstersEXPWorth;
-            var rand = new Random();
-
             switch (Difficulty)
             {
                 case Difficulty.Hard:
-                    monstersEXPWorth = rand.Next(8, 19);
-                    break;
+                    return RNG.Next(8, 19);
 
                 case Difficulty.Medium:
-                    monstersEXPWorth = rand.Next(4, 13);
-                    break;
+                    return RNG.Next(4, 13);
 
+                case Difficulty.Easy:
                 default:
-                    monstersEXPWorth = rand.Next(1, 5);
-                    break;
+                    return RNG.Next(1, 5);
             }
-
-            return monstersEXPWorth;
         }
 
 
@@ -83,25 +77,18 @@ namespace OOP_RPG.ConsoleGame
         */
         public int GetMonstersGoldCoinWorth()
         {
-            int monstersGoldCoinWorth;
-            var rand = new Random();
-
             switch (Difficulty)
             {
                 case Difficulty.Hard:
-                    monstersGoldCoinWorth = rand.Next(22, 32);
-                    break;
+                    return RNG.Next(22, 32);
 
                 case Difficulty.Medium:
-                    monstersGoldCoinWorth = rand.Next(12, 21);
-                    break;
+                    return RNG.Next(12, 21);
 
+                case Difficulty.Easy:
                 default:
-                    monstersGoldCoinWorth = rand.Next(1, 11);
-                    break;
+                    return RNG.Next(1, 11);
             }
-
-            return monstersGoldCoinWorth;
         }
 
 

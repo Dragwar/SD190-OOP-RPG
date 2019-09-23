@@ -1,3 +1,4 @@
+using OOP_RPG.ConsoleGame.Utilities;
 using OOP_RPG.Models.Enumerations;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,6 @@ namespace OOP_RPG.ConsoleGame
 {
     public class Fight
     {
-        private Random Random { get; }
         private HandleAchievements ManageAchievements { get; }
         private List<Monster> Monsters { get; }
         private Hero Hero { get; }
@@ -26,7 +26,6 @@ namespace OOP_RPG.ConsoleGame
         public Fight(HandleAchievements manageAchievements, Hero hero)
         {
             Hero = hero;
-            Random = new Random();
             ManageAchievements = manageAchievements;
 
             // Not Implemented yet
@@ -35,7 +34,7 @@ namespace OOP_RPG.ConsoleGame
 
             Monsters = new List<Monster>(GetTodaysMonsters());
 
-            CurrentMonster = Monsters[Random.Next(0, Monsters.Count)];
+            CurrentMonster = Monsters[RNG.Next(0, Monsters.Count)];
 
             MonstersEXPWorth = CurrentMonster.GetMonstersEXPWorth();
             MonstersGoldCoinWorth = CurrentMonster.GetMonstersGoldCoinWorth();
@@ -112,7 +111,7 @@ namespace OOP_RPG.ConsoleGame
         */
         private void Flee()
         {
-            var randNum = Random.Next(0, 100);
+            var randNum = RNG.Next(0, 100);
             var chance = CurrentMonster.GetRunAwayChance(CurrentMonster);
             var hasFled = false;
 
@@ -223,7 +222,7 @@ namespace OOP_RPG.ConsoleGame
             if (Hero.EquippedWeapon != null)
             {
                 Weapon weapon = Hero.EquippedWeapon;
-                var weaponDamage = Random.Next(weapon.MinDamage, weapon.MaxDamage + 1);
+                var weaponDamage = RNG.Next(weapon.MinDamage, weapon.MaxDamage + 1);
                 var finalDamage = Hero.Strength + weaponDamage;
                 compare = finalDamage - CurrentMonster.Defense;
             }
@@ -270,22 +269,22 @@ namespace OOP_RPG.ConsoleGame
             {
                 Armor armor = Hero.EquippedArmor;
                 Shield shield = Hero.EquippedShield;
-                var armorDefense = Random.Next(armor.MinDefense, armor.MaxDefense + 1);
-                var shieldDefense = Random.Next(shield.MinDefense, shield.MaxDefense + 1);
+                var armorDefense = RNG.Next(armor.MinDefense, armor.MaxDefense + 1);
+                var shieldDefense = RNG.Next(shield.MinDefense, shield.MaxDefense + 1);
                 var finalDefense = shieldDefense + armorDefense + Hero.Defense;
                 compare = CurrentMonster.Strength - finalDefense;
             }
             else if (Hero.EquippedArmor != null)
             {
                 Armor armor = Hero.EquippedArmor;
-                var armorDefense = Random.Next(armor.MinDefense, armor.MaxDefense + 1);
+                var armorDefense = RNG.Next(armor.MinDefense, armor.MaxDefense + 1);
                 var finalDefense = armorDefense + Hero.Defense;
                 compare = CurrentMonster.Strength - finalDefense;
             }
             else if (Hero.EquippedShield != null)
             {
                 Shield shield = Hero.EquippedShield;
-                var shieldDefense = Random.Next(shield.MinDefense, shield.MaxDefense + 1);
+                var shieldDefense = RNG.Next(shield.MinDefense, shield.MaxDefense + 1);
                 var finalDefense = shieldDefense + Hero.Defense;
                 compare = CurrentMonster.Strength - finalDefense;
             }
