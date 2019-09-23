@@ -12,7 +12,7 @@ namespace OOP_RPG.Models.Interfaces
         int SellingPrice { get; }
         bool Sold { get; set; }
         bool CanBeSoldMultipleTimes { get; set; }
-        string ShowItemStats();
-        string ShowItemStats(int itemIndex);
+        string ItemStatsAsString();
+        string ItemStatsAsString(int itemIndex);
     }
 }

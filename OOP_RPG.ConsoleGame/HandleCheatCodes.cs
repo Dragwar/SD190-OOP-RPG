@@ -1,4 +1,5 @@
 ﻿using OOP_RPG.Models.Interfaces;
+using OOP_RPG.Models.Items;
 
 namespace OOP_RPG.ConsoleGame
 {

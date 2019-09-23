@@ -1,4 +1,5 @@
 using OOP_RPG.Models.Interfaces;
+using OOP_RPG.Models.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;

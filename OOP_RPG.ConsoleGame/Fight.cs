@@ -1,5 +1,6 @@
 using OOP_RPG.ConsoleGame.Utilities;
 using OOP_RPG.Models.Enumerations;
+using OOP_RPG.Models.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;

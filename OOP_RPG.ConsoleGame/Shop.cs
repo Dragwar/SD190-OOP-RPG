@@ -1,5 +1,6 @@
 ﻿using OOP_RPG.Models.Enumerations;
 using OOP_RPG.Models.Interfaces;
+using OOP_RPG.Models.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -102,17 +103,17 @@ namespace OOP_RPG.ConsoleGame
                 if (allItems[i - 1].ItemCategory == ItemCategoryEnum.Strength)
                 {
                     Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine(allItems[i - 1].ShowItemStats(i));
+                    Console.WriteLine(allItems[i - 1].ItemStatsAsString(i));
                 }
                 else if (allItems[i - 1].ItemCategory == ItemCategoryEnum.Defence)
                 {
                     Console.ForegroundColor = allItems[i - 1] is Armor ? ConsoleColor.DarkBlue : ConsoleColor.Blue;
-                    Console.WriteLine(allItems[i - 1].ShowItemStats(i));
+                    Console.WriteLine(allItems[i - 1].ItemStatsAsString(i));
                 }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.WriteLine(allItems[i - 1].ShowItemStats(i));
+                    Console.WriteLine(allItems[i - 1].ItemStatsAsString(i));
                 }
                 Console.ResetColor();
             }

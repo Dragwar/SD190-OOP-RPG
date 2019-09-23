@@ -2,7 +2,7 @@ using OOP_RPG.Models.Enumerations;
 using OOP_RPG.Models.Interfaces;
 using System;
 
-namespace OOP_RPG.ConsoleGame
+namespace OOP_RPG.Models.Items
 {
     public class Weapon : IBuyableItem
     {
@@ -31,14 +31,14 @@ namespace OOP_RPG.ConsoleGame
             IsEquipped = false;
         }
 
-        public string ShowItemStats(int itemIndex) =>
+        public string ItemStatsAsString(int itemIndex) =>
             $"{itemIndex}. (Weapon)\n" +
             $"   - Name: {Name}\n" +
             $"   - Cost: {Price} Gold {(Price > 1 ? $"Coins" : $"Coin")}\n" +
             $"   - SellingPrice: {SellingPrice} Gold {(SellingPrice > 1 ? $"Coins" : $"Coin")}\n" +
             $"   - Strength: (+ {Strength})\n";
 
-        public string ShowItemStats() =>
+        public string ItemStatsAsString() =>
             $"(Weapon)\n" +
             $"   - Name: {Name}\n" +
             $"   - Cost: {Price} Gold {(Price > 1 ? $"Coins" : $"Coin")}\n" +
