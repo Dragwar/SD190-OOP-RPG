@@ -1,6 +1,6 @@
 using OOP_RPG.ConsoleGame.Utilities;
 using OOP_RPG.Models.Enumerations;
-using OOP_RPG.Models.Items;
+using OOP_RPG.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -97,7 +97,7 @@ namespace OOP_RPG.ConsoleGame
                 }
                 else if (input == "4")
                 {
-                    Hero.ShowStats(false);
+                    Hero.ShowStats(/*false*/);
                     CurrentMonster.ShowStats();
                 }
             }
@@ -114,8 +114,8 @@ namespace OOP_RPG.ConsoleGame
         {
             var randNum = RNG.Next(0, 100);
             var chance = CurrentMonster.GetRunAwayChance(CurrentMonster);
-            var hasFled = false;
 
+            bool hasFled;
             if (randNum <= chance)
             {
                 hasFled = true;
@@ -158,11 +158,11 @@ namespace OOP_RPG.ConsoleGame
             Console.WriteLine("******* Your Health Potions *******");
             Console.ResetColor();
 
-            var healthPotions = Hero.HealthPotionBag.ToList();
+            var healthPotions = Hero.Bag.OfType<IHealthPotion>().ToArray();
 
             if (healthPotions.Any())
             {
-                for (var i = 1; i < healthPotions.Count + 1; i++)
+                for (var i = 1; i < healthPotions.Length + 1; i++)
                 {
                     Console.WriteLine($"{i}. {healthPotions[i - 1].Name} --> (+ {healthPotions[i - 1].HealAmount} HP)");
                 }
@@ -172,7 +172,7 @@ namespace OOP_RPG.ConsoleGame
                 // account for index offset of 1
                 userIndex--;
 
-                if (!isNumber || userIndex < 0 || userIndex >= healthPotions.Count)
+                if (!isNumber || userIndex < 0 || userIndex >= healthPotions.Length)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Nothing was used because of one of the following errors:");
@@ -180,7 +180,6 @@ namespace OOP_RPG.ConsoleGame
                     Console.WriteLine("- inputted number was too small");
                     Console.WriteLine("- inputted number was too big");
                     Console.ResetColor();
-                    return;
                 }
                 else
                 {
@@ -220,10 +219,9 @@ namespace OOP_RPG.ConsoleGame
             int damage;
             var compare = Hero.Strength - CurrentMonster.Defense;
 
-            if (Hero.EquippedWeapon != null)
+            if (Hero.EquippedItems.SingleOrDefault(item => item is IWeapon) is IWeapon foundWeapon)
             {
-                Weapon weapon = Hero.EquippedWeapon;
-                var weaponDamage = RNG.Next(weapon.MinDamage, weapon.MaxDamage + 1);
+                var weaponDamage = RNG.Next(foundWeapon.Strength.MinValue, foundWeapon.Strength.MaxValue + 1);
                 var finalDamage = Hero.Strength + weaponDamage;
                 compare = finalDamage - CurrentMonster.Defense;
             }
@@ -266,26 +264,25 @@ namespace OOP_RPG.ConsoleGame
             int damage;
             var compare = CurrentMonster.Strength - Hero.Defense;
 
-            if (Hero.EquippedArmor != null && Hero.EquippedShield != null)
+            var armor = Hero.EquippedItems.SingleOrDefault(item => item is IArmor) as IArmor;
+            var shield = Hero.EquippedItems.SingleOrDefault(item => item is IShield) as IShield;
+
+            if (armor != null && shield != null)
             {
-                Armor armor = Hero.EquippedArmor;
-                Shield shield = Hero.EquippedShield;
-                var armorDefense = RNG.Next(armor.MinDefense, armor.MaxDefense + 1);
-                var shieldDefense = RNG.Next(shield.MinDefense, shield.MaxDefense + 1);
+                var armorDefense = RNG.Next(armor.Defense.MinValue, armor.Defense.MaxValue + 1);
+                var shieldDefense = RNG.Next(shield.Defense.MinValue, shield.Defense.MaxValue + 1);
                 var finalDefense = shieldDefense + armorDefense + Hero.Defense;
                 compare = CurrentMonster.Strength - finalDefense;
             }
-            else if (Hero.EquippedArmor != null)
+            else if (armor != null)
             {
-                Armor armor = Hero.EquippedArmor;
-                var armorDefense = RNG.Next(armor.MinDefense, armor.MaxDefense + 1);
+                var armorDefense = RNG.Next(armor.Defense.MinValue, armor.Defense.MaxValue + 1);
                 var finalDefense = armorDefense + Hero.Defense;
                 compare = CurrentMonster.Strength - finalDefense;
             }
-            else if (Hero.EquippedShield != null)
+            else if (shield != null)
             {
-                Shield shield = Hero.EquippedShield;
-                var shieldDefense = RNG.Next(shield.MinDefense, shield.MaxDefense + 1);
+                var shieldDefense = RNG.Next(shield.Defense.MinValue, shield.Defense.MaxValue + 1);
                 var finalDefense = shieldDefense + Hero.Defense;
                 compare = CurrentMonster.Strength - finalDefense;
             }
@@ -339,7 +336,7 @@ namespace OOP_RPG.ConsoleGame
                 Console.WriteLine($"You have successfully fled the battle!");
                 Console.ResetColor();
             }
-            Hero.ShowStats(false);
+            Hero.ShowStats(/*false*/);
 
             Console.Title = $"Main Menu";
         }

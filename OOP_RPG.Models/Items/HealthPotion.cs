@@ -1,46 +1,33 @@
-﻿using OOP_RPG.Models.Enumerations;
-using OOP_RPG.Models.Interfaces;
-using System;
+﻿using OOP_RPG.Models.Interfaces;
 
 namespace OOP_RPG.Models.Items
 {
-    public class HealthPotion : IBuyableItem
+    public class HealthPotion : IHealthPotion
     {
         public string Name { get; }
-        public int HealAmount { get; }
-        public int Price { get; }
-        public int SellingPrice { get; }
-        public ItemCategoryEnum ItemCategory { get; }
-        public Guid ItemId { get; private set; }
-        public bool Sold { get; set; }
+        public ItemStat HealAmount { get; }
+        public ItemPrice Price { get; }
         public bool IsEquipped { get; set; }
-        public bool CanBeSoldMultipleTimes { get; set; }
 
         public HealthPotion(string name, int healAmount, int price)
         {
             Name = name;
-            HealAmount = healAmount;
-            Price = price;
-            SellingPrice = price / 2;
-            ItemCategory = ItemCategoryEnum.CurrentHP;
-            ItemId = Guid.NewGuid();
-            Sold = false;
-            CanBeSoldMultipleTimes = true;
-            IsEquipped = false;
+            HealAmount = new ItemStat(baseValue: healAmount);
+            Price = new ItemPrice(buyingPrice: price);
         }
 
         public string ItemStatsAsString(int itemIndex) =>
             $"{itemIndex}. (Healing Item)\n" +
             $"   - Name: {Name}\n" +
-            $"   - Cost: {Price} Gold {(Price > 1 ? $"Coins" : $"Coin")}\n" +
-            $"   - SellingPrice: {SellingPrice} Gold {(SellingPrice > 1 ? $"Coins" : $"Coin")}\n" +
+            $"   - Cost: {Price.BuyingPrice} Gold {(Price.BuyingPrice > 1 ? $"Coins" : $"Coin")}\n" +
+            $"   - SellingPrice: {Price.SellingPrice} Gold {(Price.SellingPrice > 1 ? $"Coins" : $"Coin")}\n" +
             $"   - Heal Amount: (+ {HealAmount} cHP)\n";
 
         public string ItemStatsAsString() =>
             $"(Healing Item)\n" +
             $"   - Name: {Name}\n" +
-            $"   - Cost: {Price} Gold {(Price > 1 ? $"Coins" : $"Coin")}\n" +
-            $"   - SellingPrice: {SellingPrice} Gold {(SellingPrice > 1 ? $"Coins" : $"Coin")}\n" +
+            $"   - Cost: {Price.BuyingPrice} Gold {(Price.BuyingPrice > 1 ? $"Coins" : $"Coin")}\n" +
+            $"   - SellingPrice: {Price.SellingPrice} Gold {(Price.SellingPrice > 1 ? $"Coins" : $"Coin")}\n" +
             $"   - Heal Amount: (+ {HealAmount} cHP)\n";
     }
 }

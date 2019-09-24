@@ -12,7 +12,7 @@ namespace OOP_RPG.ConsoleGame
         public Game()
         {
             ManageAchievements = new HandleAchievements(); // only one HandleAchievements per game
-            Hero = new Hero(ManageAchievements); // only one hero per game
+            Hero = new Hero(/*ManageAchievements*/); // only one hero per game
             MyShop = new Shop(Hero); // only one shop per game
         }
 
@@ -126,7 +126,7 @@ namespace OOP_RPG.ConsoleGame
             Console.Clear();
 
             Console.Title = $"{Hero.Name}'s Stats: [> Str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <]";
-            Hero.ShowStats(true);
+            Hero.ShowStats(/*true*/);
 
             Console.WriteLine("Press any key to return to main menu.");
             Console.ReadKey(true);

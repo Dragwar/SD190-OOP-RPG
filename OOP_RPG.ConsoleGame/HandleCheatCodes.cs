@@ -1,5 +1,6 @@
 ﻿using OOP_RPG.Models.Interfaces;
 using OOP_RPG.Models.Items;
+using System;
 
 namespace OOP_RPG.ConsoleGame
 {
@@ -7,27 +8,27 @@ namespace OOP_RPG.ConsoleGame
     {
         private static void CreateAndAddCheatItem(Hero hero, Shop shop, IBuyableItem cheatItem)
         {
-            if (cheatItem is Weapon)
+            if (cheatItem is IWeapon weapon)
             {
-                hero.WeaponsBag.Add((Weapon)cheatItem);
-                shop.AllBuyableItems.Add(cheatItem);
-                hero.EquipWeapon(hero.WeaponsBag.IndexOf((Weapon)cheatItem));
+                hero.Bag.Add(weapon);
+                shop.AllBuyableItems.Add(weapon);
+                hero.EquipWeapon(hero.Bag.IndexOf(weapon));
             }
-            else if (cheatItem is Armor)
+            else if (cheatItem is IArmor armor)
             {
-                hero.ArmorBag.Add((Armor)cheatItem);
-                shop.AllBuyableItems.Add(cheatItem);
-                hero.EquipArmor(hero.ArmorBag.IndexOf((Armor)cheatItem));
+                hero.Bag.Add(armor);
+                shop.AllBuyableItems.Add(armor);
+                hero.EquipArmor(hero.Bag.IndexOf(armor));
             }
-            else if (cheatItem is Shield)
+            else if (cheatItem is IShield shield)
             {
-                hero.ShieldBag.Add((Shield)cheatItem);
-                shop.AllBuyableItems.Add(cheatItem);
-                hero.EquipShield(hero.ShieldBag.IndexOf((Shield)cheatItem));
+                hero.Bag.Add(shield);
+                shop.AllBuyableItems.Add(shield);
+                hero.EquipShield(hero.Bag.IndexOf(shield));
             }
             else
             {
-                throw new System.NotImplementedException("item type N/A");
+                throw new NotImplementedException("item type N/A");
             }
         }
 
@@ -43,34 +44,34 @@ namespace OOP_RPG.ConsoleGame
 
                 case "gui":
                 case "Gui":
-                    var steelSword = new Weapon("Steel Straight Sword", 20, 25) { Sold = true };
+                    var steelSword = new Weapon("Steel Straight Sword", 20, 25);
                     CreateAndAddCheatItem(hero, shop, steelSword);
 
-                    var steelArmor = new Armor("Hardened Steel Armor", 20, 45) { Sold = true };
+                    var steelArmor = new Armor("Hardened Steel Armor", 20, 45);
                     CreateAndAddCheatItem(hero, shop, steelArmor);
 
-                    var steelShield = new Shield("Tower Steel Shield", 15, 60) { Sold = true };
+                    var steelShield = new Shield("Tower Steel Shield", 15, 60);
                     CreateAndAddCheatItem(hero, shop, steelShield);
                     break;
 
                 case "john":
                 case "John":
-                    var rapier = new Weapon("Rapier", 40, 50) { Sold = true };
+                    var rapier = new Weapon("Rapier", 40, 50);
                     CreateAndAddCheatItem(hero, shop, rapier);
 
-                    var lightSteelArmor = new Armor("Light Steel Armor", 12, 20) { Sold = true };
+                    var lightSteelArmor = new Armor("Light Steel Armor", 12, 20);
                     CreateAndAddCheatItem(hero, shop, lightSteelArmor);
 
-                    var parryShield = new Shield("Parrying Shield", 7, 12) { Sold = true };
+                    var parryShield = new Shield("Parrying Shield", 7, 12);
                     CreateAndAddCheatItem(hero, shop, parryShield);
                     break;
 
                 case "darius":
                 case "Darius":
-                    var greatWarAxe = new Weapon("Great War Axe", 120, 135) { Sold = true };
+                    var greatWarAxe = new Weapon("Great War Axe", 120, 135);
                     CreateAndAddCheatItem(hero, shop, greatWarAxe);
 
-                    var largeIronArmor = new Armor("Heavy Iron Armor", 35, 40) { Sold = true };
+                    var largeIronArmor = new Armor("Heavy Iron Armor", 35, 40);
                     CreateAndAddCheatItem(hero, shop, largeIronArmor);
                     break;
 
@@ -82,10 +83,10 @@ namespace OOP_RPG.ConsoleGame
 
                 case "guts":
                 case "Guts":
-                    var dragonSlayer = new Weapon("DragonSlayer", 120, 200) { Sold = true };
+                    var dragonSlayer = new Weapon("DragonSlayer", 120, 200);
                     CreateAndAddCheatItem(hero, shop, dragonSlayer);
 
-                    var berserkerArmor = new Armor("Berserker Armor", 80, 150) { Sold = true };
+                    var berserkerArmor = new Armor("Berserker Armor", 80, 150);
                     CreateAndAddCheatItem(hero, shop, berserkerArmor);
                     break;
             }

@@ -1,5 +1,4 @@
-﻿using OOP_RPG.Models.Enumerations;
-using OOP_RPG.Models.Interfaces;
+﻿using OOP_RPG.Models.Interfaces;
 using OOP_RPG.Models.Items;
 using System;
 using System.Collections.Generic;
@@ -9,30 +8,32 @@ namespace OOP_RPG.ConsoleGame
 {
     public class Shop
     {
+        private IReadOnlyList<IBuyableItem> ALLSHOPITEMS => new List<IBuyableItem>()
+        {
+            new Weapon("Sword", 3, 10),
+            new Weapon("Axe", 4, 12),
+            new Weapon("Longsword", 7, 15),
+
+            new Armor("Wooden Armor", 10, 8),
+            new Armor("Metal Armor", 12, 14),
+            new Armor("Golden Armor", 15, 18),
+
+            new Shield("Wooden Shield", 3, 10),
+            new Shield("Battle Shield", 4, 12),
+            new Shield("Dragon Shield", 7, 15),
+
+            new HealthPotion("Health Potion", 7, 5),
+            new HealthPotion("Strong Health Potion", 11, 10),
+            new HealthPotion("Great Health Potion", 16, 15),
+        };
+
         public List<IBuyableItem> AllBuyableItems { get; }
         private Hero Hero { get; }
 
         public Shop(Hero hero)
         {
             Hero = hero;
-            AllBuyableItems = new List<IBuyableItem>()
-            {
-                new Weapon("Sword", 3, 10),
-                new Weapon("Axe", 4, 12),
-                new Weapon("Longsword", 7, 15),
-
-                new Armor("Wooden Armor", 10, 8),
-                new Armor("Metal Armor", 12, 14),
-                new Armor("Golden Armor", 15, 18),
-
-                new Shield("Wooden Shield", 3, 10),
-                new Shield("Battle Shield", 4, 12),
-                new Shield("Dragon Shield", 7, 15),
-
-                new HealthPotion("Health Potion", 7, 5),
-                new HealthPotion("Strong Health Potion", 11, 10),
-                new HealthPotion("Great Health Potion", 16, 15),
-            };
+            AllBuyableItems = ALLSHOPITEMS.ToList();
         }
 
 
@@ -44,49 +45,48 @@ namespace OOP_RPG.ConsoleGame
         */
         private void SellItem(IBuyableItem item)
         {
-            Hero.RemoveGoldCoins(item.Price);
-            ToggleSoldProperty(item);
+            Hero.RemoveGoldCoins(item.Price.BuyingPrice);
 
-            if (item.ItemCategory == ItemCategoryEnum.Strength)
+            //TODO: skip checks? allow any type as long item implements IBuyableItem?
+            if (item is IWeapon weapon)
             {
-                Hero.WeaponsBag.Add((Weapon)item);
+                Hero.Bag.Add(weapon);
             }
-            else if (item.ItemCategory == ItemCategoryEnum.Defence)
+            else if (item is IArmor armor)
             {
-                if (item is Armor)
-                {
-                    Hero.ArmorBag.Add((Armor)item);
-                }
-                else if (item is Shield)
-                {
-                    Hero.ShieldBag.Add((Shield)item);
-                }
+                Hero.Bag.Add(armor);
+            }
+            else if (item is IShield shield)
+            {
+                Hero.Bag.Add(shield);
+            }
+            else if (item is IHealthPotion healthPotion)
+            {
+                Hero.Bag.Add(healthPotion);
             }
             else
             {
-                Hero.HealthPotionBag.Add((HealthPotion)item);
+                throw new Exception("Unexpected item type/category");
             }
+
+            AllBuyableItems.Remove(item);
         }
 
 
-        public List<Weapon> GetCurrentWeapons() => AllBuyableItems
-                .Where(item => item.ItemCategory == ItemCategoryEnum.Strength && item is Weapon && (!item.Sold || item.CanBeSoldMultipleTimes))
-                .Cast<Weapon>()
+        public List<IWeapon> GetCurrentWeapons() => AllBuyableItems
+                .Where(item => item is IWeapon weapon && !(Hero.IsItemInBag(weapon) || Hero.IsItemEquipped(weapon)))
+                .Cast<IWeapon>()
                 .ToList();
 
-        public List<Armor> GetCurrentArmor() => AllBuyableItems
-                .Where(item => item.ItemCategory == ItemCategoryEnum.Defence && item is Armor && (!item.Sold || item.CanBeSoldMultipleTimes))
-                .Cast<Armor>()
+        public List<IArmor> GetCurrentArmor() => AllBuyableItems
+                .Where(item => item is IArmor armor && !(Hero.IsItemInBag(armor) || Hero.IsItemEquipped(armor)))
+                .Cast<IArmor>()
                 .ToList();
 
-        public List<Shield> GetCurrentShields() => AllBuyableItems
-                .Where(item => item.ItemCategory == ItemCategoryEnum.Defence && item is Shield && (!item.Sold || item.CanBeSoldMultipleTimes))
-                .Cast<Shield>()
+        public List<IShield> GetCurrentShields() => AllBuyableItems
+                .Where(item => item is IShield shield && !(Hero.IsItemInBag(shield) || Hero.IsItemEquipped(shield)))
+                .Cast<IShield>()
                 .ToList();
-
-
-        private void ToggleSoldProperty(IBuyableItem item) => item.Sold = item.Sold ? false : true;
-
 
 
         /*
@@ -96,24 +96,22 @@ namespace OOP_RPG.ConsoleGame
         */
         private void DisplayAllItems()
         {
-            var allItems = AllBuyableItems.Where(item => !item.Sold || item.CanBeSoldMultipleTimes).ToList();
-
-            for (var i = 1; i < allItems.Count + 1; i++)
+            for (var i = 1; i < AllBuyableItems.Count + 1; i++)
             {
-                if (allItems[i - 1].ItemCategory == ItemCategoryEnum.Strength)
+                if (AllBuyableItems[i - 1] is IStrengthItem)
                 {
                     Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine(allItems[i - 1].ItemStatsAsString(i));
+                    Console.WriteLine(AllBuyableItems[i - 1].ItemStatsAsString(i));
                 }
-                else if (allItems[i - 1].ItemCategory == ItemCategoryEnum.Defence)
+                else if (AllBuyableItems[i - 1] is IDefenseItem)
                 {
-                    Console.ForegroundColor = allItems[i - 1] is Armor ? ConsoleColor.DarkBlue : ConsoleColor.Blue;
-                    Console.WriteLine(allItems[i - 1].ItemStatsAsString(i));
+                    Console.ForegroundColor = AllBuyableItems[i - 1] is IArmor ? ConsoleColor.DarkBlue : ConsoleColor.Blue;
+                    Console.WriteLine(AllBuyableItems[i - 1].ItemStatsAsString(i));
                 }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.WriteLine(allItems[i - 1].ItemStatsAsString(i));
+                    Console.WriteLine(AllBuyableItems[i - 1].ItemStatsAsString(i));
                 }
                 Console.ResetColor();
             }
@@ -130,9 +128,7 @@ namespace OOP_RPG.ConsoleGame
         {
             Console.Clear();
 
-            var buyableItems = AllBuyableItems.Where(item => !item.Sold || item.CanBeSoldMultipleTimes).ToList();
-
-            if (buyableItems.Any())
+            if (AllBuyableItems.Any())
             {
                 Console.WriteLine("================[All Items]================");
                 DisplayAllItems();
@@ -141,10 +137,10 @@ namespace OOP_RPG.ConsoleGame
                 var isNumber = int.TryParse(Console.ReadLine().Trim(), out var inputtedIndex);
 
 
-                IBuyableItem selectedItem = isNumber && inputtedIndex > 0 && inputtedIndex <= buyableItems.Count ? buyableItems[inputtedIndex - 1] : null;
+                IBuyableItem selectedItem = isNumber && inputtedIndex > 0 && inputtedIndex <= AllBuyableItems.Count ? AllBuyableItems[inputtedIndex - 1] : null;
 
 
-                if (isNumber && selectedItem != null && selectedItem.Price <= Hero.GoldCoins)
+                if (isNumber && selectedItem != null && selectedItem.Price.BuyingPrice <= Hero.GoldCoins)
                 {
                     SellItem(selectedItem);
 
@@ -204,7 +200,7 @@ namespace OOP_RPG.ConsoleGame
                 {
                     BuyHeroItem();
                 }
-            } // End of While Loop
+            }
         }
 
 
@@ -218,65 +214,73 @@ namespace OOP_RPG.ConsoleGame
         {
             Console.Clear();
 
-            var heroItems = Hero.GetMasterInventoryList().ToList();
+            var heroItems = Hero.Bag.ToList();
 
             if (heroItems.Any())
             {
                 for (var i = 0; i < heroItems.Count; i++)
                 {
-                    if (heroItems[i].ItemCategory == ItemCategoryEnum.Strength)
+                    if (heroItems[i] is IBuyableItem buyableItem)
                     {
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        if (heroItems[i] is Weapon weapon)
+                        if (heroItems[i] is IStrengthItem)
                         {
-                            if (weapon.IsEquipped)
+                            Console.ForegroundColor = ConsoleColor.Cyan;
+                            if (heroItems[i] is IWeapon weapon)
                             {
-                                Console.WriteLine($"{i + 1}. Sell your {weapon.Name} for {weapon.SellingPrice} Gold Coins (Currently Equipped)");
+                                if (weapon.IsEquipped)
+                                {
+                                    Console.WriteLine($"{i + 1}. Sell your {weapon.Name} for {weapon.Price.SellingPrice} Gold Coins (Currently Equipped)");
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"{i + 1}. Sell your {weapon.Name} for {weapon.Price.SellingPrice} Gold Coins");
+                                }
                             }
                             else
                             {
-                                Console.WriteLine($"{i + 1}. Sell your {weapon.Name} for {weapon.SellingPrice} Gold Coins");
+                                Console.WriteLine($"{i + 1}. Sell your {buyableItem.Name} for {buyableItem.Price.SellingPrice} Gold Coins");
                             }
+                        }
+                        else if (heroItems[i] is IDefenseItem)
+                        {
+                            if (heroItems[i] is IArmor armor)
+                            {
+                                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                                if (armor.IsEquipped)
+                                {
+                                    Console.WriteLine($"{i + 1}. Sell your {armor.Name} for {armor.Price.SellingPrice} Gold Coins (Currently Equipped)");
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"{i + 1}. Sell your {armor.Name} for {armor.Price.SellingPrice} Gold Coins");
+                                }
+                            }
+                            else if (heroItems[i] is IShield shield)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Blue;
+                                if (shield.IsEquipped)
+                                {
+                                    Console.WriteLine($"{i + 1}. Sell your {shield.Name} for {shield.Price.SellingPrice} Gold Coins (Currently Equipped)");
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"{i + 1}. Sell your {shield.Name} for {shield.Price.SellingPrice} Gold Coins");
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{i + 1}. Sell your {buyableItem.Name} for {buyableItem.Price.SellingPrice} Gold Coins");
+                            }
+                        }
+                        else if (heroItems[i] is IHealthPotion healthPotion)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"{i + 1}. Sell your {healthPotion.Name} for {healthPotion.Price.SellingPrice} Gold Coins");
                         }
                         else
                         {
-                            Console.WriteLine($"{i + 1}. Sell your {heroItems[i].Name} for {heroItems[i].SellingPrice} Gold Coins");
+                            throw new Exception($"Unexpected Item type ({heroItems[i]})");
                         }
-                    }
-                    else if (heroItems[i].ItemCategory == ItemCategoryEnum.Defence)
-                    {
-                        Console.ForegroundColor = heroItems[i] is Armor ? ConsoleColor.DarkBlue : ConsoleColor.Blue;
-                        if (heroItems[i] is Armor armor)
-                        {
-                            if (armor.IsEquipped)
-                            {
-                                Console.WriteLine($"{i + 1}. Sell your {armor.Name} for {armor.SellingPrice} Gold Coins (Currently Equipped)");
-                            }
-                            else
-                            {
-                                Console.WriteLine($"{i + 1}. Sell your {armor.Name} for {armor.SellingPrice} Gold Coins");
-                            }
-                        }
-                        else if (heroItems[i] is Shield shield)
-                        {
-                            if (shield.IsEquipped)
-                            {
-                                Console.WriteLine($"{i + 1}. Sell your {shield.Name} for {shield.SellingPrice} Gold Coins (Currently Equipped)");
-                            }
-                            else
-                            {
-                                Console.WriteLine($"{i + 1}. Sell your {shield.Name} for {shield.SellingPrice} Gold Coins");
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine($"{i + 1}. Sell your {heroItems[i].Name} for {heroItems[i].SellingPrice} Gold Coins");
-                        }
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"{i + 1}. Sell your {heroItems[i].Name} for {heroItems[i].SellingPrice} Gold Coins");
                     }
                     Console.ResetColor();
                 }
@@ -287,58 +291,30 @@ namespace OOP_RPG.ConsoleGame
 
                 userIndex--;
 
-                var invalidIndex = userIndex > heroItems.Count || userIndex < 0 ? true : false;
+                var invalidIndex = userIndex > heroItems.Count || userIndex < 0;
 
                 if (isNumber && !invalidIndex)
                 {
-                    Guid foundId = heroItems[userIndex].ItemId;
-                    IBuyableItem deleteThisItem = Hero.ArmorBag.Where(item => item.ItemId == foundId).FirstOrDefault();
+                    var deleteThisItem = Hero.Bag[userIndex] as IBuyableItem;
 
-                    if (deleteThisItem == null)
+
+                    if (deleteThisItem is IEquippableItem equippableItem && Hero.IsItemEquipped(equippableItem))
                     {
-                        deleteThisItem = Hero.ShieldBag.Where(item => item.ItemId == foundId).FirstOrDefault();
+                        Hero.UnEquipItem(equippableItem);
                     }
-                    if (deleteThisItem == null)
+                    else if (Hero.IsItemInBag(deleteThisItem))
                     {
-                        deleteThisItem = Hero.WeaponsBag.Where(item => item.ItemId == foundId).FirstOrDefault();
-                    }
-                    if (deleteThisItem == null)
-                    {
-                        deleteThisItem = Hero.HealthPotionBag.Where(item => item.ItemId == foundId).FirstOrDefault();
-                    }
-                    if (deleteThisItem == null)
-                    {
-                        throw new Exception("No Item was found to sell");
+                        Hero.Bag.Remove(deleteThisItem);
                     }
 
-                    Hero.UnEquipItem(deleteThisItem);
-                    Hero.AddGoldCoins(deleteThisItem.SellingPrice);
-                    if (deleteThisItem.ItemCategory == ItemCategoryEnum.Strength)
-                    {
-                        Hero.WeaponsBag.Remove((Weapon)deleteThisItem);
-                    }
-                    else if (deleteThisItem.ItemCategory == ItemCategoryEnum.Defence)
-                    {
-                        if (deleteThisItem is Armor)
-                        {
-                            Hero.ArmorBag.Remove((Armor)deleteThisItem);
-                        }
-                        else if (deleteThisItem is Shield)
-                        {
-                            Hero.ShieldBag.Remove((Shield)deleteThisItem);
-                        }
-                    }
-                    else
-                    {
-                        Hero.HealthPotionBag.Remove((HealthPotion)deleteThisItem);
-                    }
+                    Hero.AddGoldCoins(deleteThisItem.Price.SellingPrice);
+
 
                     // Make sold item available in the shop again
-                    IBuyableItem shopItem = AllBuyableItems.Where(item => item.ItemId == foundId).FirstOrDefault();
-                    shopItem.Sold = false;
+                    AllBuyableItems.Add(deleteThisItem);
 
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"You just sold your {deleteThisItem.Name} for {deleteThisItem.SellingPrice} Gold Coins");
+                    Console.WriteLine($"You just sold your {deleteThisItem.Name} for {deleteThisItem.Price.SellingPrice} Gold Coins");
                     Console.ResetColor();
                 }
                 else
