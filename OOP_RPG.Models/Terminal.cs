@@ -1,6 +1,5 @@
 ﻿using OOP_RPG.Models.Interfaces;
 using System;
-using System.Text;
 
 namespace OOP_RPG.Models
 {
@@ -8,7 +7,19 @@ namespace OOP_RPG.Models
     {
         public ConsoleColor TextColor { get; set; }
         public ConsoleColor BackgroundColor { get; set; }
-        public StringBuilder Title { get; }
+
+        private string _title;
+        public string Title
+        {
+            get => Environment.OSVersion.Platform switch
+            {
+                PlatformID.Win32NT => _title,
+                PlatformID.Unix => throw new InvalidOperationException($"{nameof(PlatformID)}.{nameof(PlatformID.Unix)} doesn't support reading the console title"),
+                _ => throw new Exception($"Unexpected {nameof(PlatformID)} type ({Environment.OSVersion.Platform})")
+            };
+            set => _title = value;
+        }
+
         public bool IsCursorVisible { get; set; }
         public bool CapsLock { get; }
         public bool NumLock { get; }

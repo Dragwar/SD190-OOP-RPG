@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Text;
 
 namespace OOP_RPG.Models.Interfaces
 {
     public interface IConsole
     {
-        StringBuilder Title { get; }
+        string Title { set; }
         int CursorLeft { get; set; }
         int CursorSize { get; set; }
         int CursorTop { get; set; }
