@@ -5,7 +5,7 @@ namespace OOP_RPG.Models
 {
     public class Terminal : IConsole
     {
-        public ConsoleColor TextColor
+        public ConsoleColor ForegroundColor
         {
             get => Console.ForegroundColor;
             set => Console.ForegroundColor = value;

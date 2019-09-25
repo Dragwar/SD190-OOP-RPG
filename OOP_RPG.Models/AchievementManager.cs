@@ -122,7 +122,7 @@ namespace OOP_RPG.Models
                 foundAchievement.IsCompleted = true;
                 foundAchievement.CompletedDate = $"{DateTime.Now.ToShortDateString()} ({DateTime.Now.ToShortTimeString()})";
                 TotalPoints += foundAchievement.RewardPoints;
-                _console.TextColor = ConsoleColor.Yellow;
+                _console.ForegroundColor = ConsoleColor.Yellow;
                 _console.WriteLine($"\nYou Completed An Achievement ({foundAchievement.Title})");
                 _console.WriteLine($"(+ {foundAchievement.RewardPoints} AP)\n");
                 _console.ResetColor();
@@ -135,11 +135,11 @@ namespace OOP_RPG.Models
             {
                 if (achievement.IsCompleted)
                 {
-                    _console.TextColor = ConsoleColor.Yellow;
+                    _console.ForegroundColor = ConsoleColor.Yellow;
                 }
                 else
                 {
-                    _console.TextColor = ConsoleColor.DarkGray;
+                    _console.ForegroundColor = ConsoleColor.DarkGray;
                 }
                 _console.WriteLine(achievement.ToString());
                 _console.ResetColor();

@@ -47,11 +47,11 @@ namespace OOP_RPG.Models
         */
         public void ShowStats()
         {
-            _console.TextColor = ConsoleColor.Yellow;
+            _console.ForegroundColor = ConsoleColor.Yellow;
             _console.WriteLine($"\n***** {Name} (Enemy) *****");
             _console.ResetColor();
 
-            _console.TextColor = ConsoleColor.Red;
+            _console.ForegroundColor = ConsoleColor.Red;
             _console.WriteLine($"Strength: {Strength}");
             _console.WriteLine($"Defense: {Defense}");
             _console.WriteLine($"Hit-points: {CurrentHP}/{OriginalHP}");

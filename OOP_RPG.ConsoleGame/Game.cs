@@ -32,7 +32,7 @@ namespace OOP_RPG.ConsoleGame
 
             _console.Title = $"Today's Monsters";
 
-            _console.TextColor = ConsoleColor.Yellow;
+            _console.ForegroundColor = ConsoleColor.Yellow;
             _console.WriteLine("***** Today's Monsters ******\n");
 
             foreach (var monster in Fight.GetTodaysMonsters())
@@ -40,15 +40,15 @@ namespace OOP_RPG.ConsoleGame
                 switch (monster.Difficulty)
                 {
                     case Difficulty.Easy:
-                        _console.TextColor = ConsoleColor.Cyan;
+                        _console.ForegroundColor = ConsoleColor.Cyan;
                         break;
 
                     case Difficulty.Medium:
-                        _console.TextColor = ConsoleColor.DarkCyan;
+                        _console.ForegroundColor = ConsoleColor.DarkCyan;
                         break;
 
                     default:
-                        _console.TextColor = ConsoleColor.DarkBlue;
+                        _console.ForegroundColor = ConsoleColor.DarkBlue;
                         break;
                 }
                 _console.WriteLine($"{monster.Name} - Difficulty: {monster.Difficulty}");
@@ -74,7 +74,7 @@ namespace OOP_RPG.ConsoleGame
 
             while (string.IsNullOrEmpty(Hero.Name) || string.IsNullOrWhiteSpace(Hero.Name))
             {
-                _console.TextColor = ConsoleColor.Red;
+                _console.ForegroundColor = ConsoleColor.Red;
                 _console.WriteLine("Every Hero Has A Name . . .");
                 _console.ResetColor();
 
@@ -107,7 +107,7 @@ namespace OOP_RPG.ConsoleGame
                 _console.WriteLine("\t\tMain Menu");
                 _console.WriteLine("==============================================\n");
 
-                _console.TextColor = ConsoleColor.Yellow;
+                _console.ForegroundColor = ConsoleColor.Yellow;
                 _console.WriteLine("Please choose an option by entering a number.");
                 _console.ResetColor();
 
@@ -216,7 +216,7 @@ namespace OOP_RPG.ConsoleGame
             {
                 _console.Title = $"Spend Your EXP | Current Experience Points: {Hero.ExperiencePoints} | Stats: [> Str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <]";
 
-                _console.TextColor = ConsoleColor.Yellow;
+                _console.ForegroundColor = ConsoleColor.Yellow;
                 _console.WriteLine($"**** Manage Experience Points ****");
                 _console.ResetColor();
 

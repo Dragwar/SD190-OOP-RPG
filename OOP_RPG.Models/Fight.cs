@@ -69,7 +69,7 @@ namespace OOP_RPG.Models
         */
         public void Start()
         {
-            _console.TextColor = ConsoleColor.Cyan;
+            _console.ForegroundColor = ConsoleColor.Cyan;
             _console.WriteLine($"\nA {CurrentMonster.Name}! (Strength = {CurrentMonster.Strength} | Defense = {CurrentMonster.Defense} | HP = {CurrentMonster.CurrentHP})");
             _console.ResetColor();
 
@@ -137,7 +137,7 @@ namespace OOP_RPG.Models
             }
             else
             {
-                _console.TextColor = ConsoleColor.Red;
+                _console.ForegroundColor = ConsoleColor.Red;
                 _console.WriteLine("You have failed to flee the battle");
                 _console.ResetColor();
                 MonsterTurn();
@@ -155,7 +155,7 @@ namespace OOP_RPG.Models
         {
             _console.Clear();
 
-            _console.TextColor = ConsoleColor.Yellow;
+            _console.ForegroundColor = ConsoleColor.Yellow;
             _console.WriteLine("******* Your Health Potions *******");
             _console.ResetColor();
 
@@ -175,7 +175,7 @@ namespace OOP_RPG.Models
 
                 if (!isNumber || userIndex < 0 || userIndex >= healthPotions.Length)
                 {
-                    _console.TextColor = ConsoleColor.Red;
+                    _console.ForegroundColor = ConsoleColor.Red;
                     _console.WriteLine("Nothing was used because of one of the following errors:");
                     _console.WriteLine("- did not input a number");
                     _console.WriteLine("- inputted number was too small");
@@ -186,13 +186,13 @@ namespace OOP_RPG.Models
                 {
                     if (Hero.CurrentHP >= Hero.OriginalHP)
                     {
-                        _console.TextColor = ConsoleColor.Red;
+                        _console.ForegroundColor = ConsoleColor.Red;
                         _console.WriteLine("Sorry you can't heal past you Original HP\n");
                         _console.ResetColor();
                     }
                     else
                     {
-                        _console.TextColor = ConsoleColor.Yellow;
+                        _console.ForegroundColor = ConsoleColor.Yellow;
                         _console.WriteLine($"You used your {healthPotions[userIndex].Name}!");
                         _console.ResetColor();
 
@@ -202,7 +202,7 @@ namespace OOP_RPG.Models
             }
             else
             {
-                _console.TextColor = ConsoleColor.Red;
+                _console.ForegroundColor = ConsoleColor.Red;
                 _console.WriteLine("You have nothing to use. . .");
                 _console.ResetColor();
             }
@@ -238,7 +238,7 @@ namespace OOP_RPG.Models
                 CurrentMonster.CurrentHP -= damage;
             }
 
-            _console.TextColor = ConsoleColor.Blue;
+            _console.ForegroundColor = ConsoleColor.Blue;
             _console.WriteLine($"\nYou did {damage} damage!");
             _console.WriteLine($"Monster's HP: {CurrentMonster.CurrentHP}/{CurrentMonster.OriginalHP}");
             _console.ResetColor();
@@ -299,7 +299,7 @@ namespace OOP_RPG.Models
                 Hero.TakeDamage(damage);
             }
 
-            _console.TextColor = ConsoleColor.Red;
+            _console.ForegroundColor = ConsoleColor.Red;
             _console.WriteLine($"\n{CurrentMonster.Name} does {damage} damage!");
             _console.WriteLine($"{Hero.Name}'s HP: {Hero.CurrentHP}/{Hero.OriginalHP}");
             _console.ResetColor();
@@ -324,7 +324,7 @@ namespace OOP_RPG.Models
                 Hero.AddExperiencePoints(MonstersEXPWorth);
                 Hero.AddGoldCoins(MonstersGoldCoinWorth);
 
-                _console.TextColor = ConsoleColor.Yellow;
+                _console.ForegroundColor = ConsoleColor.Yellow;
                 _console.WriteLine($"{CurrentMonster.Name} has been defeated! You win the battle!");
                 _console.WriteLine($"(+ {MonstersGoldCoinWorth} Gold Coins)");
                 _console.WriteLine($"(+ {MonstersEXPWorth} EXP)");
@@ -333,7 +333,7 @@ namespace OOP_RPG.Models
             }
             else if (howHeroWon == WinConditionEnum.Flee)
             {
-                _console.TextColor = ConsoleColor.Yellow;
+                _console.ForegroundColor = ConsoleColor.Yellow;
                 _console.WriteLine($"You have successfully fled the battle!");
                 _console.ResetColor();
             }
@@ -353,7 +353,7 @@ namespace OOP_RPG.Models
         {
             _console.Title = $"Better Luck Next Time.";
 
-            _console.TextColor = ConsoleColor.DarkRed;
+            _console.ForegroundColor = ConsoleColor.DarkRed;
             _console.WriteLine("You've been defeated! :( GAME OVER.");
             _console.ResetColor();
 
