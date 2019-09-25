@@ -3,5 +3,6 @@
     public interface IItem
     {
         string Name { get; }
+        string ToString();
     }
 }

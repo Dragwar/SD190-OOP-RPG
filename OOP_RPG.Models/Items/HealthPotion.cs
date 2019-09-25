@@ -21,13 +21,18 @@ namespace OOP_RPG.Models.Items
             $"   - Name: {Name}\n" +
             $"   - Cost: {Price.BuyingPrice} Gold {(Price.BuyingPrice > 1 ? $"Coins" : $"Coin")}\n" +
             $"   - SellingPrice: {Price.SellingPrice} Gold {(Price.SellingPrice > 1 ? $"Coins" : $"Coin")}\n" +
-            $"   - Heal Amount: (+ {HealAmount} cHP)\n";
+            $"   - Heal Amount: (+ {HealAmount.BaseValue} cHP)\n";
 
         public string ItemStatsAsString() =>
             $"(Healing Item)\n" +
             $"   - Name: {Name}\n" +
             $"   - Cost: {Price.BuyingPrice} Gold {(Price.BuyingPrice > 1 ? $"Coins" : $"Coin")}\n" +
             $"   - SellingPrice: {Price.SellingPrice} Gold {(Price.SellingPrice > 1 ? $"Coins" : $"Coin")}\n" +
-            $"   - Heal Amount: (+ {HealAmount} cHP)\n";
+            $"   - Heal Amount: (+ {HealAmount.BaseValue} cHP)\n";
+
+        public override string ToString() =>
+            $"============({Name})============\n" +
+            $"Worth: {Price.SellingPrice} Gold Coins\n" +
+            $"HealAmount: (+ {HealAmount.BaseValue})";
     }
 }

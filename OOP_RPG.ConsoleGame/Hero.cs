@@ -1,7 +1,9 @@
 using OOP_RPG.Models;
 using OOP_RPG.Models.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace OOP_RPG.ConsoleGame
 {
@@ -66,7 +68,6 @@ namespace OOP_RPG.ConsoleGame
         public bool IsItemInBag(IItem item) => Bag.Contains(item);
 
 
-
         /*
         ======================================================================================== 
         ShowStats ---> Simple method prints all the current stat values
@@ -116,6 +117,60 @@ namespace OOP_RPG.ConsoleGame
             ShowInventoryShield();
             ShowInventoryHealthPotions();
         }
+
+        public void ShowInventory<TItem>()
+            where TItem : IItem
+        {
+            var itemType = typeof(TItem);
+            _console.WriteLine(itemType.Name + ": ");
+
+            var items = AllItems.Where(item => item is TItem).ToArray();
+            if (items.Any())
+            {
+                if (items.All(item => item is IEquippableItem))
+                {
+                    foreach (var item in items.Cast<IEquippableItem>())
+                    {
+                        _console.TextColor = ConsoleColor.DarkGray;
+                        var equippedMessage = default(string);
+
+                        if (item.IsEquipped)
+                        {
+                            _console.TextColor = ConsoleColor.Yellow;
+                            equippedMessage = "CURRENTLY EQUIPPED\n";
+                        }
+
+                        _console.WriteLine(item.ToString());
+                        _console.WriteLine(equippedMessage);
+                    }
+                }
+                else if (items.All(item => item is IHealthPotion))
+                {
+                    foreach (var item in items)
+                    {
+                        _console.TextColor = ConsoleColor.DarkGreen;
+                        _console.WriteLine(item.ToString());
+                        _console.WriteLine();
+                    }
+                }
+                else
+                {
+                    foreach (var item in items)
+                    {
+                        _console.TextColor = ConsoleColor.DarkGray;
+                        _console.WriteLine(item.ToString());
+                        _console.WriteLine();
+                    }
+                }
+            }
+            else
+            {
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine("You Have No Weapons . . .");
+            }
+            _console.ResetColor();
+        }
+
 
         /*
         ======================================================================================== 
@@ -517,19 +572,38 @@ namespace OOP_RPG.ConsoleGame
             }
         }
 
+
+
         public void Equip(IEquippableItem equippableItem)
         {
             if (Bag.Any(item => item is IEquippableItem))
             {
-                if (IsItemInBag(equippableItem))
+                // remove preexisting items of the same type before adding the new one
+                List<IEquippableItem> unequippedItems = equippableItem switch
+                {
+                    IWeapon _ => EquippedItems.RemoveItemsOfType<IWeapon>().Cast<IEquippableItem>().ToList(),
+                    IArmor _ => EquippedItems.RemoveItemsOfType<IArmor>().Cast<IEquippableItem>().ToList(),
+                    IShield _ => EquippedItems.RemoveItemsOfType<IShield>().Cast<IEquippableItem>().ToList(),
+                    _ => throw new Exception($"Unexpected type ({equippableItem})")
+                };
+
+                unequippedItems.ForEach(Bag.Add);
+
+                if (unequippedItems.Count > 1)
+                {
+                    throw new Exception("Unexpected number of items removed");
+                }
+
+
+                if (IsItemInBag(equippableItem) && IsItemEquipped(equippableItem))
+                {
+                    Bag.Remove(equippableItem);
+                    equippableItem.IsEquipped = true;
+                }
+                else if (IsItemInBag(equippableItem))
                 {
                     Bag.Remove(equippableItem);
                     EquippedItems.Add(equippableItem);
-                    equippableItem.IsEquipped = true;
-                }
-                else if (IsItemInBag(equippableItem) && IsItemEquipped(equippableItem))
-                {
-                    Bag.Remove(equippableItem);
                     equippableItem.IsEquipped = true;
                 }
                 else if (IsItemEquipped(equippableItem))

@@ -29,5 +29,10 @@ namespace OOP_RPG.Models.Items
             $"   - Cost: {Price.BuyingPrice} Gold {(Price.BuyingPrice > 1 ? $"Coins" : $"Coin")}\n" +
             $"   - SellingPrice: {Price.SellingPrice} Gold {(Price.SellingPrice > 1 ? $"Coins" : $"Coin")}\n" +
             $"   - Strength: (+ {Strength.BaseValue})\n";
+
+        public override string ToString() =>
+            $"============({Name})============\n" +
+            $"Worth: {Price.SellingPrice} Gold Coins\n" +
+            $"Strength: (+ {Strength.BaseValue})";
     }
 }

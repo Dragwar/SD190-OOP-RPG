@@ -109,6 +109,26 @@ namespace OOP_RPG.Models
             }
         }
 
+        public virtual IEnumerable<T> RemoveItemsOfType<T>()
+            where T : TItem
+        {
+            for (int i = 0; i < Count; i++)
+            {
+                if (_underlyingList[i] is T item)
+                {
+                    if (_underlyingList.Remove(item))
+                    {
+                        if (item is IEquippableItem equippableItem)
+                        {
+                            equippableItem.IsEquipped = false;
+                        }
+
+                        yield return item;
+                    }
+                }
+            }
+        }
+
         public virtual IEnumerator<TItem> GetEnumerator() => _underlyingList.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => _underlyingList.GetEnumerator();
