@@ -1,10 +1,9 @@
-﻿using OOP_RPG.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace OOP_RPG.ConsoleGame.Utilities
+namespace OOP_RPG.Models
 {
     public class LoadingSymbol
     {

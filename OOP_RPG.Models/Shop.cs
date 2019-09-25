@@ -4,12 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace OOP_RPG.ConsoleGame
+namespace OOP_RPG.Models
 {
     public class Shop : IShop
     {
         private readonly IConsole _console;
-        private IReadOnlyList<IBuyableItem> ALLSHOPITEMS => new List<IBuyableItem>()
+        private static IReadOnlyList<IBuyableItem> ALLSHOPITEMS => new List<IBuyableItem>()
         {
             new Weapon("Sword", 3, 10),
             new Weapon("Axe", 4, 12),

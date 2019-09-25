@@ -1,10 +1,9 @@
-using OOP_RPG.ConsoleGame.Utilities;
-using OOP_RPG.Models;
+using OOP_RPG.ConsoleGame;
 using OOP_RPG.Models.Enumerations;
 using OOP_RPG.Models.Interfaces;
 using System;
 
-namespace OOP_RPG.ConsoleGame
+namespace OOP_RPG.Models
 {
     public class Game
     {
