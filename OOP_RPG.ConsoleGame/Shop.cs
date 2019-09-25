@@ -6,8 +6,9 @@ using System.Linq;
 
 namespace OOP_RPG.ConsoleGame
 {
-    public class Shop
+    public class Shop : IShop
     {
+        private readonly IConsole _console;
         private IReadOnlyList<IBuyableItem> ALLSHOPITEMS => new List<IBuyableItem>()
         {
             new Weapon("Sword", 3, 10),
@@ -28,10 +29,11 @@ namespace OOP_RPG.ConsoleGame
         };
 
         public List<IBuyableItem> AllBuyableItems { get; }
-        private Hero Hero { get; }
+        private IHero Hero { get; }
 
-        public Shop(Hero hero)
+        public Shop(IConsole console, IHero hero)
         {
+            _console = console;
             Hero = hero;
             AllBuyableItems = ALLSHOPITEMS.ToList();
         }
@@ -94,26 +96,26 @@ namespace OOP_RPG.ConsoleGame
         DisplayAllItems ---> Prints all shop items and color codes items by their category 
         ======================================================================================== 
         */
-        private void DisplayAllItems()
+        public void DisplayAllItems()
         {
             for (var i = 1; i < AllBuyableItems.Count + 1; i++)
             {
                 if (AllBuyableItems[i - 1] is IStrengthItem)
                 {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine(AllBuyableItems[i - 1].ItemStatsAsString(i));
+                    _console.TextColor = ConsoleColor.Cyan;
+                    _console.WriteLine(AllBuyableItems[i - 1].ItemStatsAsString(i));
                 }
                 else if (AllBuyableItems[i - 1] is IDefenseItem)
                 {
-                    Console.ForegroundColor = AllBuyableItems[i - 1] is IArmor ? ConsoleColor.DarkBlue : ConsoleColor.Blue;
-                    Console.WriteLine(AllBuyableItems[i - 1].ItemStatsAsString(i));
+                    _console.TextColor = AllBuyableItems[i - 1] is IArmor ? ConsoleColor.DarkBlue : ConsoleColor.Blue;
+                    _console.WriteLine(AllBuyableItems[i - 1].ItemStatsAsString(i));
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.WriteLine(AllBuyableItems[i - 1].ItemStatsAsString(i));
+                    _console.TextColor = ConsoleColor.DarkGreen;
+                    _console.WriteLine(AllBuyableItems[i - 1].ItemStatsAsString(i));
                 }
-                Console.ResetColor();
+                _console.ResetColor();
             }
         }
 
@@ -126,15 +128,15 @@ namespace OOP_RPG.ConsoleGame
         */
         private void SellShopItem()
         {
-            Console.Clear();
+            _console.Clear();
 
             if (AllBuyableItems.Any())
             {
-                Console.WriteLine("================[All Items]================");
+                _console.WriteLine("================[All Items]================");
                 DisplayAllItems();
 
-                Console.WriteLine("Tip: input item number to buy it");
-                var isNumber = int.TryParse(Console.ReadLine().Trim(), out var inputtedIndex);
+                _console.WriteLine("Tip: input item number to buy it");
+                var isNumber = int.TryParse(_console.ReadLine().Trim(), out var inputtedIndex);
 
 
                 IBuyableItem selectedItem = isNumber && inputtedIndex > 0 && inputtedIndex <= AllBuyableItems.Count ? AllBuyableItems[inputtedIndex - 1] : null;
@@ -144,25 +146,25 @@ namespace OOP_RPG.ConsoleGame
                 {
                     SellItem(selectedItem);
 
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"You just bought a new {selectedItem.Name}\n\n");
-                    Console.ResetColor();
+                    _console.TextColor = ConsoleColor.Yellow;
+                    _console.WriteLine($"You just bought a new {selectedItem.Name}\n\n");
+                    _console.ResetColor();
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Nothing Was Bought . . .");
-                    Console.WriteLine("Because one of the following reasons:");
-                    Console.WriteLine("- item's price was greater than your current Gold Coins");
-                    Console.WriteLine("- input wasn't an item number\n");
-                    Console.ResetColor();
+                    _console.TextColor = ConsoleColor.Red;
+                    _console.WriteLine("Nothing Was Bought . . .");
+                    _console.WriteLine("Because one of the following reasons:");
+                    _console.WriteLine("- item's price was greater than your current Gold Coins");
+                    _console.WriteLine("- input wasn't an item number\n");
+                    _console.ResetColor();
                 }
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Sorry The Shop Is Out Of Stock . . .");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine("Sorry The Shop Is Out Of Stock . . .");
+                _console.ResetColor();
             }
         }
 
@@ -179,17 +181,17 @@ namespace OOP_RPG.ConsoleGame
 
             while (userInput != "3")
             {
-                Console.Title = $"Spend Your Gold Coins | Current Gold Coins: {Hero.GoldCoins}";
+                _console.Title = $"Spend Your Gold Coins | Current Gold Coins: {Hero.GoldCoins}";
 
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("***** Shop ******\n");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Yellow;
+                _console.WriteLine("***** Shop ******\n");
+                _console.ResetColor();
 
-                Console.WriteLine("1. Buy An Item");
-                Console.WriteLine("2. Sell An Item");
-                Console.WriteLine("3. Exit");
+                _console.WriteLine("1. Buy An Item");
+                _console.WriteLine("2. Sell An Item");
+                _console.WriteLine("3. Exit");
 
-                userInput = Console.ReadLine().Trim();
+                userInput = _console.ReadLine().Trim();
 
 
                 if (userInput == "1")
@@ -212,7 +214,7 @@ namespace OOP_RPG.ConsoleGame
         */
         private void BuyHeroItem()
         {
-            Console.Clear();
+            _console.Clear();
 
             var heroItems = Hero.Bag.ToList();
 
@@ -224,70 +226,70 @@ namespace OOP_RPG.ConsoleGame
                     {
                         if (heroItems[i] is IStrengthItem)
                         {
-                            Console.ForegroundColor = ConsoleColor.Cyan;
+                            _console.TextColor = ConsoleColor.Cyan;
                             if (heroItems[i] is IWeapon weapon)
                             {
                                 if (weapon.IsEquipped)
                                 {
-                                    Console.WriteLine($"{i + 1}. Sell your {weapon.Name} for {weapon.Price.SellingPrice} Gold Coins (Currently Equipped)");
+                                    _console.WriteLine($"{i + 1}. Sell your {weapon.Name} for {weapon.Price.SellingPrice} Gold Coins (Currently Equipped)");
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"{i + 1}. Sell your {weapon.Name} for {weapon.Price.SellingPrice} Gold Coins");
+                                    _console.WriteLine($"{i + 1}. Sell your {weapon.Name} for {weapon.Price.SellingPrice} Gold Coins");
                                 }
                             }
                             else
                             {
-                                Console.WriteLine($"{i + 1}. Sell your {buyableItem.Name} for {buyableItem.Price.SellingPrice} Gold Coins");
+                                _console.WriteLine($"{i + 1}. Sell your {buyableItem.Name} for {buyableItem.Price.SellingPrice} Gold Coins");
                             }
                         }
                         else if (heroItems[i] is IDefenseItem)
                         {
                             if (heroItems[i] is IArmor armor)
                             {
-                                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                                _console.TextColor = ConsoleColor.DarkBlue;
                                 if (armor.IsEquipped)
                                 {
-                                    Console.WriteLine($"{i + 1}. Sell your {armor.Name} for {armor.Price.SellingPrice} Gold Coins (Currently Equipped)");
+                                    _console.WriteLine($"{i + 1}. Sell your {armor.Name} for {armor.Price.SellingPrice} Gold Coins (Currently Equipped)");
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"{i + 1}. Sell your {armor.Name} for {armor.Price.SellingPrice} Gold Coins");
+                                    _console.WriteLine($"{i + 1}. Sell your {armor.Name} for {armor.Price.SellingPrice} Gold Coins");
                                 }
                             }
                             else if (heroItems[i] is IShield shield)
                             {
-                                Console.ForegroundColor = ConsoleColor.Blue;
+                                _console.TextColor = ConsoleColor.Blue;
                                 if (shield.IsEquipped)
                                 {
-                                    Console.WriteLine($"{i + 1}. Sell your {shield.Name} for {shield.Price.SellingPrice} Gold Coins (Currently Equipped)");
+                                    _console.WriteLine($"{i + 1}. Sell your {shield.Name} for {shield.Price.SellingPrice} Gold Coins (Currently Equipped)");
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"{i + 1}. Sell your {shield.Name} for {shield.Price.SellingPrice} Gold Coins");
+                                    _console.WriteLine($"{i + 1}. Sell your {shield.Name} for {shield.Price.SellingPrice} Gold Coins");
                                 }
                             }
                             else
                             {
-                                Console.WriteLine($"{i + 1}. Sell your {buyableItem.Name} for {buyableItem.Price.SellingPrice} Gold Coins");
+                                _console.WriteLine($"{i + 1}. Sell your {buyableItem.Name} for {buyableItem.Price.SellingPrice} Gold Coins");
                             }
                         }
                         else if (heroItems[i] is IHealthPotion healthPotion)
                         {
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine($"{i + 1}. Sell your {healthPotion.Name} for {healthPotion.Price.SellingPrice} Gold Coins");
+                            _console.TextColor = ConsoleColor.Green;
+                            _console.WriteLine($"{i + 1}. Sell your {healthPotion.Name} for {healthPotion.Price.SellingPrice} Gold Coins");
                         }
                         else
                         {
                             throw new Exception($"Unexpected Item type ({heroItems[i]})");
                         }
                     }
-                    Console.ResetColor();
+                    _console.ResetColor();
                 }
 
-                Console.WriteLine("\nPlease input a item number to sell it\n");
+                _console.WriteLine("\nPlease input a item number to sell it\n");
 
-                var isNumber = int.TryParse(Console.ReadLine().Trim(), out var userIndex);
+                var isNumber = int.TryParse(_console.ReadLine().Trim(), out var userIndex);
 
                 userIndex--;
 
@@ -313,24 +315,24 @@ namespace OOP_RPG.ConsoleGame
                     // Make sold item available in the shop again
                     AllBuyableItems.Add(deleteThisItem);
 
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"You just sold your {deleteThisItem.Name} for {deleteThisItem.Price.SellingPrice} Gold Coins");
-                    Console.ResetColor();
+                    _console.TextColor = ConsoleColor.Yellow;
+                    _console.WriteLine($"You just sold your {deleteThisItem.Name} for {deleteThisItem.Price.SellingPrice} Gold Coins");
+                    _console.ResetColor();
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Did not sell an item because of one of the following statements:");
-                    Console.WriteLine(" - didn't input a number");
-                    Console.WriteLine(" - inputted number wasn't within a valid range");
-                    Console.ResetColor();
+                    _console.TextColor = ConsoleColor.Red;
+                    _console.WriteLine("Did not sell an item because of one of the following statements:");
+                    _console.WriteLine(" - didn't input a number");
+                    _console.WriteLine(" - inputted number wasn't within a valid range");
+                    _console.ResetColor();
                 }
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("You Have No Items To Sell");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine("You Have No Items To Sell");
+                _console.ResetColor();
             }
         }
     }

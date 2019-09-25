@@ -1,18 +1,18 @@
-using OOP_RPG.ConsoleGame.Utilities;
 using OOP_RPG.Models.Enumerations;
 using OOP_RPG.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace OOP_RPG.ConsoleGame
+namespace OOP_RPG.Models
 {
     public class Fight
     {
-        private HandleAchievements ManageAchievements { get; }
-        private List<Monster> Monsters { get; }
-        private Hero Hero { get; }
-        private Monster CurrentMonster { get; }
+        private readonly IConsole _console;
+        private IAchievementManager ManageAchievements { get; }
+        private List<IMonster> Monsters { get; }
+        private IHero Hero { get; }
+        private IMonster CurrentMonster { get; }
         private int MonstersEXPWorth { get; }
         private int MonstersGoldCoinWorth { get; }
 
@@ -24,8 +24,9 @@ namespace OOP_RPG.ConsoleGame
         Fight ---> Initializes the fight and selects a random monster from today's monsters
         ======================================================================================== 
         */
-        public Fight(HandleAchievements manageAchievements, Hero hero)
+        public Fight(IConsole console, IAchievementManager manageAchievements, IHero hero)
         {
+            _console = console;
             Hero = hero;
             ManageAchievements = manageAchievements;
 
@@ -33,7 +34,7 @@ namespace OOP_RPG.ConsoleGame
             // TODO: use this to up the difficulty for the monsters
             // TotalHeroPoints = Hero.OriginalHP + Hero.Strength + Hero.Defense;
 
-            Monsters = new List<Monster>(GetTodaysMonsters());
+            Monsters = new List<IMonster>(GetTodaysMonsters());
 
             CurrentMonster = Monsters[RNG.Next(0, Monsters.Count)];
 
@@ -48,9 +49,9 @@ namespace OOP_RPG.ConsoleGame
         GetTodaysMonsters ---> Gets all the monsters and only returns today's monsters
         ======================================================================================== 
         */
-        public static List<Monster> GetTodaysMonsters()
+        public static List<IMonster> GetTodaysMonsters()
         {
-            var allMonsters = new List<Monster>(WeekDayMonsters.InitialMonsters);
+            var allMonsters = new List<IMonster>(WeekDayMonsterManager.InitialMonsters);
 
             var todaysMonsters = allMonsters
                 .Where(monster => monster.DayOfTheWeek == DateTime.Now.DayOfWeek)
@@ -68,20 +69,20 @@ namespace OOP_RPG.ConsoleGame
         */
         public void Start()
         {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine($"\nA {CurrentMonster.Name}! (Strength = {CurrentMonster.Strength} | Defense = {CurrentMonster.Defense} | HP = {CurrentMonster.CurrentHP})");
-            Console.ResetColor();
+            _console.TextColor = ConsoleColor.Cyan;
+            _console.WriteLine($"\nA {CurrentMonster.Name}! (Strength = {CurrentMonster.Strength} | Defense = {CurrentMonster.Defense} | HP = {CurrentMonster.CurrentHP})");
+            _console.ResetColor();
 
             while (CurrentMonster.CurrentHP > 0 && Hero.CurrentHP > 0)
             {
-                Console.Title = $"FIGHT!!! ({Hero.Name} vs {CurrentMonster.Name}) Stats: [> Str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <] | Enemy Current HP: {CurrentMonster.CurrentHP}";
-                Console.WriteLine($"\nWhat will you do?");
-                Console.WriteLine("1. Fight");
-                Console.WriteLine("2. Use Health Potion");
-                Console.WriteLine("3. Flee");
-                Console.WriteLine("4. See The Enemy's Status and Your Status");
+                _console.Title = $"FIGHT!!! ({Hero.Name} vs {CurrentMonster.Name}) Stats: [> Str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <] | Enemy Current HP: {CurrentMonster.CurrentHP}";
+                _console.WriteLine($"\nWhat will you do?");
+                _console.WriteLine("1. Fight");
+                _console.WriteLine("2. Use Health Potion");
+                _console.WriteLine("3. Flee");
+                _console.WriteLine("4. See The Enemy's Status and Your Status");
 
-                var input = Console.ReadLine().Trim();
+                var input = _console.ReadLine().Trim();
 
                 if (input == "1")
                 {
@@ -97,7 +98,7 @@ namespace OOP_RPG.ConsoleGame
                 }
                 else if (input == "4")
                 {
-                    Hero.ShowStats(/*false*/);
+                    Hero.ShowStats(false);
                     CurrentMonster.ShowStats();
                 }
             }
@@ -136,9 +137,9 @@ namespace OOP_RPG.ConsoleGame
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("You have failed to flee the battle");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine("You have failed to flee the battle");
+                _console.ResetColor();
                 MonsterTurn();
             }
         }
@@ -152,11 +153,11 @@ namespace OOP_RPG.ConsoleGame
         */
         private void UseHealthPotion()
         {
-            Console.Clear();
+            _console.Clear();
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("******* Your Health Potions *******");
-            Console.ResetColor();
+            _console.TextColor = ConsoleColor.Yellow;
+            _console.WriteLine("******* Your Health Potions *******");
+            _console.ResetColor();
 
             var healthPotions = Hero.Bag.OfType<IHealthPotion>().ToArray();
 
@@ -164,46 +165,46 @@ namespace OOP_RPG.ConsoleGame
             {
                 for (var i = 1; i < healthPotions.Length + 1; i++)
                 {
-                    Console.WriteLine($"{i}. {healthPotions[i - 1].Name} --> (+ {healthPotions[i - 1].HealAmount} HP)");
+                    _console.WriteLine($"{i}. {healthPotions[i - 1].Name} --> (+ {healthPotions[i - 1].HealAmount} HP)");
                 }
 
-                var isNumber = int.TryParse(Console.ReadLine().Trim(), out var userIndex);
+                var isNumber = int.TryParse(_console.ReadLine().Trim(), out var userIndex);
 
                 // account for index offset of 1
                 userIndex--;
 
                 if (!isNumber || userIndex < 0 || userIndex >= healthPotions.Length)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Nothing was used because of one of the following errors:");
-                    Console.WriteLine("- did not input a number");
-                    Console.WriteLine("- inputted number was too small");
-                    Console.WriteLine("- inputted number was too big");
-                    Console.ResetColor();
+                    _console.TextColor = ConsoleColor.Red;
+                    _console.WriteLine("Nothing was used because of one of the following errors:");
+                    _console.WriteLine("- did not input a number");
+                    _console.WriteLine("- inputted number was too small");
+                    _console.WriteLine("- inputted number was too big");
+                    _console.ResetColor();
                 }
                 else
                 {
                     if (Hero.CurrentHP >= Hero.OriginalHP)
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Sorry you can't heal past you Original HP\n");
-                        Console.ResetColor();
+                        _console.TextColor = ConsoleColor.Red;
+                        _console.WriteLine("Sorry you can't heal past you Original HP\n");
+                        _console.ResetColor();
                     }
                     else
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"You used your {healthPotions[userIndex].Name}!");
-                        Console.ResetColor();
+                        _console.TextColor = ConsoleColor.Yellow;
+                        _console.WriteLine($"You used your {healthPotions[userIndex].Name}!");
+                        _console.ResetColor();
 
-                        Hero.UseHealthPotion(userIndex);
+                        Hero.UseHealthPotion(healthPotions[userIndex]);
                     }
                 }
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("You have nothing to use. . .");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine("You have nothing to use. . .");
+                _console.ResetColor();
             }
         }
 
@@ -237,10 +238,10 @@ namespace OOP_RPG.ConsoleGame
                 CurrentMonster.CurrentHP -= damage;
             }
 
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine($"\nYou did {damage} damage!");
-            Console.WriteLine($"Monster's HP: {CurrentMonster.CurrentHP}/{CurrentMonster.OriginalHP}");
-            Console.ResetColor();
+            _console.TextColor = ConsoleColor.Blue;
+            _console.WriteLine($"\nYou did {damage} damage!");
+            _console.WriteLine($"Monster's HP: {CurrentMonster.CurrentHP}/{CurrentMonster.OriginalHP}");
+            _console.ResetColor();
 
             if (CurrentMonster.CurrentHP <= 0)
             {
@@ -298,10 +299,10 @@ namespace OOP_RPG.ConsoleGame
                 Hero.TakeDamage(damage);
             }
 
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"\n{CurrentMonster.Name} does {damage} damage!");
-            Console.WriteLine($"{Hero.Name}'s HP: {Hero.CurrentHP}/{Hero.OriginalHP}");
-            Console.ResetColor();
+            _console.TextColor = ConsoleColor.Red;
+            _console.WriteLine($"\n{CurrentMonster.Name} does {damage} damage!");
+            _console.WriteLine($"{Hero.Name}'s HP: {Hero.CurrentHP}/{Hero.OriginalHP}");
+            _console.ResetColor();
 
             if (Hero.CurrentHP <= 0)
             {
@@ -323,22 +324,22 @@ namespace OOP_RPG.ConsoleGame
                 Hero.AddExperiencePoints(MonstersEXPWorth);
                 Hero.AddGoldCoins(MonstersGoldCoinWorth);
 
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"{CurrentMonster.Name} has been defeated! You win the battle!");
-                Console.WriteLine($"(+ {MonstersGoldCoinWorth} Gold Coins)");
-                Console.WriteLine($"(+ {MonstersEXPWorth} EXP)");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Yellow;
+                _console.WriteLine($"{CurrentMonster.Name} has been defeated! You win the battle!");
+                _console.WriteLine($"(+ {MonstersGoldCoinWorth} Gold Coins)");
+                _console.WriteLine($"(+ {MonstersEXPWorth} EXP)");
+                _console.ResetColor();
                 ManageAchievements.AddDeadMonster(CurrentMonster);
             }
             else if (howHeroWon == WinConditionEnum.Flee)
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"You have successfully fled the battle!");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Yellow;
+                _console.WriteLine($"You have successfully fled the battle!");
+                _console.ResetColor();
             }
-            Hero.ShowStats(/*false*/);
+            Hero.ShowStats(false);
 
-            Console.Title = $"Main Menu";
+            _console.Title = $"Main Menu";
         }
 
 
@@ -350,14 +351,14 @@ namespace OOP_RPG.ConsoleGame
         */
         private void Lose()
         {
-            Console.Title = $"Better Luck Next Time.";
+            _console.Title = $"Better Luck Next Time.";
 
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("You've been defeated! :( GAME OVER.");
-            Console.ResetColor();
+            _console.TextColor = ConsoleColor.DarkRed;
+            _console.WriteLine("You've been defeated! :( GAME OVER.");
+            _console.ResetColor();
 
-            Console.WriteLine("Press any key to exit the game");
-            Console.ReadKey(true);
+            _console.WriteLine("Press any key to exit the game");
+            _console.ReadKey(true);
         }
     }
 }

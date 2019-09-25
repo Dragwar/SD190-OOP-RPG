@@ -4,27 +4,20 @@ using System;
 
 namespace OOP_RPG.ConsoleGame
 {
-    public static class HandleCheatCodes
+    public static class CheatCodeManager
     {
-        private static void CreateAndAddCheatItem(Hero hero, Shop shop, IBuyableItem cheatItem)
+        private static void CreateAndAddCheatItem(IHero hero, IShop shop, IBuyableItem cheatItem)
         {
-            if (cheatItem is IWeapon weapon)
+            if (cheatItem is IEquippableItem equippableItem)
             {
-                hero.Bag.Add(weapon);
-                shop.AllBuyableItems.Add(weapon);
-                hero.EquipWeapon(hero.Bag.IndexOf(weapon));
+                hero.Bag.Add(equippableItem);
+                shop.AllBuyableItems.Add(cheatItem);
+                hero.Equip(equippableItem);
             }
-            else if (cheatItem is IArmor armor)
+            else if (cheatItem is { })
             {
-                hero.Bag.Add(armor);
-                shop.AllBuyableItems.Add(armor);
-                hero.EquipArmor(hero.Bag.IndexOf(armor));
-            }
-            else if (cheatItem is IShield shield)
-            {
-                hero.Bag.Add(shield);
-                shop.AllBuyableItems.Add(shield);
-                hero.EquipShield(hero.Bag.IndexOf(shield));
+                hero.Bag.Add(cheatItem);
+                shop.AllBuyableItems.Add(cheatItem);
             }
             else
             {
@@ -32,9 +25,9 @@ namespace OOP_RPG.ConsoleGame
             }
         }
 
-        public static void HeroNameCheat(Hero hero, Shop shop, string heroName)
+        public static void HeroNameCheat(IHero hero, IShop shop)
         {
-            switch (heroName)
+            switch (hero.Name)
             {
                 case "everett":
                 case "Everett":

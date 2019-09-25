@@ -1,13 +1,13 @@
 using OOP_RPG.Models;
 using OOP_RPG.Models.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace OOP_RPG.ConsoleGame
 {
-    public class Hero
+    public class Hero : IHero
     {
+        private readonly IConsole _console;
         public string Name { get; set; }
         public int Strength { get; private set; }
         public int Defense { get; private set; }
@@ -17,18 +17,20 @@ namespace OOP_RPG.ConsoleGame
         public int GoldCoins { get; private set; }
         public ItemInventory<IEquippableItem> EquippedItems { get; }
         public ItemInventory<IItem> Bag { get; }
-        //public HandleAchievements ManageAchievements { get; private set; }
-        //public int AchievementPoints { get => ManageAchievements.TotalPoints; }
+        public IQueryable<IItem> AllItems => Bag.Concat(EquippedItems).AsQueryable();
+        public IAchievementManager AchievementManager { get; private set; }
+        public int AchievementPoints { get => AchievementManager.TotalPoints; }
 
-        public Hero(/*HandleAchievements manageAchievements*/)
+        public Hero(IConsole console, IAchievementManager achievementManager)
         {
+            _console = console;
             Strength = 5;
             Defense = 5;
             OriginalHP = 20;
             CurrentHP = 20;
             GoldCoins = 25;
             ExperiencePoints = 10;
-            //ManageAchievements = manageAchievements;
+            AchievementManager = achievementManager;
 
             Bag = new ItemInventory<IItem>();
             Bag.OnItemAdd += Bag_OnItemAdd;
@@ -65,36 +67,35 @@ namespace OOP_RPG.ConsoleGame
 
 
 
-
         /*
         ======================================================================================== 
         ShowStats ---> Simple method prints all the current stat values
         ======================================================================================== 
         */
-        public void ShowStats(/*bool showAchievements*/)
+        public void ShowStats(bool showAchievements)
         {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\n***** {Name} *****");
-            Console.ResetColor();
+            _console.TextColor = ConsoleColor.Yellow;
+            _console.WriteLine($"\n***** {Name} *****");
+            _console.ResetColor();
 
             var strengthItems = EquippedItems.OfType<IStrengthItem>().ToArray();
             var defenseItems = EquippedItems.OfType<IDefenseItem>().ToArray();
 
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Strength: {Strength} {(strengthItems.Any() ? $"(+ {strengthItems.Sum(s => s.Strength.BaseValue)})" : "")}");
-            Console.WriteLine($"Defense: {Defense} {(defenseItems.Any() ? $"(+ {defenseItems.Sum(d => d.Defense.BaseValue)})" : "")}");
-            Console.WriteLine($"Hit-points: {CurrentHP}/{OriginalHP}");
-            Console.WriteLine($"Gold Coins: {GoldCoins}");
-            Console.WriteLine($"Experience Points: {ExperiencePoints}");
-            //Console.WriteLine($"Achievement Points: {AchievementPoints}");
-            Console.ResetColor();
+            _console.TextColor = ConsoleColor.Green;
+            _console.WriteLine($"Strength: {Strength} {(strengthItems.Any() ? $"(+ {strengthItems.Sum(s => s.Strength.BaseValue)})" : "")}");
+            _console.WriteLine($"Defense: {Defense} {(defenseItems.Any() ? $"(+ {defenseItems.Sum(d => d.Defense.BaseValue)})" : "")}");
+            _console.WriteLine($"Hit-points: {CurrentHP}/{OriginalHP}");
+            _console.WriteLine($"Gold Coins: {GoldCoins}");
+            _console.WriteLine($"Experience Points: {ExperiencePoints}");
+            _console.WriteLine($"Achievement Points: {AchievementPoints}");
+            _console.ResetColor();
 
-            //if (showAchievements)
-            //{
-            //    Console.WriteLine($"Achievements:");
-            //    ManageAchievements.PrintAllAchievements();
-            //}
+            if (showAchievements)
+            {
+                _console.WriteLine($"Achievements:");
+                AchievementManager.PrintAllAchievements();
+            }
         }
 
 
@@ -106,9 +107,9 @@ namespace OOP_RPG.ConsoleGame
         */
         public void ShowInventory()
         {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("\n***** INVENTORY ******");
-            Console.ResetColor();
+            _console.TextColor = ConsoleColor.Yellow;
+            _console.WriteLine("\n***** INVENTORY ******");
+            _console.ResetColor();
 
             ShowInventoryWeapons();
             ShowInventoryArmor();
@@ -123,35 +124,35 @@ namespace OOP_RPG.ConsoleGame
         */
         public void ShowInventoryWeapons()
         {
-            Console.WriteLine("Weapons: ");
+            _console.WriteLine("Weapons: ");
 
-            var weapons = Bag.OfType<IWeapon>().ToArray();
+            var weapons = AllItems.OfType<IWeapon>().ToArray();
             if (weapons.Any())
             {
                 foreach (var weapon in weapons)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    _console.TextColor = ConsoleColor.DarkGray;
                     var equippedMessage = "";
 
                     if (weapon.IsEquipped)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        _console.TextColor = ConsoleColor.Yellow;
                         equippedMessage = "CURRENTLY EQUIPPED\n";
                     }
 
-                    Console.WriteLine($"============({weapon.Name})============");
-                    Console.WriteLine($"Worth: {weapon.Price.SellingPrice} Gold Coins");
-                    Console.WriteLine($"Strength: (+ {weapon.Strength.BaseValue})");
-                    Console.WriteLine(equippedMessage);
-                    Console.ResetColor();
+                    _console.WriteLine($"============({weapon.Name})============");
+                    _console.WriteLine($"Worth: {weapon.Price.SellingPrice} Gold Coins");
+                    _console.WriteLine($"Strength: (+ {weapon.Strength.BaseValue})");
+                    _console.WriteLine(equippedMessage);
+                    _console.ResetColor();
                 }
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("You Have No Weapons . . .");
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine("You Have No Weapons . . .");
             }
-            Console.ResetColor();
+            _console.ResetColor();
         }
 
         /*
@@ -161,35 +162,35 @@ namespace OOP_RPG.ConsoleGame
         */
         public void ShowInventoryArmor()
         {
-            Console.WriteLine("Armor: ");
+            _console.WriteLine("Armor: ");
 
-            var armors = Bag.OfType<IArmor>().ToArray();
+            var armors = AllItems.OfType<IArmor>().ToArray();
             if (armors.Any())
             {
                 foreach (var armor in armors)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    _console.TextColor = ConsoleColor.DarkGray;
                     var equippedMessage = "";
 
                     if (armor.IsEquipped)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        _console.TextColor = ConsoleColor.Yellow;
                         equippedMessage = "CURRENTLY EQUIPPED\n";
                     }
 
-                    Console.WriteLine($"============({armor.Name})============");
-                    Console.WriteLine($"Worth: {armor.Price.SellingPrice} Gold Coins");
-                    Console.WriteLine($"Defense: (+ {armor.Defense.BaseValue})");
-                    Console.WriteLine(equippedMessage);
-                    Console.ResetColor();
+                    _console.WriteLine($"============({armor.Name})============");
+                    _console.WriteLine($"Worth: {armor.Price.SellingPrice} Gold Coins");
+                    _console.WriteLine($"Defense: (+ {armor.Defense.BaseValue})");
+                    _console.WriteLine(equippedMessage);
+                    _console.ResetColor();
                 }
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("You Have No Armor . . .");
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine("You Have No Armor . . .");
             }
-            Console.ResetColor();
+            _console.ResetColor();
         }
 
         /*
@@ -199,35 +200,35 @@ namespace OOP_RPG.ConsoleGame
         */
         public void ShowInventoryShield()
         {
-            Console.WriteLine("Shields: ");
+            _console.WriteLine("Shields: ");
 
-            var shields = Bag.OfType<IShield>().ToArray();
+            var shields = AllItems.OfType<IShield>().ToArray();
             if (shields.Any())
             {
                 foreach (var shield in shields)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    _console.TextColor = ConsoleColor.DarkGray;
                     var equippedMessage = "";
 
                     if (shield.IsEquipped)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        _console.TextColor = ConsoleColor.Yellow;
                         equippedMessage = "CURRENTLY EQUIPPED\n";
                     }
 
-                    Console.WriteLine($"============({shield.Name})============");
-                    Console.WriteLine($"Worth: {shield.Price.SellingPrice} Gold Coins");
-                    Console.WriteLine($"Defense: (+ {shield.Defense.BaseValue})");
-                    Console.WriteLine(equippedMessage);
-                    Console.ResetColor();
+                    _console.WriteLine($"============({shield.Name})============");
+                    _console.WriteLine($"Worth: {shield.Price.SellingPrice} Gold Coins");
+                    _console.WriteLine($"Defense: (+ {shield.Defense.BaseValue})");
+                    _console.WriteLine(equippedMessage);
+                    _console.ResetColor();
                 }
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("You Have No Shields . . .");
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine("You Have No Shields . . .");
             }
-            Console.ResetColor();
+            _console.ResetColor();
         }
 
 
@@ -239,27 +240,27 @@ namespace OOP_RPG.ConsoleGame
         */
         public void ShowInventoryHealthPotions()
         {
-            Console.WriteLine("HealthPotions: ");
+            _console.WriteLine("HealthPotions: ");
 
-            var healthPotions = Bag.OfType<IHealthPotion>().ToArray();
+            var healthPotions = AllItems.OfType<IHealthPotion>().ToArray();
             if (healthPotions.Any())
             {
                 foreach (var healthPotion in healthPotions)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.WriteLine($"============({healthPotion.Name})============");
-                    Console.WriteLine($"Worth: {healthPotion.Price.SellingPrice} Gold Coins");
-                    Console.WriteLine($"Heal Amount: (+ {healthPotion.HealAmount.BaseValue} HP)");
-                    Console.WriteLine();
-                    Console.ResetColor();
+                    _console.TextColor = ConsoleColor.DarkGreen;
+                    _console.WriteLine($"============({healthPotion.Name})============");
+                    _console.WriteLine($"Worth: {healthPotion.Price.SellingPrice} Gold Coins");
+                    _console.WriteLine($"Heal Amount: (+ {healthPotion.HealAmount.BaseValue} HP)");
+                    _console.WriteLine();
+                    _console.ResetColor();
                 }
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("You Have No Health Potions . . .");
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine("You Have No Health Potions . . .");
             }
-            Console.ResetColor();
+            _console.ResetColor();
         }
 
 
@@ -277,35 +278,35 @@ namespace OOP_RPG.ConsoleGame
 
             while (userInput != "6")
             {
-                Console.Title = $"{Name}'s Inventory | Stats: [> Str: {Strength} | Def: {Defense} | HP: {CurrentHP}/{OriginalHP} <]";
+                _console.Title = $"{Name}'s Inventory | Stats: [> Str: {Strength} | Def: {Defense} | HP: {CurrentHP}/{OriginalHP} <]";
                 ShowInventory();
 
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine(successMessage);
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Yellow;
+                _console.WriteLine(successMessage);
+                _console.ResetColor();
                 successMessage = "";
 
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(errorMessage);
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine(errorMessage);
+                _console.ResetColor();
                 errorMessage = "";
 
-                Console.WriteLine("1. equip a Weapon.");
-                Console.WriteLine("2. equip Armor.");
-                Console.WriteLine("3. equip Shield.");
-                Console.WriteLine("4. unequip all items.");
-                Console.WriteLine("5. use Health Potion.");
-                Console.WriteLine("6. exit\n");
+                _console.WriteLine("1. equip a Weapon.");
+                _console.WriteLine("2. equip Armor.");
+                _console.WriteLine("3. equip Shield.");
+                _console.WriteLine("4. unequip all items.");
+                _console.WriteLine("5. use Health Potion.");
+                _console.WriteLine("6. exit\n");
 
-                userInput = Console.ReadLine().Trim();
+                userInput = _console.ReadLine().Trim();
 
                 if (userInput == "1")
                 {
-                    Console.Clear();
+                    _console.Clear();
 
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("******* Unequipped Weapons *******");
-                    Console.ResetColor();
+                    _console.TextColor = ConsoleColor.Yellow;
+                    _console.WriteLine("******* Unequipped Weapons *******");
+                    _console.ResetColor();
 
                     var weapons = Bag.OfType<IWeapon>().ToArray();
                     if (weapons.Any())
@@ -314,35 +315,35 @@ namespace OOP_RPG.ConsoleGame
                         {
                             if (weapons[i - 1].IsEquipped)
                             {
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"{i}. {weapons[i - 1].Name} --> (+ {weapons[i - 1].Strength.BaseValue}) Strength (Already Equipped)");
-                                Console.ResetColor();
+                                _console.TextColor = ConsoleColor.Yellow;
+                                _console.WriteLine($"{i}. {weapons[i - 1].Name} --> (+ {weapons[i - 1].Strength.BaseValue}) Strength (Already Equipped)");
+                                _console.ResetColor();
 
                             }
                             else
                             {
-                                Console.WriteLine($"{i}. {weapons[i - 1].Name} --> (+ {weapons[i - 1].Strength.BaseValue}) Strength");
+                                _console.WriteLine($"{i}. {weapons[i - 1].Name} --> (+ {weapons[i - 1].Strength.BaseValue}) Strength");
                             }
                         }
 
-                        var isNumber = int.TryParse(Console.ReadLine().Trim(), out var userIndex);
+                        var isNumber = int.TryParse(_console.ReadLine().Trim(), out var userIndex);
 
                         // account for index offset of 1
                         userIndex--;
 
                         if (!isNumber || userIndex < 0 || userIndex >= weapons.Length)
                         {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Nothing was equipped because of one of the following errors:");
-                            Console.WriteLine("- did not input a number");
-                            Console.WriteLine("- inputted number was too small");
-                            Console.WriteLine("- inputted number was too big");
-                            Console.ResetColor();
+                            _console.TextColor = ConsoleColor.Red;
+                            _console.WriteLine("Nothing was equipped because of one of the following errors:");
+                            _console.WriteLine("- did not input a number");
+                            _console.WriteLine("- inputted number was too small");
+                            _console.WriteLine("- inputted number was too big");
+                            _console.ResetColor();
                             return;
                         }
                         else
                         {
-                            EquipWeapon(userIndex);
+                            Equip(weapons[userIndex]);
 
                             successMessage = $"You equipped your {EquippedItems.Last().Name}!"; // TODO: improve how to get the item that was just equipped
                         }
@@ -354,48 +355,48 @@ namespace OOP_RPG.ConsoleGame
                 }
                 else if (userInput == "2")
                 {
-                    Console.Clear();
+                    _console.Clear();
 
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("******* Unequipped Armor *******");
-                    Console.ResetColor();
+                    _console.TextColor = ConsoleColor.Yellow;
+                    _console.WriteLine("******* Unequipped Armor *******");
+                    _console.ResetColor();
 
-                    var armor = Bag.OfType<IArmor>().ToArray();
+                    var armors = Bag.OfType<IArmor>().ToArray();
 
-                    if (armor.Any())
+                    if (armors.Any())
                     {
-                        for (var i = 1; i < armor.Length + 1; i++)
+                        for (var i = 1; i < armors.Length + 1; i++)
                         {
-                            if (armor[i - 1].IsEquipped)
+                            if (armors[i - 1].IsEquipped)
                             {
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"{i}. {armor[i - 1].Name} --> (+ {armor[i - 1].Defense.BaseValue}) Defense (Already Equipped)");
-                                Console.ResetColor();
+                                _console.TextColor = ConsoleColor.Yellow;
+                                _console.WriteLine($"{i}. {armors[i - 1].Name} --> (+ {armors[i - 1].Defense.BaseValue}) Defense (Already Equipped)");
+                                _console.ResetColor();
                             }
                             else
                             {
-                                Console.WriteLine($"{i}. {armor[i - 1].Name} --> (+ {armor[i - 1].Defense.BaseValue}) Defense");
+                                _console.WriteLine($"{i}. {armors[i - 1].Name} --> (+ {armors[i - 1].Defense.BaseValue}) Defense");
                             }
                         }
 
-                        var isNumber = int.TryParse(Console.ReadLine().Trim(), out var userIndex);
+                        var isNumber = int.TryParse(_console.ReadLine().Trim(), out var userIndex);
 
                         // account for index offset of 1
                         userIndex--;
 
-                        if (!isNumber || userIndex < 0 || userIndex >= armor.Length)
+                        if (!isNumber || userIndex < 0 || userIndex >= armors.Length)
                         {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Nothing was equipped because of one of the following errors:");
-                            Console.WriteLine("- did not input a number");
-                            Console.WriteLine("- inputted number was too small");
-                            Console.WriteLine("- inputted number was too big");
-                            Console.ResetColor();
+                            _console.TextColor = ConsoleColor.Red;
+                            _console.WriteLine("Nothing was equipped because of one of the following errors:");
+                            _console.WriteLine("- did not input a number");
+                            _console.WriteLine("- inputted number was too small");
+                            _console.WriteLine("- inputted number was too big");
+                            _console.ResetColor();
                             return;
                         }
                         else
                         {
-                            EquipArmor(userIndex);
+                            Equip(armors[userIndex]);
 
                             successMessage = $"You equipped your {EquippedItems.Last().Name}!"; // TODO: improve how to get the item that was just equipped
                         }
@@ -407,11 +408,11 @@ namespace OOP_RPG.ConsoleGame
                 }
                 else if (userInput == "3")
                 {
-                    Console.Clear();
+                    _console.Clear();
 
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("******* Unequipped Shields *******");
-                    Console.ResetColor();
+                    _console.TextColor = ConsoleColor.Yellow;
+                    _console.WriteLine("******* Unequipped Shields *******");
+                    _console.ResetColor();
 
                     var shields = Bag.OfType<IShield>().ToArray();
 
@@ -421,34 +422,34 @@ namespace OOP_RPG.ConsoleGame
                         {
                             if (shields[i - 1].IsEquipped)
                             {
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"{i}. {shields[i - 1].Name} --> (+ {shields[i - 1].Defense.BaseValue}) Defense (Already Equipped)");
-                                Console.ResetColor();
+                                _console.TextColor = ConsoleColor.Yellow;
+                                _console.WriteLine($"{i}. {shields[i - 1].Name} --> (+ {shields[i - 1].Defense.BaseValue}) Defense (Already Equipped)");
+                                _console.ResetColor();
                             }
                             else
                             {
-                                Console.WriteLine($"{i}. {shields[i - 1].Name} --> (+ {shields[i - 1].Defense.BaseValue}) Defense");
+                                _console.WriteLine($"{i}. {shields[i - 1].Name} --> (+ {shields[i - 1].Defense.BaseValue}) Defense");
                             }
                         }
 
-                        var isNumber = int.TryParse(Console.ReadLine().Trim(), out var userIndex);
+                        var isNumber = int.TryParse(_console.ReadLine().Trim(), out var userIndex);
 
                         // account for index offset of 1
                         userIndex--;
 
                         if (!isNumber || userIndex < 0 || userIndex >= shields.Length)
                         {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Nothing was equipped because of one of the following errors:");
-                            Console.WriteLine("- did not input a number");
-                            Console.WriteLine("- inputted number was too small");
-                            Console.WriteLine("- inputted number was too big");
-                            Console.ResetColor();
+                            _console.TextColor = ConsoleColor.Red;
+                            _console.WriteLine("Nothing was equipped because of one of the following errors:");
+                            _console.WriteLine("- did not input a number");
+                            _console.WriteLine("- inputted number was too small");
+                            _console.WriteLine("- inputted number was too big");
+                            _console.ResetColor();
                             return;
                         }
                         else
                         {
-                            EquipShield(userIndex);
+                            Equip(shields[userIndex]);
 
                             successMessage = $"You equipped your {EquippedItems.Last().Name}!"; // TODO: improve how to get the item that was just equipped
                         }
@@ -464,11 +465,11 @@ namespace OOP_RPG.ConsoleGame
                 }
                 else if (userInput == "5")
                 {
-                    Console.Clear();
+                    _console.Clear();
 
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("******* Your Health Potions *******");
-                    Console.ResetColor();
+                    _console.TextColor = ConsoleColor.Yellow;
+                    _console.WriteLine("******* Your Health Potions *******");
+                    _console.ResetColor();
 
                     var healthPotions = Bag.OfType<IHealthPotion>().ToArray();
 
@@ -476,22 +477,22 @@ namespace OOP_RPG.ConsoleGame
                     {
                         for (var i = 1; i < healthPotions.Length + 1; i++)
                         {
-                            Console.WriteLine($"{i}. {healthPotions[i - 1].Name} --> (+ {healthPotions[i - 1].HealAmount} HP)");
+                            _console.WriteLine($"{i}. {healthPotions[i - 1].Name} --> (+ {healthPotions[i - 1].HealAmount} HP)");
                         }
 
-                        var isNumber = int.TryParse(Console.ReadLine().Trim(), out var userIndex);
+                        var isNumber = int.TryParse(_console.ReadLine().Trim(), out var userIndex);
 
                         // account for index offset of 1
                         userIndex--;
 
                         if (!isNumber || userIndex < 0 || userIndex >= healthPotions.Length)
                         {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Nothing was used because of one of the following errors:");
-                            Console.WriteLine("- did not input a number");
-                            Console.WriteLine("- inputted number was too small");
-                            Console.WriteLine("- inputted number was too big");
-                            Console.ResetColor();
+                            _console.TextColor = ConsoleColor.Red;
+                            _console.WriteLine("Nothing was used because of one of the following errors:");
+                            _console.WriteLine("- did not input a number");
+                            _console.WriteLine("- inputted number was too small");
+                            _console.WriteLine("- inputted number was too big");
+                            _console.ResetColor();
                             return;
                         }
                         else
@@ -504,7 +505,7 @@ namespace OOP_RPG.ConsoleGame
                             {
                                 successMessage = $"You used your {healthPotions[userIndex].Name}!";
 
-                                UseHealthPotion(userIndex);
+                                UseHealthPotion(healthPotions[userIndex]);
                             }
                         }
                     }
@@ -516,48 +517,9 @@ namespace OOP_RPG.ConsoleGame
             }
         }
 
-
-
-        /*
-        ======================================================================================== 
-        EquipWeapon ---> Simple method to equip a weapon via index
-        ======================================================================================== 
-        */
-        public void EquipWeapon(int weaponIndex)
-        {
-            var weapons = Bag.OfType<IWeapon>().ToArray();
-            if (weapons.Any())
-            {
-                var currentEquippedWeapon = EquippedItems.OfType<IWeapon>().SingleOrDefault();
-                if (currentEquippedWeapon != null)
-                {
-                    UnEquipItem(currentEquippedWeapon);
-                }
-
-                var foundItem = Bag[weaponIndex];
-
-                if (foundItem is IWeapon weapon)
-                {
-                    EquippedItems.Add(weapon);
-                    weapon.IsEquipped = true;
-                }
-                else
-                {
-                    throw new InvalidOperationException($"Error: Trying Invalid Item that isn't a {nameof(IWeapon)} type from {nameof(Bag)}. (Was at this index {weaponIndex})");
-                }
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nYou don't have any weapons to equip!");
-                Console.ResetColor();
-            }
-        }
-
-
         public void Equip(IEquippableItem equippableItem)
         {
-            if (Bag.Any())
+            if (Bag.Any(item => item is IEquippableItem))
             {
                 if (IsItemInBag(equippableItem))
                 {
@@ -570,6 +532,10 @@ namespace OOP_RPG.ConsoleGame
                     Bag.Remove(equippableItem);
                     equippableItem.IsEquipped = true;
                 }
+                else if (IsItemEquipped(equippableItem))
+                {
+                    equippableItem.IsEquipped = true;
+                }
                 else
                 {
                     throw new Exception("Unexpected error occurred");
@@ -577,9 +543,9 @@ namespace OOP_RPG.ConsoleGame
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nYou don't have any armor to equip!");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine("\nYou don't have any items to equip!");
+                _console.ResetColor();
             }
         }
 
@@ -612,9 +578,9 @@ namespace OOP_RPG.ConsoleGame
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nYou don't have any armor to equip!");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine("\nYou don't have any armor to equip!");
+                _console.ResetColor();
             }
         }
 
@@ -648,9 +614,9 @@ namespace OOP_RPG.ConsoleGame
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nYou don't have any shield to equip!");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine("\nYou don't have any shield to equip!");
+                _console.ResetColor();
             }
         }
 
@@ -669,9 +635,9 @@ namespace OOP_RPG.ConsoleGame
                 {
                     EquippedItems.Remove(armor);
                     armor.IsEquipped = false;
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"{armor.Name} was unequipped!");
-                    Console.ResetColor();
+                    _console.TextColor = ConsoleColor.Yellow;
+                    _console.WriteLine($"{armor.Name} was unequipped!");
+                    _console.ResetColor();
                 }
             }
             else if (item is IWeapon weapon)
@@ -680,9 +646,9 @@ namespace OOP_RPG.ConsoleGame
                 {
                     EquippedItems.Remove(weapon);
                     weapon.IsEquipped = false;
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"{weapon.Name} was unequipped!");
-                    Console.ResetColor();
+                    _console.TextColor = ConsoleColor.Yellow;
+                    _console.WriteLine($"{weapon.Name} was unequipped!");
+                    _console.ResetColor();
                 }
             }
             else if (item is IShield shield)
@@ -691,9 +657,9 @@ namespace OOP_RPG.ConsoleGame
                 {
                     EquippedItems.Remove(shield);
                     shield.IsEquipped = false;
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"{shield.Name} was unequipped!");
-                    Console.ResetColor();
+                    _console.TextColor = ConsoleColor.Yellow;
+                    _console.WriteLine($"{shield.Name} was unequipped!");
+                    _console.ResetColor();
                 }
             }
         }
@@ -785,9 +751,9 @@ namespace OOP_RPG.ConsoleGame
         UseHealthPotion ---> Selects Health potion via index and heals then removes it from bag
         ======================================================================================== 
         */
-        public void UseHealthPotion(int healthPotionIndex)
+        public void UseHealthPotion(IHealthPotion healthPotion)
         {
-            if (Bag.OfType<IHealthPotion>().Any() && Bag[healthPotionIndex] is IHealthPotion healthPotion)
+            if (IsItemInBag(healthPotion))
             {
                 CurrentHP += healthPotion.HealAmount.BaseValue;
 
@@ -796,15 +762,15 @@ namespace OOP_RPG.ConsoleGame
                 // then my curHP would go to 30 and not past it.
                 CurrentHP = CurrentHP > OriginalHP ? OriginalHP : CurrentHP;
 
-                Console.WriteLine($"You used {healthPotion.Name}");
-                Console.WriteLine($"Your HP: {CurrentHP}/{OriginalHP}");
-                Bag.RemoveAt(healthPotionIndex);
+                _console.WriteLine($"You used {healthPotion.Name}");
+                _console.WriteLine($"Your HP: {CurrentHP}/{OriginalHP}");
+                Bag.Remove(healthPotion);
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nYou don't have any health potion to use!");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine("\nYou don't have any health potion to use!");
+                _console.ResetColor();
             }
         }
 
@@ -817,7 +783,7 @@ namespace OOP_RPG.ConsoleGame
         */
         public int LevelUp(int heroStatValue)
         {
-            var isNumber = int.TryParse(Console.ReadLine().Trim(), out var levelAmount);
+            var isNumber = int.TryParse(_console.ReadLine().Trim(), out var levelAmount);
 
             if (isNumber && levelAmount <= ExperiencePoints)
             {
@@ -826,9 +792,9 @@ namespace OOP_RPG.ConsoleGame
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Nothing Leveled Up (input wasn't a int or input was greater than current exp)\n");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine("Nothing Leveled Up (input wasn't a int or input was greater than current exp)\n");
+                _console.ResetColor();
             }
             return heroStatValue;
         }
@@ -844,41 +810,39 @@ namespace OOP_RPG.ConsoleGame
         {
             if (userInput == "1")
             {
-                Console.WriteLine("================[Level Up Strength]================");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Current Experience Points: {ExperiencePoints}");
-                Console.WriteLine($"Current Strength: {Strength}");
-                Console.ResetColor();
+                _console.WriteLine("================[Level Up Strength]================");
+                _console.TextColor = ConsoleColor.Green;
+                _console.WriteLine($"Current Experience Points: {ExperiencePoints}");
+                _console.WriteLine($"Current Strength: {Strength}");
+                _console.ResetColor();
 
-                Console.WriteLine("Level Up Strength by:\n");
+                _console.WriteLine("Level Up Strength by:\n");
                 Strength = LevelUp(Strength);
             }
             else if (userInput == "2")
             {
-                Console.WriteLine("================[Level Up Defense]================");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Current Experience Points: {ExperiencePoints}");
-                Console.WriteLine($"Current Defense: {Defense}");
-                Console.ResetColor();
+                _console.WriteLine("================[Level Up Defense]================");
+                _console.TextColor = ConsoleColor.Green;
+                _console.WriteLine($"Current Experience Points: {ExperiencePoints}");
+                _console.WriteLine($"Current Defense: {Defense}");
+                _console.ResetColor();
 
-                Console.WriteLine("Level Up Defense by:\n");
+                _console.WriteLine("Level Up Defense by:\n");
                 Defense = LevelUp(Defense);
             }
             else if (userInput == "3")
             {
-                Console.WriteLine("================[Level Up Original HP]================");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Current Experience Points: {ExperiencePoints}");
-                Console.WriteLine($"Current OriginalHP: {OriginalHP}");
-                Console.ResetColor();
+                _console.WriteLine("================[Level Up Original HP]================");
+                _console.TextColor = ConsoleColor.Green;
+                _console.WriteLine($"Current Experience Points: {ExperiencePoints}");
+                _console.WriteLine($"Current OriginalHP: {OriginalHP}");
+                _console.ResetColor();
 
-                Console.WriteLine("Level Up HP by:\n");
+                _console.WriteLine("Level Up HP by:\n");
                 OriginalHP = LevelUp(OriginalHP);
             }
-            ShowStats(/*false*/);
-            Console.WriteLine("\n");
+            ShowStats(false);
+            _console.WriteLine("\n");
         }
-
-
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace OOP_RPG.ConsoleGame.Utilities
+namespace OOP_RPG.Models
 {
     /// <summary>
     /// Holds a <see cref="ThreadStaticAttribute"/> <see cref="System.Random"/> property

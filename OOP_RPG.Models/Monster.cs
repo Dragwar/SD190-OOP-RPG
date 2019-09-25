@@ -1,11 +1,12 @@
-using OOP_RPG.ConsoleGame.Utilities;
 using OOP_RPG.Models.Enumerations;
+using OOP_RPG.Models.Interfaces;
 using System;
 
-namespace OOP_RPG.ConsoleGame
+namespace OOP_RPG.Models
 {
-    public class Monster
+    public class Monster : IMonster
     {
+        private readonly IConsole _console;
         public Difficulty Difficulty { get; }
         public DayOfWeek DayOfTheWeek { get; }
         public string Name { get; }
@@ -16,6 +17,18 @@ namespace OOP_RPG.ConsoleGame
 
         public Monster(Difficulty difficulty, DayOfWeek dayOfTheWeek, string name, int strength, int defense, int hp)
         {
+            Difficulty = difficulty;
+            DayOfTheWeek = dayOfTheWeek;
+            Name = name;
+            Strength = strength;
+            Defense = defense;
+            OriginalHP = hp;
+            CurrentHP = hp;
+            _console = new Terminal();
+        }
+        public Monster(IConsole console, Difficulty difficulty, DayOfWeek dayOfTheWeek, string name, int strength, int defense, int hp)
+        {
+            _console = console;
             Difficulty = difficulty;
             DayOfTheWeek = dayOfTheWeek;
             Name = name;
@@ -34,15 +47,15 @@ namespace OOP_RPG.ConsoleGame
         */
         public void ShowStats()
         {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\n***** {Name} (Enemy) *****");
-            Console.ResetColor();
+            _console.TextColor = ConsoleColor.Yellow;
+            _console.WriteLine($"\n***** {Name} (Enemy) *****");
+            _console.ResetColor();
 
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Strength: {Strength}");
-            Console.WriteLine($"Defense: {Defense}");
-            Console.WriteLine($"Hit-points: {CurrentHP}/{OriginalHP}");
-            Console.ResetColor();
+            _console.TextColor = ConsoleColor.Red;
+            _console.WriteLine($"Strength: {Strength}");
+            _console.WriteLine($"Defense: {Defense}");
+            _console.WriteLine($"Hit-points: {CurrentHP}/{OriginalHP}");
+            _console.ResetColor();
         }
 
 
@@ -92,51 +105,12 @@ namespace OOP_RPG.ConsoleGame
         }
 
 
-
         /*
         ======================================================================================== 
         ShowTodaysMonsters ---> Displays today's monsters (color coded, darker == harder)
         ======================================================================================== 
         */
-        public static void ShowTodaysMonsters()
-        {
-            Console.Clear();
-
-            Console.Title = $"Today's Monsters";
-
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("***** Today's Monsters ******\n");
-
-            foreach (Monster monster in Fight.GetTodaysMonsters())
-            {
-                switch (monster.Difficulty)
-                {
-                    case Difficulty.Easy:
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        break;
-
-                    case Difficulty.Medium:
-                        Console.ForegroundColor = ConsoleColor.DarkCyan;
-                        break;
-
-                    default:
-                        Console.ForegroundColor = ConsoleColor.DarkBlue;
-                        break;
-                }
-                Console.WriteLine($"{monster.Name} - Difficulty: {monster.Difficulty}");
-            }
-            Console.ResetColor();
-            Console.WriteLine();
-        }
-
-
-
-        /*
-        ======================================================================================== 
-        ShowTodaysMonsters ---> Displays today's monsters (color coded, darker == harder)
-        ======================================================================================== 
-        */
-        public int GetRunAwayChance(Monster currentMonster)
+        public int GetRunAwayChance(IMonster currentMonster)
         {
             int chance;
             switch (currentMonster.Difficulty)

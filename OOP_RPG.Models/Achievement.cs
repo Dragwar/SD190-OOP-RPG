@@ -1,8 +1,9 @@
 ﻿using OOP_RPG.Models.Enumerations;
+using OOP_RPG.Models.Interfaces;
 
-namespace OOP_RPG.ConsoleGame
+namespace OOP_RPG.Models
 {
-    public class Achievement
+    public class Achievement : IAchievement
     {
         public string Title { get; }
         public AchievementEnum EnumTitle { get; }
@@ -20,7 +21,6 @@ namespace OOP_RPG.ConsoleGame
         }
 
         public override string ToString() =>
-
             $"\n=========({Title})=========\n" +
             $"Reward: {RewardPoints} {(RewardPoints > 1 ? "points" : "point")}\n" +
             $"Status: {(IsCompleted ? $"Completed On {CompletedDate}" : "Not Completed")}\n"

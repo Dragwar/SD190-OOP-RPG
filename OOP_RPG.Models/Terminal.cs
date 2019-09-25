@@ -5,28 +5,57 @@ namespace OOP_RPG.Models
 {
     public class Terminal : IConsole
     {
-        public ConsoleColor TextColor { get; set; }
-        public ConsoleColor BackgroundColor { get; set; }
+        public ConsoleColor TextColor
+        {
+            get => Console.ForegroundColor;
+            set => Console.ForegroundColor = value;
+        }
 
-        private string _title;
+        public ConsoleColor BackgroundColor
+        {
+            get => Console.BackgroundColor;
+            set => Console.BackgroundColor = value;
+        }
+
         public string Title
         {
             get => Environment.OSVersion.Platform switch
             {
-                PlatformID.Win32NT => _title,
+                PlatformID.Win32NT => Console.Title,
                 PlatformID.Unix => throw new InvalidOperationException($"{nameof(PlatformID)}.{nameof(PlatformID.Unix)} doesn't support reading the console title"),
                 _ => throw new Exception($"Unexpected {nameof(PlatformID)} type ({Environment.OSVersion.Platform})")
             };
-            set => _title = value;
+            set => Console.Title = value;
         }
 
-        public bool IsCursorVisible { get; set; }
-        public bool CapsLock { get; }
-        public bool NumLock { get; }
-        public bool KeyAvailable { get; }
-        public int CursorTop { get; set; }
-        public int CursorLeft { get; set; }
-        public int CursorSize { get; set; }
+        public bool CapsLock => Console.CapsLock;
+        public bool NumLock => Console.NumberLock;
+        public bool KeyAvailable => Console.KeyAvailable;
+
+
+        public bool IsCursorVisible
+        {
+            get => Console.CursorVisible;
+            set => Console.CursorVisible = value;
+        }
+
+        public int CursorTop
+        {
+            get => Console.CursorTop;
+            set => Console.CursorTop = value;
+        }
+
+        public int CursorLeft
+        {
+            get => Console.CursorLeft;
+            set => Console.CursorLeft = value;
+        }
+
+        public int CursorSize
+        {
+            get => Console.CursorSize;
+            set => Console.CursorSize = value;
+        }
 
         public void SetCursorPosition(int left, int top) => Console.SetCursorPosition(left, top);
 

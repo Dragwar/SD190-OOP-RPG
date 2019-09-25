@@ -1,21 +1,61 @@
 using OOP_RPG.ConsoleGame.Utilities;
+using OOP_RPG.Models;
+using OOP_RPG.Models.Enumerations;
+using OOP_RPG.Models.Interfaces;
 using System;
 
 namespace OOP_RPG.ConsoleGame
 {
     public class Game
     {
-        public Hero Hero { get; }
-        private Shop MyShop { get; }
-        public HandleAchievements ManageAchievements { get; }
+        private readonly IConsole _console;
+        public IShop MyShop { get; }
+        public IHero Hero { get; }
+        public IAchievementManager AchievementManager { get; }
 
-        public Game()
+        public Game(IConsole console, IHero hero, IShop shop, IAchievementManager achievementManager)
         {
-            ManageAchievements = new HandleAchievements(); // only one HandleAchievements per game
-            Hero = new Hero(/*ManageAchievements*/); // only one hero per game
-            MyShop = new Shop(Hero); // only one shop per game
+            _console = console;
+            AchievementManager = achievementManager; // only one HandleAchievements per game
+            Hero = hero; // only one hero per game
+            MyShop = shop; // only one shop per game
         }
 
+        /*
+        ======================================================================================== 
+        ShowTodaysMonsters ---> Displays today's monsters (color coded, darker == harder)
+        ======================================================================================== 
+        */
+        public void ShowTodaysMonsters()
+        {
+            _console.Clear();
+
+            _console.Title = $"Today's Monsters";
+
+            _console.TextColor = ConsoleColor.Yellow;
+            _console.WriteLine("***** Today's Monsters ******\n");
+
+            foreach (var monster in Fight.GetTodaysMonsters())
+            {
+                switch (monster.Difficulty)
+                {
+                    case Difficulty.Easy:
+                        _console.TextColor = ConsoleColor.Cyan;
+                        break;
+
+                    case Difficulty.Medium:
+                        _console.TextColor = ConsoleColor.DarkCyan;
+                        break;
+
+                    default:
+                        _console.TextColor = ConsoleColor.DarkBlue;
+                        break;
+                }
+                _console.WriteLine($"{monster.Name} - Difficulty: {monster.Difficulty}");
+            }
+            _console.ResetColor();
+            _console.WriteLine();
+        }
 
 
         /*
@@ -25,29 +65,28 @@ namespace OOP_RPG.ConsoleGame
         */
         public void Start()
         {
-            Console.Title = $"Welcome!!!";
+            _console.Title = $"Welcome!!!";
 
-            Console.WriteLine("Welcome hero!");
-            Console.WriteLine("Please enter your name:");
+            _console.WriteLine("Welcome hero!");
+            _console.WriteLine("Please enter your name:");
 
-            Hero.Name = Console.ReadLine().Trim();
+            Hero.Name = _console.ReadLine().Trim();
 
             while (string.IsNullOrEmpty(Hero.Name) || string.IsNullOrWhiteSpace(Hero.Name))
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Every Hero Has A Name . . .");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Red;
+                _console.WriteLine("Every Hero Has A Name . . .");
+                _console.ResetColor();
 
-                Console.WriteLine("Please enter your name:");
-                Hero.Name = Console.ReadLine().Trim();
+                _console.WriteLine("Please enter your name:");
+                Hero.Name = _console.ReadLine().Trim();
             }
 
-            HandleCheatCodes.HeroNameCheat(Hero, MyShop, Hero.Name);
+            CheatCodeManager.HeroNameCheat(Hero, MyShop);
 
-            Console.WriteLine($"\nHello {Hero.Name}");
-
+            _console.WriteLine($"\nHello {Hero.Name}");
             Main();
-        }// End of the Start Method
+        }
 
 
 
@@ -58,28 +97,28 @@ namespace OOP_RPG.ConsoleGame
         */
         private void Main()
         {
-            Console.Title = $"Main Menu";
+            _console.Title = $"Main Menu";
 
             var input = "0";
 
             while (input != "6")
             {
-                Console.WriteLine("\n==============================================");
-                Console.WriteLine("\t\tMain Menu");
-                Console.WriteLine("==============================================\n");
+                _console.WriteLine("\n==============================================");
+                _console.WriteLine("\t\tMain Menu");
+                _console.WriteLine("==============================================\n");
 
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("Please choose an option by entering a number.");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Yellow;
+                _console.WriteLine("Please choose an option by entering a number.");
+                _console.ResetColor();
 
-                Console.WriteLine("1. View Stats");
-                Console.WriteLine("2. View and Manage Inventory");
-                Console.WriteLine("3. View Shop");
-                Console.WriteLine("4. Spend Experience Points");
-                Console.WriteLine("5. Fight Monster");
-                Console.WriteLine("6. Exit");
+                _console.WriteLine("1. View Stats");
+                _console.WriteLine("2. View and Manage Inventory");
+                _console.WriteLine("3. View Shop");
+                _console.WriteLine("4. Spend Experience Points");
+                _console.WriteLine("5. Fight Monster");
+                _console.WriteLine("6. Exit");
 
-                input = Console.ReadLine().Trim();
+                input = _console.ReadLine().Trim();
 
                 if (input == "1")
                 {
@@ -99,7 +138,7 @@ namespace OOP_RPG.ConsoleGame
                 }
                 else if (input == "5")
                 {
-                    Monster.ShowTodaysMonsters();
+                    ShowTodaysMonsters();
 
                     var loadingSymbol = new LoadingSymbol("Searching For Monsters", "You Encountered:");
                     loadingSymbol.Excute(RNG.Next(2, 7));
@@ -112,7 +151,7 @@ namespace OOP_RPG.ConsoleGame
                     return;
                 }
             }
-        }// End of the Main Method
+        }
 
 
 
@@ -123,16 +162,14 @@ namespace OOP_RPG.ConsoleGame
         */
         private void Stats()
         {
-            Console.Clear();
+            _console.Clear();
 
-            Console.Title = $"{Hero.Name}'s Stats: [> Str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <]";
-            Hero.ShowStats(/*true*/);
+            _console.Title = $"{Hero.Name}'s Stats: [> Str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <]";
+            Hero.ShowStats(true);
 
-            Console.WriteLine("Press any key to return to main menu.");
-            Console.ReadKey(true);
-
-            Console.Title = $"Main Menu";
-        }// End of the Stats Method
+            _console.WriteLine("Press any key to return to main menu.");
+            _console.ReadKey(true);
+        }
 
 
 
@@ -143,12 +180,10 @@ namespace OOP_RPG.ConsoleGame
         */
         private void Inventory()
         {
-            Console.Clear();
+            _console.Clear();
 
             Hero.ManageInventory();
-
-            Console.Title = $"Main Menu";
-        }// End of the Inventory Method
+        }
 
 
 
@@ -159,10 +194,10 @@ namespace OOP_RPG.ConsoleGame
         */
         private void FightMonster()
         {
-            var newFight = new Fight(ManageAchievements, Hero);
+            var newFight = new Fight(_console, AchievementManager, Hero);
 
             newFight.Start();
-        }// End of the FightMonster Method
+        }
 
 
 
@@ -173,29 +208,27 @@ namespace OOP_RPG.ConsoleGame
         */
         public void SpendExperiencePoints()
         {
-            Console.Clear();
+            _console.Clear();
 
             var userInput = "";
 
             while (userInput != "4")
             {
-                Console.Title = $"Spend Your EXP | Current Experience Points: {Hero.ExperiencePoints} | Stats: [> Str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <]";
+                _console.Title = $"Spend Your EXP | Current Experience Points: {Hero.ExperiencePoints} | Stats: [> Str: {Hero.Strength} | Def: {Hero.Defense} | HP: {Hero.CurrentHP}/{Hero.OriginalHP} <]";
 
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"**** Manage Experience Points ****");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Yellow;
+                _console.WriteLine($"**** Manage Experience Points ****");
+                _console.ResetColor();
 
-                Console.WriteLine("1. Level Up Strength");
-                Console.WriteLine("2. Level Up Defense");
-                Console.WriteLine("3. Level Up Original HP");
-                Console.WriteLine("4. Return To Main Menu\n");
+                _console.WriteLine("1. Level Up Strength");
+                _console.WriteLine("2. Level Up Defense");
+                _console.WriteLine("3. Level Up Original HP");
+                _console.WriteLine("4. Return To Main Menu\n");
 
-                userInput = Console.ReadLine().Trim();
+                userInput = _console.ReadLine().Trim();
 
                 Hero.SpendExperiencePoints(userInput);
-
-                Console.Title = $"Main Menu";
-            }// End of the SpendExperiencePoints Method
+            }
         }
 
 
@@ -206,12 +239,9 @@ namespace OOP_RPG.ConsoleGame
         */
         public void Shop()
         {
-            Console.Clear();
+            _console.Clear();
 
             MyShop.OpenShopAndTakeUserOrder();
-
-
-            Console.Title = $"Main Menu";
-        }// End of the Shop Method
+        }
     }
 }

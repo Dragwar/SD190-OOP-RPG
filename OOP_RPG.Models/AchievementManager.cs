@@ -1,37 +1,40 @@
 ﻿using OOP_RPG.Models.Enumerations;
+using OOP_RPG.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace OOP_RPG.ConsoleGame
+namespace OOP_RPG.Models
 {
-    public class HandleAchievements
+    public class AchievementManager : IAchievementManager
     {
+        private readonly IConsole _console;
         public int TotalPoints { get; private set; }
-        public List<Achievement> AllAchievements { get; set; }
-        public List<Monster> AllKilledMonsters { get; }
+        public List<IAchievement> AllAchievements { get; set; }
+        public List<IMonster> AllKilledMonsters { get; }
 
-        public HandleAchievements()
+        public AchievementManager(IConsole console)
         {
-            AllAchievements = new List<Achievement>()
+            _console = console;
+            AllAchievements = new List<IAchievement>()
             {
                 new Achievement("Kill 1 Monster", AchievementEnum.KillOneMonster, 1),
                 new Achievement("Kill 3 Monsters", AchievementEnum.KillThreeMonsters, 2),
                 new Achievement("Kill 5 Different Monsters", AchievementEnum.KillFiveDifferentMonsters, 3),
                 new Achievement("Kill 10 Monsters", AchievementEnum.KillTenMonsters, 5),
             };
-            AllKilledMonsters = new List<Monster>();
+            AllKilledMonsters = new List<IMonster>();
         }
 
-        public List<Achievement> GetCompletedAchievements() => AllAchievements.Where(ach => ach.IsCompleted).ToList();
-        public List<Achievement> GetUnCompletedAchievements() => AllAchievements.Where(ach => !ach.IsCompleted).ToList();
+        public List<IAchievement> GetCompletedAchievements() => AllAchievements.Where(ach => ach.IsCompleted).ToList();
+        public List<IAchievement> GetUnCompletedAchievements() => AllAchievements.Where(ach => !ach.IsCompleted).ToList();
 
-        private List<Monster> GetUniqueDeadMonsters() => AllKilledMonsters
+        private List<IMonster> GetUniqueDeadMonsters() => AllKilledMonsters
                 .GroupBy(x => x.Name)
                 .Select(y => y.FirstOrDefault())
                 .ToList();
 
-        public void AddDeadMonster(Monster deadMonster)
+        public void AddDeadMonster(IMonster deadMonster)
         {
             if (deadMonster.CurrentHP > 0)
             {
@@ -54,11 +57,11 @@ namespace OOP_RPG.ConsoleGame
             }
         }
 
-        private Achievement CheckForNumberOfKilledUniqueMonstersAchievements()
+        private IAchievement CheckForNumberOfKilledUniqueMonstersAchievements()
         {
-            Achievement foundAchievement = null;
+            IAchievement foundAchievement = null;
 
-            List<Monster> uniqueMonsters = GetUniqueDeadMonsters();
+            List<IMonster> uniqueMonsters = GetUniqueDeadMonsters();
 
             switch (uniqueMonsters.Count)
             {
@@ -74,9 +77,9 @@ namespace OOP_RPG.ConsoleGame
             return foundAchievement;
         }
 
-        private Achievement CheckForNumberOfKilledMonstersAchievements()
+        private IAchievement CheckForNumberOfKilledMonstersAchievements()
         {
-            Achievement foundAchievement = null;
+            IAchievement foundAchievement = null;
             switch (AllKilledMonsters.Count)
             {
                 case 1:
@@ -102,10 +105,8 @@ namespace OOP_RPG.ConsoleGame
 
         public void CheckForAllAchievements()
         {
-            Achievement foundAchievement = null;
-
             // Check for the number of killed monsters
-            foundAchievement = CheckForNumberOfKilledMonstersAchievements();
+            IAchievement foundAchievement = CheckForNumberOfKilledMonstersAchievements();
 
 
             if (foundAchievement == null)
@@ -121,27 +122,27 @@ namespace OOP_RPG.ConsoleGame
                 foundAchievement.IsCompleted = true;
                 foundAchievement.CompletedDate = $"{DateTime.Now.ToShortDateString()} ({DateTime.Now.ToShortTimeString()})";
                 TotalPoints += foundAchievement.RewardPoints;
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"\nYou Completed An Achievement ({foundAchievement.Title})");
-                Console.WriteLine($"(+ {foundAchievement.RewardPoints} AP)\n");
-                Console.ResetColor();
+                _console.TextColor = ConsoleColor.Yellow;
+                _console.WriteLine($"\nYou Completed An Achievement ({foundAchievement.Title})");
+                _console.WriteLine($"(+ {foundAchievement.RewardPoints} AP)\n");
+                _console.ResetColor();
             }
         }
 
         public void PrintAllAchievements()
         {
-            foreach (Achievement achievement in AllAchievements)
+            foreach (IAchievement achievement in AllAchievements)
             {
                 if (achievement.IsCompleted)
                 {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    _console.TextColor = ConsoleColor.Yellow;
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    _console.TextColor = ConsoleColor.DarkGray;
                 }
-                Console.WriteLine(achievement.ToString());
-                Console.ResetColor();
+                _console.WriteLine(achievement.ToString());
+                _console.ResetColor();
             }
         }
     }
